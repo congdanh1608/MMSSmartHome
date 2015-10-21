@@ -2,16 +2,23 @@
     <string name="app_name">AVPDemo</string>
     <string name="action_settings">Settings</string>
 
+    <string name="btnConnectPi">Connect PI</string>
+    <string name="tvConnectPi">Disconnect</string>
+
     <string name="titleA">Example Audio Record</string>
-    <string name="btnStartRecordA">Start Record Audio</string>
-    <string name="btnStopRecordA">Stop Record Audio</string>
-    <string name="btnPlayRecordA">Play Record Audio</string>
+    <string name="btnStartRecordA">Start Record</string>
+    <string name="btnStopRecordA">Stop Record</string>
+    <string name="btnPlayRecordA">Play</string>
 
     <string name="titleV">Example Video Record</string>
-    <string name="btnStartRecordV">Start Record Video</string>
-    <string name="btnStopRecordV">Stop Record Video</string>
-    <string name="btnPlayRecordV">Play Record Video</string>
+    <string name="btnStartRecordV">Start Record</string>
+    <string name="btnStopRecordV">Stop Record</string>
+    <string name="btnPlayRecordV">Play</string>
 
     <string name="titleP">Example Photo</string>
     <string name="btnChoosePhoto">Choose Photo</string>
+
+    <string name="btnPushA">Push</string>
+    <string name="btnPushP">Push</string>
+    <string name="btnPushV">Push</string>
 </resources>

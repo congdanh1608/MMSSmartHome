@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,7 +22,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -32,8 +35,16 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import thesis.danh.avpdemo.SSH.ConnectSSHAsyncTask;
+import thesis.danh.avpdemo.SSH.DisConnectSSHAsyncTask;
+import thesis.danh.avpdemo.SSH.PushFileAsyncTask;
+import thesis.danh.avpdemo.SSH.Utils;
+
 public class MainActivity extends AppCompatActivity {
-    Button btnRecordA, btnPlayRecordA, btnRecordV, btnPlayV, btnPhoto;
+    public static TextView tvConnect;
+    EditText edIPPI;
+    Button btnRecordA, btnPlayRecordA, btnRecordV, btnPlayV, btnPhoto, btnPushA, btnPushV;
+    public static Button btnPushP, btnConnectPI;
     ImageView imgPhoto;
     VideoView vViewV;
 
@@ -46,14 +57,25 @@ public class MainActivity extends AppCompatActivity {
     private boolean mStartPlayingV = true;
     private Uri outputFileUri = null, outputFileUriV = null;
 
-    private int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 1111;
-    static final int REQUEST_VIDEO_CAPTURE = 2222;
+    private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 1111;
+    private static final int REQUEST_VIDEO_CAPTURE = 2222;
 
+    private Utils utils;
+
+    public static boolean mStartConnect = true;
+
+    //Demo info
+    RaspberryPiClient rasp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        utils = new Utils(this);
 
         mDir = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileNameA = mDir + "/audiorecord.3gp";
@@ -64,9 +86,25 @@ public class MainActivity extends AppCompatActivity {
         btnPlayRecordA = (Button) findViewById(R.id.btnPlayRecordA);
         btnRecordV = (Button) findViewById(R.id.btnRecordV);
         btnPlayV = (Button) findViewById(R.id.btnPlayV);
-        btnPhoto = (Button) findViewById(R.id.btnChosePhoto);
+        btnPhoto = (Button) findViewById(R.id.btnChoosePhoto);
+        btnPushA = (Button) findViewById(R.id.btnPushA);
+        btnPushP = (Button) findViewById(R.id.btnPushP);
+        btnPushV = (Button) findViewById(R.id.btnPushV);
+        btnConnectPI = (Button) findViewById(R.id.btnConnectPI);
+        tvConnect = (TextView) findViewById(R.id.tvConnect);
         imgPhoto = (ImageView) findViewById(R.id.imgPhoto);
         vViewV = (VideoView) findViewById(R.id.vViewV);
+        edIPPI = (EditText) findViewById(R.id.edIPPI);
+
+        btnConnectPI.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Demo info
+                rasp = new RaspberryPiClient("Pi", edIPPI.getText().toString(), "B8:27:EB:57:07:1C");
+
+                onConnect(mStartConnect);
+            }
+        });
 
         btnRecordA.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     btnPlayRecordA.setText("Start playing");
                 }
-                mStartPlayingA = !mStartPlayingA;
             }
         });
 
@@ -120,6 +157,65 @@ public class MainActivity extends AppCompatActivity {
                 openImageIntent();
             }
         });
+
+        btnPushA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mFileNameA != null) {
+                    String[] separated = mFileNameA.split("/");
+                    //Get Name File
+                    String fName = separated[separated.length - 1];
+                    byte[] bytes = utils.loadResource(mFileNameA);
+                    if (bytes != null) {
+                        PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
+                        async.execute();
+//                        utils.pushFile(bytes, fName, rasp);
+                    }
+                }
+            }
+        });
+
+        btnPushP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mFileNameP != null) {
+                    String[] separated = mFileNameP.split("/");
+                    //Get Name File
+                    String fName = separated[separated.length - 1];
+                    byte[] bytes = utils.loadResource(mFileNameP);
+                    if (bytes != null) {
+                        PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
+                        async.execute();
+//                        utils.pushFile(bytes, fName, rasp);
+                    }
+                }
+            }
+        });
+
+        btnPushV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mFileNameV != null) {
+                    String[] separated = mFileNameV.split("/");
+                    //Get Name File
+                    String fName = separated[separated.length - 1];
+                    byte[] bytes = utils.loadResource(mFileNameV);
+                    if (bytes != null) {
+                        PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
+                        async.execute();
+//                        utils.pushFile(bytes, fName, rasp);
+                    }
+                }
+            }
+        });
+    }
+
+    private void onConnect(boolean connect) {
+        if (connect) {
+            new ConnectSSHAsyncTask(this, rasp).execute();
+        } else {
+            new DisConnectSSHAsyncTask(this, rasp).execute();
+        }
     }
 
     private void onRecordA(boolean start) {
@@ -202,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
     private void onPlayV(boolean start) {
         if (start) {
             startPlayingV();
-        }else {
+        } else {
             pausePlayingV();
         }
     }
@@ -219,9 +315,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void startPlayingV() {
         if (vViewV != null) {
-            if (vViewV.isPlaying()){
+            if (vViewV.isPlaying()) {
                 vViewV.resume();
-            }else vViewV.start();
+            } else vViewV.start();
 
             vViewV.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
@@ -241,8 +337,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void pausePlayingV(){
-        if (vViewV != null){
+    private void pausePlayingV() {
+        if (vViewV != null) {
             vViewV.pause();
         }
     }
@@ -279,6 +375,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(chooserIntent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
 
     }
+
 
     @Override
     public void onPause() {

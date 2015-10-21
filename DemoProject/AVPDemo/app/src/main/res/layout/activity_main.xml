@@ -1,104 +1,184 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
-    android:orientation="vertical">
+    tools:context=".MainActivity">
 
-    <LinearLayout
-        android:gravity="center"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tvTitleA"
-            android:text="@string/titleA"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnRecordA"
-            android:layout_below="@+id/tvTitleA"
-            android:text="@string/btnStartRecordA"
-            android:layout_width="200dp"
-            android:layout_height="40dp" />
+                <Button
+                    android:id="@+id/btnConnectPI"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btnConnectPi" />
 
+                <EditText
+                    android:id="@+id/edIPPI"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:text="192.168.0.104" />
 
-        <Button
-            android:id="@+id/btnPlayRecordA"
-            android:layout_below="@id/btnRecordA"
-            android:text="@string/btnPlayRecordA"
-            android:layout_width="200dp"
-            android:layout_height="40dp" />
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/tvConnect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tvConnectPi" />
+            </LinearLayout>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="10dp" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
 
-    <LinearLayout
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvTitleV"
-            android:text="@string/titleV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvTitleA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/titleA" />
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnRecordV"
-            android:layout_below="@+id/tvTitleV"
-            android:text="@string/btnStartRecordV"
-            android:layout_width="200dp"
-            android:layout_height="40dp" />
-
-        <Button
-            android:id="@+id/btnPlayV"
-            android:layout_below="@+id/btnRecordV"
-            android:text="@string/btnPlayRecordV"
-            android:layout_width="200dp"
-            android:layout_height="40dp" />
-
-        <VideoView
-            android:id="@+id/vViewV"
-            android:layout_width="250dp"
-            android:layout_height="150dp" />
-    </LinearLayout>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="10dp" />
-
-    <LinearLayout
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvTitleP"
-            android:text="@string/titleP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+                    <Button
+                        android:id="@+id/btnRecordA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_below="@+id/tvTitleA"
+                        android:text="@string/btnStartRecordA" />
 
 
-        <Button
-            android:id="@+id/btnChosePhoto"
-            android:layout_below="@+id/tvTitleP"
-            android:text="@string/btnChoosePhoto"
-            android:layout_width="200dp"
-            android:layout_height="40dp" />
+                    <Button
+                        android:id="@+id/btnPlayRecordA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_below="@id/btnRecordA"
+                        android:text="@string/btnPlayRecordA" />
 
-        <ImageView
-            android:id="@+id/imgPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+                    <Button
+                        android:id="@+id/btnPushA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_below="@id/btnPlayRecordA"
+                        android:text="@string/btnPushA" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvTitleV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/titleV" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnRecordV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_below="@+id/tvTitleV"
+                        android:text="@string/btnStartRecordV" />
+
+                    <Button
+                        android:id="@+id/btnPlayV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_below="@+id/btnRecordV"
+                        android:text="@string/btnPlayRecordV" />
+
+                    <Button
+                        android:id="@+id/btnPushV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_below="@id/btnPlayV"
+                        android:text="@string/btnPushV" />
+                </LinearLayout>
+
+                <VideoView
+                    android:id="@+id/vViewV"
+                    android:layout_width="250dp"
+                    android:layout_height="150dp" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvTitleP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/titleP" />
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnChoosePhoto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_below="@+id/tvTitleP"
+                        android:text="@string/btnChoosePhoto" />
+
+                    <Button
+                        android:id="@+id/btnPushP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_below="@id/btnChoosePhoto"
+                        android:text="@string/btnPushP" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgPhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
