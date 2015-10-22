@@ -23,6 +23,8 @@ import java.util.List;
  */
 public class Inbox extends Fragment {
 
+    public static final int COLUMN_GRID = 2;
+
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -63,7 +65,7 @@ public class Inbox extends Fragment {
         // use a linear layout manager
         //mLayoutManager = new LinearLayoutManager(getActivity());
         //use a grid layout manager
-        mLayoutManager = new GridLayoutManager(getActivity(),2);
+        mLayoutManager = new GridLayoutManager(getActivity(),COLUMN_GRID);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         return rootView;

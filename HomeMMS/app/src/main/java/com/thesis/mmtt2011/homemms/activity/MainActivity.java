@@ -1,5 +1,6 @@
 package com.thesis.mmtt2011.homemms.activity;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         searchView.setIconifiedByDefault(false);
         searchView.setOnQueryTextListener(queryTextListener);
@@ -87,6 +88,12 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if (id == R.id.action_scan_devices) {
+            Intent intent = new Intent(this, ScanDevicesActivity.class);
+            startActivity(intent);
             return true;
         }
 
