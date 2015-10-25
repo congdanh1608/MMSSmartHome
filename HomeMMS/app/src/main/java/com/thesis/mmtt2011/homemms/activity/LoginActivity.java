@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
+    public static final int MIN_LENGTH_PASSWORD = 3;
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "C4:42:02:5C:CB:83-hello", "00:00:10:10:10:11-world"
     };
@@ -41,6 +42,16 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private TextView mForgotPassword;
+
+    //Group in class networkUils
+    public String getMacAddress() {
+        WifiManager wimanager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        String macAddress = wimanager.getConnectionInfo().getMacAddress();
+//        if (macAddress == null) {
+//            macAddress = "Device don't have mac address or wi-fi is disabled";
+//        }
+        return macAddress;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,15 +94,6 @@ public class LoginActivity extends AppCompatActivity {
      * errors are presented and no actual login attempt is made.
      */
 
-    public String getMacAddress() {
-        WifiManager wimanager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        String macAddress = wimanager.getConnectionInfo().getMacAddress();
-//        if (macAddress == null) {
-//            macAddress = "Device don't have mac address or wi-fi is disabled";
-//        }
-        return macAddress;
-    }
-
     private void attemptLogin() {
         if (mAuthTask != null) {
             return;
@@ -133,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() > 2;
+        return password.length() >= MIN_LENGTH_PASSWORD;
     }
 
     /**

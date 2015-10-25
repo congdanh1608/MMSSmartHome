@@ -27,4 +27,9 @@
     <string name="action_logout">Logout</string>
     <string name="action_install_config">Install configuration</string>
     <string name="forgot_password"><a href="http://tinhte.vn">Forgot password?</a></string>
+    <string name="retype_password">Retype password</string>
+    <string name="name">Name</string>
+    <string name="action_register">Register</string>
+    <string name="set_avatar">Set avatar</string>
+    <string name="error_notmatch_password">Password does not match</string>
 </resources>
