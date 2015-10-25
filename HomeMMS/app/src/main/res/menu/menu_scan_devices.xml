@@ -20,6 +20,7 @@
         android:id="@+id/action_install_config"
         android:orderInCategory="300"
         android:title="@string/action_install_config"
+        android:icon="@android:drawable/stat_sys_upload_done"
         app:showAsAction="ifRoom" />
 
     
