@@ -1,5 +1,6 @@
 package com.thesis.mmtt2011.homemms.adapter;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
 import com.thesis.mmtt2011.homemms.model.Message;
 
 import java.util.List;
@@ -33,10 +35,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public void onBindViewHolder(MessageAdapter.MessageViewHolder holder, int position) {
         Message message = messages.get(position);
-        holder.tvUsername.setText(message.getSender().getNameDisplay());
+        holder.bindMessage(message);
+        /*holder.tvUsername.setText(message.getSender().getNameDisplay());
         holder.tvTitle.setText(message.getTitle());
         holder.tvContent.setText(message.getContent());
-        holder.tvTimeStamp.setText(message.getTimestamp());
+        holder.tvTimeStamp.setText(message.getTimestamp());*/
     }
 
     @Override
@@ -45,12 +48,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
 
-    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+    public static class MessageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
 
-        protected TextView tvUsername;
-        protected TextView tvContent;
-        protected TextView tvTitle;
-        protected TextView tvTimeStamp;
+        private final TextView tvUsername;
+        private final TextView tvContent;
+        private final TextView tvTitle;
+        private final TextView tvTimeStamp;
+        private Message mMessage;
 
         public MessageViewHolder(View messageView) {
             super(messageView);
@@ -58,6 +62,31 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             tvTitle = (TextView)messageView.findViewById(R.id.title);
             tvContent = (TextView)messageView.findViewById(R.id.content);
             tvTimeStamp = (TextView)messageView.findViewById(R.id.timestamp);
+
+            messageView.setOnClickListener(this);
+            messageView.setLongClickable(true);
+            messageView.setOnLongClickListener(this);
+        }
+
+        public void bindMessage(Message message) {
+            mMessage = message;
+            tvUsername.setText(message.getSender().getNameDisplay());
+            tvTitle.setText(message.getTitle());
+            tvContent.setText(message.getContent());
+            tvTimeStamp.setText(message.getTimestamp());
+        }
+        @Override
+        public void onClick(View v) {
+            if (mMessage != null) {
+                //send mMessage to MessageContentActivity????
+                Intent intent = new Intent(v.getContext(), MessageContentActivity.class);
+                v.getContext().startActivity(intent);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            return false;
         }
     }
 }

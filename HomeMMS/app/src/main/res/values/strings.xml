@@ -32,4 +32,6 @@
     <string name="action_register">Register</string>
     <string name="set_avatar">Set avatar</string>
     <string name="error_notmatch_password">Password does not match</string>
+    <string name="type_message">Type a message...</string>
+    <string name="title_activity_message_content">MessageContentActivity</string>
 </resources>
