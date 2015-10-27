@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Sent extends Fragment {
+public class SentFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -40,7 +40,7 @@ public class Sent extends Fragment {
         }
     }
 
-    public Sent() {
+    public SentFragment() {
         // Required empty public constructor
     }
 

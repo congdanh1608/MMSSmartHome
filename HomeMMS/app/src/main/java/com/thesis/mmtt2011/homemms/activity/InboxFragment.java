@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Inbox extends Fragment {
+public class InboxFragment extends Fragment {
 
     public static final int COLUMN_GRID = 2;
 
@@ -37,13 +37,17 @@ public class Inbox extends Fragment {
         List<User> receivers = new ArrayList<>();
         User receiver = new User("Name Display", "00:00:00:00:00:00", "password", "link avatar");
         receivers.add(receiver);
+        String content[] = new String[3];
+        content[0] = "Lorem ipsum dolor sit amet, vis invenire interesset ut. Ad duo tale appareat contentiones, id per nisl tantas percipitur. Tollit mediocrem repudiandae ad vim, ad pri habeo dolorem disputando. ";
+        content[1] = "Lorem ipsum dolor sit amet, vis invenire interesset ut. Ad duo tale appareat contentiones, id per nisl tantas percipitur";
+        content[2] = "Lorem ipsum dolor sit amet, vis invenire interesset ut.";
         for(int i = 0; i < 15; i++) {
-            User user = new User("Name Display", String.valueOf(i), "password", "link avatar");
-            messages.add(new Message("Title " + i, "Content " + i, "Timestamp " + i, "Status " + i, user, receivers));
+            User user = new User("Pham Xuan Y", String.valueOf(i), "password", "link avatar");
+            messages.add(new Message("Title " + i, content[i%3], "Oct 2" + i, "Status " + i, user, receivers));
         }
     }
 
-    public Inbox() {
+    public InboxFragment() {
         // Required empty public constructor
     }
 

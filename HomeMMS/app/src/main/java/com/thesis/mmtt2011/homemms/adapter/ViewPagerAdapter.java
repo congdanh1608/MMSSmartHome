@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.thesis.mmtt2011.homemms.activity.Inbox;
-import com.thesis.mmtt2011.homemms.activity.Sent;
+import com.thesis.mmtt2011.homemms.activity.InboxFragment;
+import com.thesis.mmtt2011.homemms.activity.SentFragment;
 
 /**
  * Created by ypham on 5/20/15.
@@ -31,10 +31,10 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 // if the position is 0 we are returning the First tab
-                Inbox tabInbox = new Inbox();
+                InboxFragment tabInbox = new InboxFragment();
                 return tabInbox;
             case 1:
-                Sent tabSent = new Sent();
+                SentFragment tabSent = new SentFragment();
                 return tabSent;
             /*case 2:
                 FragmentTab3 tab3 = new FragmentTab3();

@@ -3,7 +3,6 @@ package com.thesis.mmtt2011.homemms.activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -15,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.SlidingTabLayout;
 import com.thesis.mmtt2011.homemms.adapter.ViewPagerAdapter;
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     ViewPager pager;
     ViewPagerAdapter adapter;
     SlidingTabLayout tabs;
-    CharSequence Titles[]={"Message","Sent"};
+    CharSequence Titles[]={"Message","SentFragment"};
     int NumbOfTabs = 2;
     SearchView searchView;
 
@@ -35,16 +35,49 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabNewMessage = (FloatingActionButton) findViewById(R.id.fab_new_message);
+        fabNewMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Hit new message", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Intent intent = new Intent(MainActivity.this, ComposeMessageActivity.class);
                 startActivity(intent);
             }
         });
+        FloatingActionButton fabPhoto = (FloatingActionButton) findViewById(R.id.fab_photo);
+        fabPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Hit new message photo", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                /*Intent intent = new Intent(MainActivity.this, ComposeMessageActivity.class);
+                startActivity(intent);*/
+            }
+        });
+
+        FloatingActionButton fabRecord = (FloatingActionButton) findViewById(R.id.fab_record);
+        fabRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Hit new message record", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                /*Intent intent = new Intent(MainActivity.this, ComposeMessageActivity.class);
+                startActivity(intent);*/
+            }
+        });
+
+        FloatingActionButton fabVideo = (FloatingActionButton) findViewById(R.id.fab_video);
+        fabVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Hit new message video", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                /*Intent intent = new Intent(MainActivity.this, ComposeMessageActivity.class);
+                startActivity(intent);*/
+            }
+        });
+
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
         adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,NumbOfTabs);
