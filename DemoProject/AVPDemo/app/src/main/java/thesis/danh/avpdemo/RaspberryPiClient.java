@@ -2,6 +2,8 @@ package thesis.danh.avpdemo;
 
 import android.graphics.drawable.Drawable;
 
+import java.net.Socket;
+
 import ch.ethz.ssh2.Connection;
 
 /**
@@ -11,6 +13,7 @@ public class RaspberryPiClient extends Device {
 
     private boolean isConfigured;
     private Connection connection;
+    private Socket socket;
     private boolean isChosenConfig;
 
     public RaspberryPiClient(String deviceName, String IPAddress, String MacAddress) {
@@ -18,6 +21,7 @@ public class RaspberryPiClient extends Device {
         isConfigured = false;
         isChosenConfig = true;
         connection = null;
+        socket = null;
         this.username = "pi";
         this.password = "raspberry";
     }
@@ -27,6 +31,7 @@ public class RaspberryPiClient extends Device {
         this.isConfigured = isConfigured;
         this.isChosenConfig = isChosenConfig;
         connection = null;
+        socket = null;
         this.username = "pi";
         this.password = "raspberry";
     }
@@ -35,6 +40,7 @@ public class RaspberryPiClient extends Device {
         super(deviceName, deviceIcon, IPAddress, MacAddress);
         isConfigured = false;
         isChosenConfig = true;
+        socket = null;
         connection = null;
         this.username = "pi";
         this.password = "raspberry";
@@ -74,6 +80,14 @@ public class RaspberryPiClient extends Device {
 
     public Connection getConnection() {
         return this.connection;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
     }
 
     public void setIsChosenConfig(boolean isChosenConfig) {

@@ -39,12 +39,13 @@ import thesis.danh.avpdemo.SSH.ConnectSSHAsyncTask;
 import thesis.danh.avpdemo.SSH.DisConnectSSHAsyncTask;
 import thesis.danh.avpdemo.SSH.PushFileAsyncTask;
 import thesis.danh.avpdemo.SSH.Utils;
+import thesis.danh.avpdemo.Socket.Client;
 
 public class MainActivity extends AppCompatActivity {
-    public static TextView tvConnect;
+    public static TextView tvConnectSSH, tvConnectS, tvSendMessage;
     EditText edIPPI;
-    Button btnRecordA, btnPlayRecordA, btnRecordV, btnPlayV, btnPhoto, btnPushA, btnPushV;
-    public static Button btnPushP, btnConnectPI;
+    Button btnRecordA, btnPlayRecordA, btnRecordV, btnPlayV, btnPhoto, btnPushA, btnPushP, btnPushV, btnSendMessage, btnFileInfoPush;
+    public static Button btnConnectSSHPI, btnConnectSPI;
     ImageView imgPhoto;
     VideoView vViewV;
 
@@ -62,7 +63,12 @@ public class MainActivity extends AppCompatActivity {
 
     private Utils utils;
 
-    public static boolean mStartConnect = true;
+    public static Client client;
+    private static final int port = 2222;
+
+    public static boolean mStartConnectSSH = true;
+    public static boolean mStartConnectS = true;
+
 
     //Demo info
     RaspberryPiClient rasp;
@@ -90,19 +96,45 @@ public class MainActivity extends AppCompatActivity {
         btnPushA = (Button) findViewById(R.id.btnPushA);
         btnPushP = (Button) findViewById(R.id.btnPushP);
         btnPushV = (Button) findViewById(R.id.btnPushV);
-        btnConnectPI = (Button) findViewById(R.id.btnConnectPI);
-        tvConnect = (TextView) findViewById(R.id.tvConnect);
+        btnSendMessage = (Button) findViewById(R.id.btnSendMessage);
+        btnConnectSSHPI = (Button) findViewById(R.id.btnConnectSSHPI);
+        btnConnectSPI = (Button) findViewById(R.id.btnConnectSPI);
+        btnFileInfoPush = (Button) findViewById(R.id.btnFileInfoPush);
+        tvConnectSSH = (TextView) findViewById(R.id.tvConnectSSH);
+        tvConnectS = (TextView) findViewById(R.id.tvConnectS);
+        tvSendMessage = (TextView) findViewById(R.id.edSendMessage);
         imgPhoto = (ImageView) findViewById(R.id.imgPhoto);
         vViewV = (VideoView) findViewById(R.id.vViewV);
         edIPPI = (EditText) findViewById(R.id.edIPPI);
 
-        btnConnectPI.setOnClickListener(new View.OnClickListener() {
+        //Demo info
+        rasp = new RaspberryPiClient("Pi", edIPPI.getText().toString(), "B8:27:EB:57:07:1C");
+
+        btnConnectSPI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Demo info
-                rasp = new RaspberryPiClient("Pi", edIPPI.getText().toString(), "B8:27:EB:57:07:1C");
+                onConnectSocket(mStartConnectS);
+            }
+        });
 
-                onConnect(mStartConnect);
+        btnConnectSSHPI.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onConnectSSH(mStartConnectSSH);
+            }
+        });
+
+        btnSendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessage(tvSendMessage.getText().toString());
+            }
+        });
+
+        btnConnectSPI.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onConnectSocket(mStartConnectS);
             }
         });
 
@@ -169,7 +201,6 @@ public class MainActivity extends AppCompatActivity {
                     if (bytes != null) {
                         PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
                         async.execute();
-//                        utils.pushFile(bytes, fName, rasp);
                     }
                 }
             }
@@ -186,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
                     if (bytes != null) {
                         PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
                         async.execute();
-//                        utils.pushFile(bytes, fName, rasp);
                     }
                 }
             }
@@ -203,14 +233,42 @@ public class MainActivity extends AppCompatActivity {
                     if (bytes != null) {
                         PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
                         async.execute();
-//                        utils.pushFile(bytes, fName, rasp);
                     }
                 }
             }
         });
+
+        btnFileInfoPush.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendFileInfoPush();
+            }
+        });
     }
 
-    private void onConnect(boolean connect) {
+    private void onConnectSocket(boolean connect) {
+        client = new Client(rasp, port);
+        if (connect) {
+            client.StartSocket();
+            mStartConnectS = false;
+            btnConnectSPI.setText("Disconnect");
+            tvConnectS.setText("Connected");
+        } else {
+            if (client.CloseConnectSocket()) {
+                mStartConnectS = true;
+                btnConnectSPI.setText("Connect");
+                tvConnectS.setText("Disconnected");
+            }
+        }
+    }
+
+    private void sendMessage(String msg){
+        if (msg!=null && !msg.equals("")){
+            client.SendMessages(msg);
+        }
+    }
+
+    private void onConnectSSH(boolean connect) {
         if (connect) {
             new ConnectSSHAsyncTask(this, rasp).execute();
         } else {
@@ -376,6 +434,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void sendFileInfoPush(){
+        client.SendMessageInfoFilePush(mFileNameA);
+        client.SendMessageInfoFilePush(mFileNameP);
+        client.SendMessageInfoFilePush(mFileNameV);
+    }
 
     @Override
     public void onPause() {

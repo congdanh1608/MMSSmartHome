@@ -3,7 +3,6 @@ package thesis.danh.avpdemo.SSH;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import thesis.danh.avpdemo.MainActivity;
 import thesis.danh.avpdemo.RaspberryPiClient;
@@ -42,9 +41,9 @@ public class DisConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
         super.onPostExecute(aBoolean);
         pd.dismiss();
         if (aBoolean) {
-            MainActivity.btnConnectPI.setText("Connect");
-            MainActivity.tvConnect.setText("Disconnected");
-            MainActivity.mStartConnect = true;
-        } else MainActivity.tvConnect.setText("Error");
+            MainActivity.btnConnectSSHPI.setText("Connect");
+            MainActivity.tvConnectSSH.setText("Disconnected");
+            MainActivity.mStartConnectSSH = true;
+        } else MainActivity.tvConnectSSH.setText("Error");
     }
 }

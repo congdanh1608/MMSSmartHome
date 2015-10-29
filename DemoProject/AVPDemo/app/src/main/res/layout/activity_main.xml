@@ -14,9 +14,9 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -25,22 +25,67 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btnConnectPI"
+                    android:id="@+id/btnConnectSPI"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/btnConnectPi" />
+                    android:text="@string/btnConnectSPi" />
 
                 <EditText
                     android:id="@+id/edIPPI"
-                    android:layout_width="140dp"
+                    android:layout_width="133dp"
                     android:layout_height="wrap_content"
-                    android:text="192.168.0.104" />
+                    android:text="192.168.1.78" />
 
                 <TextView
-                    android:id="@+id/tvConnect"
+                    android:id="@+id/tvConnectS"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/tvConnectPi" />
+                    android:text="@string/tvConnectSPi" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edSendMessage"
+                    android:layout_width="250dp"
+                    android:layout_height="40dp" />
+
+                <Button
+                    android:id="@+id/btnSendMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btnSendMessage" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnConnectSSHPI"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btnConnectSSHPi" />
+
+                <TextView
+                    android:id="@+id/tvConnectSSH"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tvConnectSSHPi" />
             </LinearLayout>
 
             <Space
@@ -179,6 +224,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="200dp" />
             </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <LinearLayout
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/btnFileInfoPush"
+                    android:text="Push info file"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

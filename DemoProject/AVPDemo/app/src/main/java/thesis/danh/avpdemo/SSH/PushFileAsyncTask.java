@@ -5,7 +5,9 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import thesis.danh.avpdemo.MainActivity;
 import thesis.danh.avpdemo.RaspberryPiClient;
+import thesis.danh.avpdemo.Socket.KeyString;
 
 /**
  * Created by CongDanh on 21/10/2015.
@@ -48,6 +50,7 @@ public class PushFileAsyncTask extends AsyncTask<Void, Void, Integer> {
         super.onPostExecute(integer);
         switch (integer){
             case 1:
+//                MainActivity.client.SendMessageInfoFilePush(fName);
                 Toast.makeText(activity, "Successful Push File", Toast.LENGTH_SHORT).show();
                 break;
             case 0:
