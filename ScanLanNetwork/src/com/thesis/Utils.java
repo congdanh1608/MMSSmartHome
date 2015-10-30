@@ -2,6 +2,7 @@ package com.thesis;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,7 +11,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Utils {
 	static byte[] appClientData;
@@ -50,19 +54,56 @@ public class Utils {
 	}
 
 	public static void createFile(String path, String content) {
+		File file = new File(path);
+		FileOutputStream fos = null;
 		try {
-			File file = new File(path);
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			FileOutputStream fos = new FileOutputStream(file, false);
-			Writer writer = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"));
+			fos = new FileOutputStream(file, false);
+			Writer writer = new BufferedWriter(new OutputStreamWriter(fos,
+					"utf-8"));
 			writer.write(content);
+			writer.flush();
+			writer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public static String readFile(String path) {
+		String s = "";
+		File file = new File(path);
+		if (!file.exists()) {
+			return null;
+		}
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(file);
+			int content;
+			while ((content = fis.read()) != -1) {
+				s +=(char) content;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fis != null)
+					fis.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return s;
+	}
+
+	public static String getCurrentTime() {
+		String time = null;
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+		Date date = new Date();
+		time = dateFormat.format(date); // 20151030_075959
+		return time;
+	}
 }

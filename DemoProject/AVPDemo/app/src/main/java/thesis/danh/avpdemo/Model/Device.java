@@ -1,4 +1,4 @@
-package thesis.danh.avpdemo;
+package thesis.danh.avpdemo.Model;
 
 import android.graphics.drawable.Drawable;
 

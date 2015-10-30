@@ -8,6 +8,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import Database.JsonbBuilder;
+import Model.Note;
+import Model.RecieverNote;
+
 import com.thesis.ServerGUI;
 
 public class Server {
@@ -83,13 +87,17 @@ public class Server {
 		}
 	}
 
+	//Sau nay can tao SocketControl cho moi thread.
 	class ClientThread_ extends Thread {
 		Socket socket;
 		BufferedReader recieve;
 		String tempMsg = "";
+		Note note = new Note();
+		RecieverNote recieveNote = new RecieverNote();
 
 		ClientThread_(Socket socket) {
 			this.socket = socket;
+			//reciever
 			try {
 				recieve = new BufferedReader(new InputStreamReader(
 						socket.getInputStream()));
@@ -98,7 +106,7 @@ public class Server {
 					tempMsg += temp;
 					System.out.println(tempMsg);
 					if (temp != null && !temp.equals("")) {
-						socketControl.getCommand(temp);
+						socketControl.getCommand(temp, note, recieveNote);
 					}
 				}
 			} catch (IOException e) {

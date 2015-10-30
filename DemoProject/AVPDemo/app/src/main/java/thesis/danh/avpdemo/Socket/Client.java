@@ -1,6 +1,7 @@
 package thesis.danh.avpdemo.Socket;
 
 import android.os.Handler;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,7 +12,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import thesis.danh.avpdemo.RaspberryPiClient;
+import thesis.danh.avpdemo.Model.RaspberryPiClient;
 import thesis.danh.avpdemo.Socket.KeyString.Command;
 
 /**
@@ -33,7 +34,7 @@ public class Client {
 
         handler = new Handler();
         //Demo info
-        socketControl = new SocketControl(this, "192.168.0.106", "Android Danh", "as:de:sd:sd:Ds:Ad");
+        socketControl = new SocketControl(this, "192.168.1.41", "Android Danh2", "as:de:sd:sd:Ds:Ad");
     }
 
     public void StartSocket() {
@@ -50,10 +51,13 @@ public class Client {
                 SendMessageInfoOfClient();
 
                 BufferedReader input = new BufferedReader(new InputStreamReader(socketB.getInputStream()));
-                final String box = input.readLine();
+                final String temp = input.readLine();
                 handler.post(new Runnable() {
                     public void run() {
-//
+                        Log.d("Recieve", temp);
+                        if (temp != null && !temp.equals("")) {
+                            socketControl.getCommand(temp);
+                        }
                     }
                 });
 
@@ -67,11 +71,26 @@ public class Client {
 
     public boolean CloseConnectSocket() {
         if (socketB != null && socketB.isConnected()) try {
+            SendMessageDisconnnect();
             socketB.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return true;
+    }
+
+    //Send message contain info reciver who client want send to.
+    public boolean SendMessageInfoReciever(String reciever) {
+        if (socketB.isConnected()) {
+            try {
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
+                printWriter.println(socketControl.createInfoReciever(reciever));
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else return false;
+        return false;
     }
 
     //Send message contain info of client.
@@ -103,11 +122,39 @@ public class Client {
     }
 
     //Send message contain info of file was pushed to server PI.
-    public boolean SendMessageInfoFilePush(String fileName) {
+    public boolean SendMessageInfoFilePush(String fileName, KeyString.TypeFile typeFile) {
         if (socketB.isConnected()) {
             try {
                 printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
-                printWriter.println(socketControl.createInfoMessage(fileName, Command.PUSHKEY));
+                printWriter.println(socketControl.createInfoMessage(fileName, typeFile, Command.PUSHKEY));
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else return false;
+        return false;
+    }
+
+    //Send mesage notice Client finish note.
+    public boolean SendMessageEndNote() {
+        if (socketB.isConnected()) {
+            try {
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
+                printWriter.println(socketControl.createNoticeEndNote());
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else return false;
+        return false;
+    }
+
+    //Send mesage notice Client finish note.
+    public boolean SendMessageDisconnnect() {
+        if (socketB.isConnected()) {
+            try {
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
+                printWriter.println(socketControl.createNoticeDisconnect());
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();

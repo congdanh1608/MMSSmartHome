@@ -80,6 +80,7 @@ public class ServerGUI {
 		btnClear.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+				onClear();
 			}
 		});
 		btnClear.setBounds(91, 296, 75, 25);
@@ -141,7 +142,7 @@ public class ServerGUI {
 		lblSendTo.setText("Send to:");
 
 		lblSendTo_ = new Label(group, SWT.NONE);
-		lblSendTo_.setBounds(59, 73, 168, 15);
+		lblSendTo_.setBounds(69, 73, 168, 15);
 
 		lblAttachFiles = new Label(group, SWT.NONE);
 		lblAttachFiles.setBounds(10, 189, 69, 15);
@@ -154,6 +155,16 @@ public class ServerGUI {
 		lblStatus.setAlignment(SWT.CENTER);
 		lblStatus.setBounds(128, 10, 197, 15);
 		lblStatus.setText("Stop");
+	}
+	
+	public void onClear(){
+		lblAttachFiles_.setText("");
+		lblIP_.setText("");
+		lblMac_.setText("");
+		lblName_.setText("");
+		lblSendTo_.setText("");
+		tMessages.setText("");
+		lblStatus.setText("Server is listening");
 	}
 
 	private void startSocketListener() {
@@ -185,9 +196,18 @@ public class ServerGUI {
 	public void updateInfo(final String IP, final String Name, final String Mac) {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
+				lblStatus.setText("Connected to " + Name);
 				lblIP_.setText(IP);
 				lblName_.setText(Name);
 				lblMac_.setText(Mac);
+			}
+		});
+	}
+	
+	public void updateReciever(final String msg) {
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				lblSendTo_.setText(msg);
 			}
 		});
 	}
@@ -206,6 +226,14 @@ public class ServerGUI {
 				//Demo file name.
 				String s = msg.substring(msg.lastIndexOf("/") + 1);
 				lblAttachFiles_.setText(lblAttachFiles_.getText() + " " + s);
+			}
+		});
+	}
+	
+	public void updateOnClear() {
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				onClear();
 			}
 		});
 	}

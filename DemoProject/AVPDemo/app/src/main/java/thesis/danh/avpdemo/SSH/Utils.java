@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
-import thesis.danh.avpdemo.RaspberryPiClient;
+import thesis.danh.avpdemo.Model.RaspberryPiClient;
 
 /**
  * Created by CongDanh on 20/10/2015.

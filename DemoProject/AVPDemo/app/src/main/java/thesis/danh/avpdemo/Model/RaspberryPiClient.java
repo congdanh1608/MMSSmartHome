@@ -1,10 +1,11 @@
-package thesis.danh.avpdemo;
+package thesis.danh.avpdemo.Model;
 
 import android.graphics.drawable.Drawable;
 
 import java.net.Socket;
 
 import ch.ethz.ssh2.Connection;
+import thesis.danh.avpdemo.Model.Device;
 
 /**
  * Created by Y Pham on 4/21/2015.

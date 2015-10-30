@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
 import thesis.danh.avpdemo.MainActivity;
-import thesis.danh.avpdemo.RaspberryPiClient;
+import thesis.danh.avpdemo.Model.RaspberryPiClient;
 
 public class DisConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
     Utils utils;

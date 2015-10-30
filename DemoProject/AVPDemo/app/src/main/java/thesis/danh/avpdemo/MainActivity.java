@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -35,19 +36,23 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import thesis.danh.avpdemo.Model.Note;
+import thesis.danh.avpdemo.Model.RaspberryPiClient;
 import thesis.danh.avpdemo.SSH.ConnectSSHAsyncTask;
 import thesis.danh.avpdemo.SSH.DisConnectSSHAsyncTask;
 import thesis.danh.avpdemo.SSH.PushFileAsyncTask;
 import thesis.danh.avpdemo.SSH.Utils;
 import thesis.danh.avpdemo.Socket.Client;
+import thesis.danh.avpdemo.Socket.KeyString;
 
 public class MainActivity extends AppCompatActivity {
-    public static TextView tvConnectSSH, tvConnectS, tvSendMessage;
-    EditText edIPPI;
+    public static TextView tvConnectSSH, tvConnectS, tvSendMessage, tvReciverNote, tvReciveInfo;
+    EditText edIPPI, edReciever;
     Button btnRecordA, btnPlayRecordA, btnRecordV, btnPlayV, btnPhoto, btnPushA, btnPushP, btnPushV, btnSendMessage, btnFileInfoPush;
     public static Button btnConnectSSHPI, btnConnectSPI;
     ImageView imgPhoto;
     VideoView vViewV;
+    public static LinearLayout lnRecive;
 
     private static final String LOG_TAG_A = "AudioRecordTest";
     private static String mDir = null, mFileNameA = null, mFileNameP = null, mFileNameV = null;
@@ -61,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 1111;
     private static final int REQUEST_VIDEO_CAPTURE = 2222;
 
-    private Utils utils;
+    private Utils utilsSSH;
+    private static thesis.danh.avpdemo.Utils utils;
 
     public static Client client;
     private static final int port = 2222;
@@ -81,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        utils = new Utils(this);
+        utilsSSH = new Utils(this);
+        utils = new thesis.danh.avpdemo.Utils(this);
 
         mDir = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileNameA = mDir + "/audiorecord.3gp";
@@ -103,9 +110,13 @@ public class MainActivity extends AppCompatActivity {
         tvConnectSSH = (TextView) findViewById(R.id.tvConnectSSH);
         tvConnectS = (TextView) findViewById(R.id.tvConnectS);
         tvSendMessage = (TextView) findViewById(R.id.edSendMessage);
+        tvReciverNote = (TextView) findViewById(R.id.tvReciverNote);
+        tvReciveInfo = (TextView) findViewById(R.id.tvReciveInfo);
         imgPhoto = (ImageView) findViewById(R.id.imgPhoto);
         vViewV = (VideoView) findViewById(R.id.vViewV);
         edIPPI = (EditText) findViewById(R.id.edIPPI);
+        edReciever = (EditText) findViewById(R.id.edReciever);
+        lnRecive = (LinearLayout) findViewById(R.id.lnRecive);
 
         //Demo info
         rasp = new RaspberryPiClient("Pi", edIPPI.getText().toString(), "B8:27:EB:57:07:1C");
@@ -128,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendMessage(tvSendMessage.getText().toString());
+
+                //Temp send info reciever.
+                String reciever = edReciever.getText().toString();
+                client.SendMessageInfoReciever(reciever);
             }
         });
 
@@ -197,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                     String[] separated = mFileNameA.split("/");
                     //Get Name File
                     String fName = separated[separated.length - 1];
-                    byte[] bytes = utils.loadResource(mFileNameA);
+                    byte[] bytes = utilsSSH.loadResource(mFileNameA);
                     if (bytes != null) {
                         PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
                         async.execute();
@@ -213,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
                     String[] separated = mFileNameP.split("/");
                     //Get Name File
                     String fName = separated[separated.length - 1];
-                    byte[] bytes = utils.loadResource(mFileNameP);
+                    byte[] bytes = utilsSSH.loadResource(mFileNameP);
                     if (bytes != null) {
                         PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
                         async.execute();
@@ -229,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                     String[] separated = mFileNameV.split("/");
                     //Get Name File
                     String fName = separated[separated.length - 1];
-                    byte[] bytes = utils.loadResource(mFileNameV);
+                    byte[] bytes = utilsSSH.loadResource(mFileNameV);
                     if (bytes != null) {
                         PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
                         async.execute();
@@ -262,8 +277,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void sendMessage(String msg){
-        if (msg!=null && !msg.equals("")){
+    private void sendMessage(String msg) {
+        if (msg != null && !msg.equals("")) {
             client.SendMessages(msg);
         }
     }
@@ -434,10 +449,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void sendFileInfoPush(){
-        client.SendMessageInfoFilePush(mFileNameA);
-        client.SendMessageInfoFilePush(mFileNameP);
-        client.SendMessageInfoFilePush(mFileNameV);
+    private void sendFileInfoPush() {
+        client.SendMessageInfoFilePush(mFileNameA, KeyString.TypeFile.Audio);
+        client.SendMessageInfoFilePush(mFileNameP, KeyString.TypeFile.Photo);
+        client.SendMessageInfoFilePush(mFileNameV, KeyString.TypeFile.Video);
+        //test End note.
+        client.SendMessageEndNote();
+    }
+
+    public static void updateRecieveInfo(Note note) {
+        tvReciveInfo.setText("Message: " + note.getMessage() + " Sender: " + note.getSender() + " Time: "
+                + note.getTime() + " File Attach: " + note.getFileAttachA() + note.getFileAttachP()
+                + note.getFileAttachV());
+    }
+
+    public static void updateRecieverNote(String msg) {
+        lnRecive.setVisibility(View.VISIBLE);
+        tvReciverNote.setText(msg);
+
+        //Call show dialog notice
+        utils.showDialogNewRecieve();
     }
 
     @Override

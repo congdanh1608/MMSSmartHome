@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
 import thesis.danh.avpdemo.MainActivity;
-import thesis.danh.avpdemo.RaspberryPiClient;
+import thesis.danh.avpdemo.Model.RaspberryPiClient;
 
 /**
  * Created by CongDanh on 21/10/2015.
