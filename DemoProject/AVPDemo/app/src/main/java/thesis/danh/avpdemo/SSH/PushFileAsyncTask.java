@@ -33,7 +33,7 @@ public class PushFileAsyncTask extends AsyncTask<Void, Void, Integer> {
         super.onPreExecute();
         pd.setTitle("Pushing to Pi...");
         pd.setMessage("Please Wait...");
-        pd.setProgressStyle(pd.STYLE_HORIZONTAL);
+        pd.setProgressStyle(pd.STYLE_SPINNER);
         pd.show();
         pd.setCancelable(false);
     }

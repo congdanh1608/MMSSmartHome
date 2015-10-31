@@ -8,7 +8,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import Database.JsonbBuilder;
 import Model.Note;
 import Model.RecieverNote;
 
@@ -45,7 +44,7 @@ public class Server {
 				if (!keepGoing)
 					break;
 				ClientThread_ t = new ClientThread_(socket);
-				
+
 				al.add(t);
 				t.start();
 			}
@@ -87,7 +86,7 @@ public class Server {
 		}
 	}
 
-	//Sau nay can tao SocketControl cho moi thread.
+	// Sau nay can tao SocketControl cho moi thread.
 	class ClientThread_ extends Thread {
 		Socket socket;
 		BufferedReader recieve;
@@ -97,7 +96,7 @@ public class Server {
 
 		ClientThread_(Socket socket) {
 			this.socket = socket;
-			//reciever
+			// reciever
 			try {
 				recieve = new BufferedReader(new InputStreamReader(
 						socket.getInputStream()));

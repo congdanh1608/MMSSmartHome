@@ -4,7 +4,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.text.format.Formatter;
 import android.widget.Toast;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import thesis.danh.avpdemo.Model.Device;
+import thesis.danh.avpdemo.Model.RaspberryPiClient;
 
 /**
  * Created by CongDanh on 22/10/2015.
@@ -32,4 +41,6 @@ public class Utils {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
+
+
 }

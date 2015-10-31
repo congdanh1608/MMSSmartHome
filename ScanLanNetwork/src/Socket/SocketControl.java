@@ -32,13 +32,14 @@ public class SocketControl {
 				getInfoClient(msg);
 				sGui.updateInfo(IP, Name, Mac);
 				note.setSender(IP);
-				
-				//compair data and send client if have note need send to client.
+
+				// compair data and send client if have note need send to
+				// client.
 				recieveNote = checkNoteForClient(IP);
-				if (recieveNote!=null){
+				if (recieveNote != null) {
 					server.SendMsg(createRecieverNote(recieveNote.getNoteJson()));
 				}
-				
+
 				break;
 
 			case RECIEVER:
@@ -46,7 +47,7 @@ public class SocketControl {
 				sGui.updateReciever(temp);
 				note.setReciever(temp);
 				break;
-				
+
 			case MSGKEY:
 				temp = getMessage(msg);
 				sGui.updateMessages(temp);
@@ -59,16 +60,16 @@ public class SocketControl {
 				String tempV = getNameFileV(msg);
 				if (tempA != null) {
 					note.setFileAttachA(tempA);
-					sGui.updateFileName(tempA);
+					sGui.updateAudioFile(tempA);
 				}
 				if (tempP != null) {
 					note.setFileAttachP(tempP);
-					sGui.updateFileName(tempP);
+					sGui.updateVideoFile(tempP);
 				}
 				if (tempV != null) {
 					note.setFileAttachV(tempV);
-					sGui.updateFileName(tempV);
-				}
+					sGui.updatePhotoFile(tempV);
+				}	
 				break;
 
 			case PULLKEY: // Client pull from me(PI)
@@ -81,7 +82,7 @@ public class SocketControl {
 			case DISCONNECT:
 				sGui.updateOnClear();
 				break;
-				
+
 			default:
 				break;
 			}
@@ -130,7 +131,7 @@ public class SocketControl {
 		}
 		return null;
 	}
-	
+
 	protected String getMessage(String msg) {
 		try {
 			JSONObject jsonObj = new JSONObject(msg);
@@ -188,32 +189,31 @@ public class SocketControl {
 		}
 		return null;
 	}
-	
-	private RecieverNote checkNoteForClient(String reciever) {	
+
+	private RecieverNote checkNoteForClient(String reciever) {
 		RecieverNote rNote = new RecieverNote();
 		rNote = JsonbBuilder.loadRecieverNote();
-		if (rNote.getReciever()!=null && rNote.getReciever().equals(reciever)){
+		if (rNote.getReciever() != null && rNote.getReciever().equals(reciever)) {
 			return rNote;
 		}
 		return null;
 	}
-	
-	//create String (Json) message contain Reciever info + Note json.
-    protected String createRecieverNote(String msg) {
-        try {
-            JSONObject jsonObj = new JSONObject();
-            jsonObj.put(KeyString.recieverNoteKey, msg);
-            jsonObj.put(KeyString.cmdKey, Command.RECIEVERNOTE);
-            return jsonObj.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
+	// create String (Json) message contain Reciever info + Note json.
+	protected String createRecieverNote(String msg) {
+		try {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put(KeyString.recieverNoteKey, msg);
+			jsonObj.put(KeyString.cmdKey, Command.RECIEVERNOTE);
+			return jsonObj.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	protected boolean saveNote(Note note) {
 		return JsonbBuilder.saveNote(note);
 	}
-	
+
 }

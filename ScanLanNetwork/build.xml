@@ -18,7 +18,6 @@
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
-                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -49,6 +48,16 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
+    </target>
+    <target name="Server (2)">
+        <java classname="Socket.Server" failonerror="true" fork="yes">
+            <classpath refid="ScanLanNetwork.classpath"/>
+        </java>
+    </target>
+    <target name="ServerGUIswt">
+        <java classname="com.thesis.ServerGUIswt" failonerror="true" fork="yes">
+            <classpath refid="ScanLanNetwork.classpath"/>
+        </java>
     </target>
     <target name="ServerGUI">
         <java classname="com.thesis.ServerGUI" failonerror="true" fork="yes">

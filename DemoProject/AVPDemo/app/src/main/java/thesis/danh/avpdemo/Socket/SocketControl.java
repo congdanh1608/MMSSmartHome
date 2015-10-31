@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import thesis.danh.avpdemo.Database.NoteJson;
 import thesis.danh.avpdemo.MainActivity;
+import thesis.danh.avpdemo.Model.Device;
 import thesis.danh.avpdemo.Model.Note;
 import thesis.danh.avpdemo.Socket.KeyString.Command;
 import thesis.danh.avpdemo.Utils;
@@ -20,11 +21,11 @@ public class SocketControl {
         this.client = client;
     }
 
-    public SocketControl(Client client, String IP, String Name, String Mac) {
+    public SocketControl(Client client, Device device) {
         this.client = client;
-        this.IP = IP;
-        this.Name = Name;
-        this.Mac = Mac;
+        this.IP = device.getIPAddress();
+        this.Name = device.getDeviceName();
+        this.Mac = device.getMacAddress();
     }
 
     protected void getCommand(String msg) {

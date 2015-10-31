@@ -1,9 +1,11 @@
 package thesis.danh.avpdemo;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -36,6 +38,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import thesis.danh.avpdemo.Model.Device;
 import thesis.danh.avpdemo.Model.Note;
 import thesis.danh.avpdemo.Model.RaspberryPiClient;
 import thesis.danh.avpdemo.SSH.ConnectSSHAsyncTask;
@@ -68,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Utils utilsSSH;
     private static thesis.danh.avpdemo.Utils utils;
+    private thesis.danh.avpdemo.Network.Utils utilsNetwork;
 
     public static Client client;
     private static final int port = 2222;
@@ -75,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     public static boolean mStartConnectSSH = true;
     public static boolean mStartConnectS = true;
 
+    public static Device myDevice;
 
     //Demo info
     RaspberryPiClient rasp;
@@ -89,11 +94,15 @@ public class MainActivity extends AppCompatActivity {
 
         utilsSSH = new Utils(this);
         utils = new thesis.danh.avpdemo.Utils(this);
+        utilsNetwork = new thesis.danh.avpdemo.Network.Utils(this);
+
+        //get my myDevice info
+        myDevice = new Device(utilsNetwork.getDeviceName(), utilsNetwork.getIpAddress(), utilsNetwork.getMacAddress());
 
         mDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileNameA = mDir + "/audiorecord.3gp";
+        mFileNameA = mDir + "/audiorecord.mp3";
         mFileNameP = mDir + "/imagecapture.jpg";
-        mFileNameV = mDir + "/videorecord.3gp";
+        mFileNameV = mDir + "/videorecord.mp4";
 
         btnRecordA = (Button) findViewById(R.id.btnRecordA);
         btnPlayRecordA = (Button) findViewById(R.id.btnPlayRecordA);
@@ -118,12 +127,11 @@ public class MainActivity extends AppCompatActivity {
         edReciever = (EditText) findViewById(R.id.edReciever);
         lnRecive = (LinearLayout) findViewById(R.id.lnRecive);
 
-        //Demo info
-        rasp = new RaspberryPiClient("Pi", edIPPI.getText().toString(), "B8:27:EB:57:07:1C");
-
         btnConnectSPI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Demo info
+                rasp = new RaspberryPiClient("Pi", edIPPI.getText().toString(), "B8:27:EB:57:07:1C");
                 onConnectSocket(mStartConnectS);
             }
         });
@@ -143,13 +151,6 @@ public class MainActivity extends AppCompatActivity {
                 //Temp send info reciever.
                 String reciever = edReciever.getText().toString();
                 client.SendMessageInfoReciever(reciever);
-            }
-        });
-
-        btnConnectSPI.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onConnectSocket(mStartConnectS);
             }
         });
 
@@ -175,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     btnPlayRecordA.setText("Start playing");
                 }
+                mStartPlayingA = !mStartPlayingA;
             }
         });
 
@@ -379,8 +381,10 @@ public class MainActivity extends AppCompatActivity {
     private void startRecordingV() {
         outputFileUriV = Uri.fromFile(new File(mFileNameV));
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        takeVideoIntent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, 10983040L);
         takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30);
         takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUriV);
+        takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
         if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         }
@@ -417,7 +421,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openImageIntent() {
-        final String fnameP = "img_" + System.currentTimeMillis() + ".jpg";
+//        final String fnameP = "img_" + System.currentTimeMillis() + ".jpg";
 //        final File sdImageMainDirectory = new File(mDir, fnameP);
 //        outputFileUri = Uri.fromFile(sdImageMainDirectory);
         outputFileUri = Uri.fromFile(new File(mFileNameP));
@@ -471,6 +475,21 @@ public class MainActivity extends AppCompatActivity {
         utils.showDialogNewRecieve();
     }
 
+    public String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -511,7 +530,6 @@ public class MainActivity extends AppCompatActivity {
                 options.inSampleSize = 8;
 //                final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
                 Bitmap bitmap = BitmapFactory.decodeFile(mFileNameP, options);
-
                 //rotete image.
                 try {
                     ExifInterface ei = new ExifInterface(mFileNameP);
@@ -534,7 +552,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 imgPhoto.setImageBitmap(bitmap);
             } else {
                 selectedImageUri = data == null ? null : data.getData();
@@ -547,6 +564,7 @@ public class MainActivity extends AppCompatActivity {
                     InputStream input = getContentResolver().openInputStream(selectedImageUri);
                     final Bitmap bitmap = BitmapFactory.decodeStream(input);
                     imgPhoto.setImageBitmap(bitmap);
+                    mFileNameP = getRealPathFromURI(this, selectedImageUri);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }

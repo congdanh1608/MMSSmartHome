@@ -28,7 +28,7 @@ public class ConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
         super.onPreExecute();
         pd.setTitle("Connecting Pi...");
         pd.setMessage("Please Wait...");
-        pd.setProgressStyle(pd.STYLE_HORIZONTAL);
+        pd.setProgressStyle(pd.STYLE_SPINNER);
         pd.show();
         pd.setCancelable(false);
     }

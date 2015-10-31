@@ -1,237 +1,246 @@
 package com.thesis;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import java.awt.Button;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JProgressBar;
+import javax.swing.JTextArea;
 
 import Socket.Server;
 
 public class ServerGUI {
-	Button btnScan, btnClear, btnStartSocket;
-	Label lblDeviceInfo, lblIP, lblIP_, lblName, lblName_, lblMac, lblMac_,
-			lblMessages, lblSendTo, lblSendTo_, lblAttachFiles,
-			lblAttachFiles_;
-	static Label lblStatus;
-	Group group;
-	ProgressBar progressBar;
 
-	protected Shell shell;
-	private Text tMessages;
+	private JFrame frame;
+	private JLabel lblDeviceInfo, lblServerStatus, lblName, lblName_,
+			lblIpaddr, lblIpaddr_, lblMac, lblMac_, lblReciever, lblReciever_,
+			lblMessages, lblPhotoFiles, lblPhotoFiles_, lblAudioFiles,
+			lblAudioFiles_, lblVideoFiles, lblVideoFiles_;
+	private JTextArea taMessages_;
+	private Button btnStartListening;
+	JProgressBar progressBar;
+
 	private static Server server = null;
 	private static int port = 2222;
 
-	public ServerGUI() {
-	}
-
 	/**
 	 * Launch the application.
-	 * 
-	 * @param args
 	 */
 	public static void main(String[] args) {
-		try {
-			ServerGUI window = new ServerGUI();
-			window.open();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ServerGUI window = new ServerGUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	/**
-	 * Open the window.
+	 * Create the application.
 	 */
-	public void open() {
-		Display display = Display.getDefault();
-		createContents();
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
+	public ServerGUI() {
+		initialize();
 	}
 
 	/**
-	 * Create contents of the window.
+	 * Initialize the contents of the frame.
 	 */
-	protected void createContents() {
-		shell = new Shell();
-		shell.setSize(450, 370);
-		shell.setText("Server Rasp Pi");
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 562, 458);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
 
-		btnScan = new Button(shell, SWT.NONE);
-		btnScan.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-			}
-		});
-		btnScan.setBounds(10, 296, 75, 25);
-		btnScan.setText("Scan");
+		lblDeviceInfo = new JLabel("Device Info");
+		lblDeviceInfo.setBounds(10, 11, 78, 14);
+		frame.getContentPane().add(lblDeviceInfo);
 
-		btnClear = new Button(shell, SWT.NONE);
-		btnClear.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				onClear();
-			}
-		});
-		btnClear.setBounds(91, 296, 75, 25);
-		btnClear.setText("Clear");
+		lblServerStatus = new JLabel("Server has stopped");
+		lblServerStatus.setBounds(221, 11, 312, 14);
+		frame.getContentPane().add(lblServerStatus);
 
-		btnStartSocket = new Button(shell, SWT.NONE);
-		btnStartSocket.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+		lblName = new JLabel("Name:");
+		lblName.setBounds(10, 36, 78, 14);
+		frame.getContentPane().add(lblName);
+
+		lblName_ = new JLabel("Unknow");
+		lblName_.setBounds(94, 36, 140, 14);
+		frame.getContentPane().add(lblName_);
+
+		lblIpaddr = new JLabel("IPAddr:");
+		lblIpaddr.setBounds(10, 61, 78, 14);
+		frame.getContentPane().add(lblIpaddr);
+
+		lblIpaddr_ = new JLabel("0.0.0.0");
+		lblIpaddr_.setBounds(94, 61, 140, 14);
+		frame.getContentPane().add(lblIpaddr_);
+
+		lblMac = new JLabel("Mac:");
+		lblMac.setBounds(10, 86, 78, 14);
+		frame.getContentPane().add(lblMac);
+
+		lblMac_ = new JLabel("00:00:00:00:00:00");
+		lblMac_.setBounds(94, 86, 140, 14);
+		frame.getContentPane().add(lblMac_);
+
+		lblReciever = new JLabel("Reciever:");
+		lblReciever.setBounds(10, 111, 78, 14);
+		frame.getContentPane().add(lblReciever);
+
+		lblReciever_ = new JLabel("Unknow");
+		lblReciever_.setBounds(94, 111, 140, 14);
+		frame.getContentPane().add(lblReciever_);
+
+		lblMessages = new JLabel("Messages:");
+		lblMessages.setBounds(10, 139, 78, 14);
+		frame.getContentPane().add(lblMessages);
+
+		taMessages_ = new JTextArea();
+		taMessages_.setBounds(10, 172, 411, 139);
+		frame.getContentPane().add(taMessages_);
+
+		lblAudioFiles = new JLabel("Audio Files:");
+		lblAudioFiles.setBounds(10, 331, 110, 14);
+		frame.getContentPane().add(lblAudioFiles);
+
+		lblVideoFiles = new JLabel("Video Files:");
+		lblVideoFiles.setBounds(10, 356, 110, 14);
+		frame.getContentPane().add(lblVideoFiles);
+
+		lblPhotoFiles = new JLabel("Photo Files:");
+		lblPhotoFiles.setBounds(10, 381, 110, 14);
+		frame.getContentPane().add(lblPhotoFiles);
+
+		lblAudioFiles_ = new JLabel("");
+		lblAudioFiles_.setBounds(130, 331, 179, 14);
+		frame.getContentPane().add(lblAudioFiles_);
+
+		lblVideoFiles_ = new JLabel("");
+		lblVideoFiles_.setBounds(130, 356, 179, 14);
+		frame.getContentPane().add(lblVideoFiles_);
+
+		lblPhotoFiles_ = new JLabel("");
+		lblPhotoFiles_.setBounds(130, 381, 179, 14);
+		frame.getContentPane().add(lblPhotoFiles_);
+
+		progressBar = new JProgressBar();
+		progressBar.setBounds(10, 406, 411, 5);
+		frame.getContentPane().add(progressBar);
+
+		btnStartListening = new Button("Start Listening");
+		btnStartListening.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 				startSocketListener();
 			}
 		});
-		btnStartSocket.setBounds(172, 296, 75, 25);
-		btnStartSocket.setText("Start Listen");
-
-		lblDeviceInfo = new Label(shell, SWT.NONE);
-		lblDeviceInfo.setBounds(10, 10, 65, 15);
-		lblDeviceInfo.setText("Device Info");
-
-		progressBar = new ProgressBar(shell, SWT.NONE);
-		progressBar.setBounds(10, 285, 414, 5);
-
-		group = new Group(shell, SWT.NONE);
-		group.setBounds(0, 31, 347, 248);
-
-		lblIP = new Label(group, SWT.NONE);
-		lblIP.setBounds(10, 10, 20, 15);
-		lblIP.setText("IP:");
-
-		lblIP_ = new Label(group, SWT.NONE);
-		lblIP_.setText("0.0.0.0");
-		lblIP_.setBounds(59, 10, 168, 15);
-
-		lblMac = new Label(group, SWT.NONE);
-		lblMac.setBounds(10, 31, 55, 15);
-		lblMac.setText("Mac:");
-
-		lblName = new Label(group, SWT.NONE);
-		lblName.setBounds(10, 52, 55, 15);
-		lblName.setText("Name:");
-
-		lblMac_ = new Label(group, SWT.NONE);
-		lblMac_.setText("00:00:00:00:00:00");
-		lblMac_.setBounds(59, 31, 168, 15);
-
-		lblName_ = new Label(group, SWT.NONE);
-		lblName_.setText("None");
-		lblName_.setBounds(59, 52, 168, 15);
-
-		lblMessages = new Label(group, SWT.NONE);
-		lblMessages.setBounds(10, 94, 69, 15);
-		lblMessages.setText("Messages:");
-
-		tMessages = new Text(group, SWT.BORDER);
-		tMessages.setBounds(10, 115, 327, 29);
-
-		lblSendTo = new Label(group, SWT.NONE);
-		lblSendTo.setBounds(10, 73, 55, 15);
-		lblSendTo.setText("Send to:");
-
-		lblSendTo_ = new Label(group, SWT.NONE);
-		lblSendTo_.setBounds(69, 73, 168, 15);
-
-		lblAttachFiles = new Label(group, SWT.NONE);
-		lblAttachFiles.setBounds(10, 189, 69, 15);
-		lblAttachFiles.setText("Attach Files:");
-
-		lblAttachFiles_ = new Label(group, SWT.NONE);
-		lblAttachFiles_.setBounds(85, 189, 252, 29);
-
-		lblStatus = new Label(shell, SWT.NONE);
-		lblStatus.setAlignment(SWT.CENTER);
-		lblStatus.setBounds(128, 10, 197, 15);
-		lblStatus.setText("Stop");
+		btnStartListening.setBounds(430, 356, 103, 39);
+		frame.getContentPane().add(btnStartListening);
 	}
-	
-	public void onClear(){
-		lblAttachFiles_.setText("");
-		lblIP_.setText("");
+
+	public void onClear() {
+		lblAudioFiles_.setText("");
+		lblPhotoFiles_.setText("");
+		lblVideoFiles_.setText("");
+		lblIpaddr_.setText("");
 		lblMac_.setText("");
 		lblName_.setText("");
-		lblSendTo_.setText("");
-		tMessages.setText("");
-		lblStatus.setText("Server is listening");
+		lblReciever_.setText("");
+		taMessages_.setText("");
+		lblServerStatus.setText("Server is listening");
 	}
 
 	private void startSocketListener() {
 		server = new Server(port, this);
 		new ServerRunning().start();
-		lblStatus.setText("Server is listening");
+		lblServerStatus.setText("Server is listening");
 	}
 
-	public Label getlblIP_() {
-		return lblIP_;
+	public JLabel getlblIP_() {
+		return lblIpaddr_;
 	}
 
-	public Label getlblName_() {
+	public JLabel getlblName_() {
 		return lblName_;
 	}
 
-	public Label getlblMac_() {
+	public JLabel getlblMac_() {
 		return lblMac_;
 	}
 
-	public Text getMessages() {
-		return tMessages;
+	public JTextArea getMessages() {
+		return taMessages_;
 	}
 
-	public Label getlblStatus() {
-		return lblStatus;
+	public JLabel getlblStatus() {
+		return lblServerStatus;
 	}
 
 	public void updateInfo(final String IP, final String Name, final String Mac) {
-		Display.getDefault().syncExec(new Runnable() {
+		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				lblStatus.setText("Connected to " + Name);
-				lblIP_.setText(IP);
+				lblServerStatus.setText("Connected to " + Name);
+				lblIpaddr_.setText(IP);
 				lblName_.setText(Name);
 				lblMac_.setText(Mac);
 			}
 		});
 	}
-	
+
 	public void updateReciever(final String msg) {
-		Display.getDefault().syncExec(new Runnable() {
+		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				lblSendTo_.setText(msg);
+				lblReciever_.setText(msg);
 			}
 		});
 	}
-	
+
 	public void updateMessages(final String msg) {
-		Display.getDefault().syncExec(new Runnable() {
+		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				tMessages.setText(msg);
+				taMessages_.setText(msg);
 			}
 		});
 	}
-	
-	public void updateFileName(final String msg) {
-		Display.getDefault().syncExec(new Runnable() {
+
+	public void updatePhotoFile(final String photofile) {
+		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				//Demo file name.
-				String s = msg.substring(msg.lastIndexOf("/") + 1);
-				lblAttachFiles_.setText(lblAttachFiles_.getText() + " " + s);
+				// Demo file name.
+				String photo = photofile.substring(photofile.lastIndexOf("/") + 1);
+				lblPhotoFiles_.setText(lblPhotoFiles_.getText() + " " + photo);
 			}
 		});
 	}
-	
+
+	public void updateAudioFile(final String audioFile) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				// Demo file name.
+				String audio = audioFile.substring(audioFile.lastIndexOf("/") + 1);
+				lblAudioFiles_.setText(lblAudioFiles_.getText() + " " + audio);
+			}
+		});
+	}
+
+	public void updateVideoFile(final String videoFile) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				// Demo file name.
+				String video = videoFile.substring(videoFile.lastIndexOf("/") + 1);
+				lblVideoFiles_.setText(lblVideoFiles_.getText() + " " + video);
+			}
+		});
+	}
+
 	public void updateOnClear() {
-		Display.getDefault().syncExec(new Runnable() {
+		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				onClear();
 			}

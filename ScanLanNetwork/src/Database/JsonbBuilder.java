@@ -2,13 +2,12 @@ package Database;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
-
-import com.thesis.Utils;
 
 import Model.Note;
 import Model.RecieverNote;
 import Socket.KeyString;
+
+import com.thesis.Utils;
 
 public class JsonbBuilder {
 
@@ -64,8 +63,8 @@ public class JsonbBuilder {
 						: jsonObj.getString(KeyString.recieverKey));
 				note.setSender(jsonObj.isNull(KeyString.senderKey) ? null
 						: jsonObj.getString(KeyString.senderKey));
-				note.setTime(jsonObj.isNull(KeyString.timeKey) ? null
-						: jsonObj.getString(KeyString.timeKey));
+				note.setTime(jsonObj.isNull(KeyString.timeKey) ? null : jsonObj
+						.getString(KeyString.timeKey));
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -73,7 +72,7 @@ public class JsonbBuilder {
 		}
 		return note;
 	}
-	
+
 	public static RecieverNote loadRecieverNote() {
 		RecieverNote rNote = new RecieverNote();
 		String msg = Utils.readFile("data.json");

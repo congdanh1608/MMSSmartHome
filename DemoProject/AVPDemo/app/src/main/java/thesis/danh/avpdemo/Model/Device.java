@@ -7,7 +7,7 @@ import android.graphics.drawable.Drawable;
  */
 public class Device {
     private String deviceName;
-    //private int iconIndex; //0 is rpi device, 1 PC device, 2 other
+    //private int iconIndex; //0 is rpi myDevice, 1 PC myDevice, 2 other
     private Drawable deviceIcon;
     private String IPAddress;
     private String MacAddress;

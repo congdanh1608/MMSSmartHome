@@ -1,6 +1,10 @@
 package thesis.danh.avpdemo.Socket;
 
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
+import android.text.format.Formatter;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -12,8 +16,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import thesis.danh.avpdemo.MainActivity;
+import thesis.danh.avpdemo.Model.Device;
 import thesis.danh.avpdemo.Model.RaspberryPiClient;
 import thesis.danh.avpdemo.Socket.KeyString.Command;
+import thesis.danh.avpdemo.Utils;
 
 /**
  * Created by CongDanh on 22/10/2015.
@@ -33,8 +40,7 @@ public class Client {
         this.port = port;
 
         handler = new Handler();
-        //Demo info
-        socketControl = new SocketControl(this, "192.168.1.41", "Android Danh2", "as:de:sd:sd:Ds:Ad");
+        socketControl = new SocketControl(this, MainActivity.myDevice);
     }
 
     public void StartSocket() {
