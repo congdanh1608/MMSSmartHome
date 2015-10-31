@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
-    public final static String EXTRA_MESSAGE_ID = "com.thesis.mmtt2011.EXTRA_MESSAGE_ID";
+    //public final static String EXTRA_MESSAGE_ID = "com.thesis.mmtt2011.EXTRA_MESSAGE_ID";
 
     private List<Message> messages;
     // Provide a suitable constructor (depends on the kind of dataset)
@@ -69,6 +69,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             messageView.setLongClickable(true);
             messageView.setOnLongClickListener(this);
         }
+
         //bind message properties to interface
         public void bindMessage(Message message) {
             mMessage = message;
@@ -77,14 +78,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             tvContent.setText(message.getContentText());
             tvTimeStamp.setText(message.getTimestamp());
         }
+
         @Override
         public void onClick(View v) {
             if (mMessage != null) {
                 //send mMessage to MessageContentActivity????
                 //through message id
-                Intent intent = new Intent(v.getContext(), MessageContentActivity.class);
-                intent.putExtra(EXTRA_MESSAGE_ID, mMessage.getId());
-                v.getContext().startActivity(intent);
+                /*Intent intent = new Intent(v.getContext(), MessageContentActivity.class);
+                intent.putExtra(EXTRA_MESSAGE_ID, mMessage.getId());*/
+                v.getContext().startActivity(MessageContentActivity.getStartIntent(v.getContext(),mMessage));
             }
         }
 

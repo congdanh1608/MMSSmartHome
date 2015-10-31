@@ -184,7 +184,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
      * @param fromDatabase <code>true</code> if a data refresh is needed, else <code>false</code>.
      * @return All messages stored in the database.
      */
-    private static List<Message> getMessages(Context context, boolean fromDatabase) {
+    public static List<Message> getMessages(Context context, boolean fromDatabase) {
         if (null == mMessages || fromDatabase) {
             mMessages = loadMessages(context);
         }
@@ -214,7 +214,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         final String video = cursor.getString(7);
         final String status = cursor.getString(8);
         final String timestamp = cursor.getString(9);
-        return new Message(id, title, sender, receivers, text, image, audio, video, status, timestamp);
+        return new Message(id, sender, receivers, title, text, image, audio, video, status, timestamp);
     }
 
     public static Message getMessageWith(Context context, String messageId) {
@@ -227,6 +227,46 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return getMessage(context, data, readableDatabase);
     }
 
+    /**
+     * Get all messages of sender sent
+     * @param context
+     * @param sender MAC address of sender present
+     * @return All messages of sender
+     */
+    public static List<Message> getMessagesSender(Context context, String sender, String status) {
+        SQLiteDatabase readableDatabase = getReadableDatabase(context);
+        String[] selectionArgs = {sender, status};
+        Cursor data = readableDatabase
+                .query(MessageTable.NAME, MessageTable.PROJECTION,
+                        MessageTable.FK_USER_SENDER + "=? AND " + MessageTable.COLUMN_STATUS + "=?",
+                        selectionArgs, null, null, null);
+        List<Message> tmpMessages = new ArrayList<>(data.getCount());
+        do {
+            final Message message = getMessage(context, data, readableDatabase);
+            tmpMessages.add(message);
+        } while (data.moveToNext());
+        return tmpMessages;
+    }
+
+    /**
+     * Get all messages have a status such as (draft, delivered)
+     * @param context
+     * @param status
+     * @return
+     */
+    public static List<Message> getMessagesStatus(Context context, String status) {
+        SQLiteDatabase readableDatabase = getReadableDatabase(context);
+        String[] selectionArgs = {status};
+        Cursor data = readableDatabase
+                .query(MessageTable.NAME, MessageTable.PROJECTION, MessageTable.COLUMN_STATUS + "=?",
+                        selectionArgs, null, null, null);
+        List<Message> tmpMessages = new ArrayList<>(data.getCount());
+        do {
+            final Message message = getMessage(context, data, readableDatabase);
+            tmpMessages.add(message);
+        } while (data.moveToNext());
+        return tmpMessages;
+    }
     /**
      * Gets list receivers (User) from String receivers
      * @param context

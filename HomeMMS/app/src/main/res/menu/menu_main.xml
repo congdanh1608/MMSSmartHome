@@ -21,12 +21,12 @@
         android:orderInCategory="300"
         android:title="@string/action_scan_devices"
         app:showAsAction="never" />
-
+<!--
     <item
         android:id="@+id/action_logout"
         android:orderInCategory="400"
         android:title="@string/action_logout"
-        app:showAsAction="never" />
+        app:showAsAction="never" />-->
 
     <item
         android:id="@+id/action_settings"

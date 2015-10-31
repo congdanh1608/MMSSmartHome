@@ -14,12 +14,23 @@ import android.widget.TextView;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
+import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 
 public class MessageContentActivity extends AppCompatActivity {
+
+    public static final String TAG = "MessageContentActivity";
+
+    private Message mMessage;
 
     private TextView mTitleView;
     private TextView mContentView;
     private TextView mTimestamp;
+
+    public static Intent getStartIntent(Context context, Message message) {
+        Intent starter = new Intent(context, MessageContentActivity.class);
+        starter.putExtra(MessageContentActivity.TAG, message.getId());
+        return starter;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,14 +39,23 @@ public class MessageContentActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mTitleView = (TextView) findViewById(R.id.message_title);
-        mContentView = (TextView) findViewById(R.id.message_content);
-        mTimestamp = (TextView) findViewById(R.id.timestamp);
-
         // Get the message from the intent
         Intent intent = getIntent();
-        String messageId = intent.getStringExtra(MessageAdapter.EXTRA_MESSAGE_ID);
+        String messageId = intent.getStringExtra(TAG);
+        mMessage = HomeMMSDatabaseHelper.getMessageWith(this, messageId);
 
+        mTitleView = (TextView) findViewById(R.id.message_title);
+        mTitleView.setText(mMessage.getTitle());
+
+        mContentView = (TextView) findViewById(R.id.message_content);
+        mContentView.setText(mMessage.getContentText());
+
+        mTimestamp = (TextView) findViewById(R.id.timestamp);
+        mTimestamp.setText(mMessage.getTimestamp());
+
+        //get sender to show here
+
+        //get status of message here
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

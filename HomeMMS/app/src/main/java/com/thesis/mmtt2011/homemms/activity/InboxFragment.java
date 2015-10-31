@@ -14,6 +14,7 @@ import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
+import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,8 @@ public class InboxFragment extends Fragment {
 
     //Khoi tao danh sach cach message mau
     public void initListMessage() {
+        //Get messages from database
+        //messages = HomeMMSDatabaseHelper.getMessages(getActivity(), true);
         messages = new ArrayList<>();
         List<User> receivers = new ArrayList<>();
         User receiver = new User("00:00:00:00:00:00", "Name Display", "password", "link avatar", "offline");
