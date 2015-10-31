@@ -32,11 +32,11 @@ public class SentFragment extends Fragment {
     public void initListMessage() {
         sentMessages = new ArrayList<>();
         List<User> receivers = new ArrayList<>();
-        User receiver = new User("Name Display", "00:00:00:00:00:00", "password", "link avatar");
+        User receiver = new User("00:00:00:00:00:00", "Name Display", "password", "link avatar", "offline");
         receivers.add(receiver);
         for(int i = 0; i < 15; i++) {
-            User user = new User("Name Display", String.valueOf(i), "password", "link avatar");
-            sentMessages.add(new Message("Title " + i, "Content " + i, "Timestamp " + i, "Status " + i, user, receivers));
+            User user = new User("00:00:00:00:00:00", "Name Display " + String.valueOf(i), "password", "link avatar", "online");
+            sentMessages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, "Content" + i, null, null, null, "Oct 1" + i, "Status " + i));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.thesis.mmtt2011.homemms.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,12 +19,14 @@ import java.util.List;
  */
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
-    private List<Message> messages;
+    public final static String EXTRA_MESSAGE_ID = "com.thesis.mmtt2011.EXTRA_MESSAGE_ID";
 
+    private List<Message> messages;
     // Provide a suitable constructor (depends on the kind of dataset)
     public MessageAdapter(List<Message> _messages) {
         messages = _messages;
     }
+
     @Override
     public MessageAdapter.MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //create a new view
@@ -47,7 +50,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return messages.size();
     }
 
-
     public static class MessageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
 
         private final TextView tvUsername;
@@ -55,7 +57,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         private final TextView tvTitle;
         private final TextView tvTimeStamp;
         private Message mMessage;
-
         public MessageViewHolder(View messageView) {
             super(messageView);
             tvUsername = (TextView)messageView.findViewById(R.id.username);
@@ -63,23 +64,26 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             tvContent = (TextView)messageView.findViewById(R.id.content);
             tvTimeStamp = (TextView)messageView.findViewById(R.id.timestamp);
 
+            //Select message when click on message card view
             messageView.setOnClickListener(this);
             messageView.setLongClickable(true);
             messageView.setOnLongClickListener(this);
         }
-
+        //bind message properties to interface
         public void bindMessage(Message message) {
             mMessage = message;
             tvUsername.setText(message.getSender().getNameDisplay());
             tvTitle.setText(message.getTitle());
-            tvContent.setText(message.getContent());
+            tvContent.setText(message.getContentText());
             tvTimeStamp.setText(message.getTimestamp());
         }
         @Override
         public void onClick(View v) {
             if (mMessage != null) {
                 //send mMessage to MessageContentActivity????
+                //through message id
                 Intent intent = new Intent(v.getContext(), MessageContentActivity.class);
+                intent.putExtra(EXTRA_MESSAGE_ID, mMessage.getId());
                 v.getContext().startActivity(intent);
             }
         }

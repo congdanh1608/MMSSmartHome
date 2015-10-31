@@ -24,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
     ViewPager pager;
     ViewPagerAdapter adapter;
     SlidingTabLayout tabs;
-    CharSequence Titles[]={"Message","SentFragment"};
-    int NumbOfTabs = 2;
+    CharSequence Titles[]={"Message","Sent"};
+    final int NumbOfTabs = 2;
     SearchView searchView;
 
     @Override
@@ -51,8 +51,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Hit new message photo", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                /*Intent intent = new Intent(MainActivity.this, ComposeMessageActivity.class);
-                startActivity(intent);*/
+                /*Implement compose photo message;*/
             }
         });
 
@@ -73,8 +72,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Hit new message video", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                /*Intent intent = new Intent(MainActivity.this, ComposeMessageActivity.class);
-                startActivity(intent);*/
+                 /*Implement compose video message;*/
             }
         });
 

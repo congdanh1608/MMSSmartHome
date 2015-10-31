@@ -1,34 +1,61 @@
 package com.thesis.mmtt2011.homemms.model;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Xpie on 10/20/2015.
  */
 public class Message {
+    String mId;
     String title;
-    String content;
-    String timestamp;
-    String status;
-    List<User> receiver;
     User sender;
+    List<User> receiver;
+    String contentText;
+    String contentImage;
+    String contentAudio;
+    String contentVideo;
+    String timestamp; //(id)
+    String status;
 
-    public Message(String _title, String _content, String _timestamp,
-                   String _status, User _sender, List<User> _receiver) {
-        title = _title;
-        content = _content;
-        timestamp = _timestamp;
-        status = _status;
+    public Message(String _mId, User _sender, List<User> _receiver, String _title, String _contentText,
+                   String _contentImage, String _contentAudio, String _contentVideo, String _status,
+                   String _timestamp) {
+
+        mId = _mId;
         sender = _sender;
         receiver = _receiver;
+        title = _title;
+        contentText = _contentText;
+        contentImage = _contentImage;
+        contentAudio = _contentAudio;
+        contentVideo = _contentVideo;
+        timestamp = _timestamp;
+        status = _status;
+    }
+
+    public String getId() {
+        return mId;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public String getContent() {
-        return content;
+    public String getContentText() {
+        return contentText;
+    }
+
+    public String getContentImage() {
+        return contentImage;
+    }
+
+    public String getContentAudio() {
+        return contentAudio;
+    }
+
+    public String getContentVideo() {
+        return contentVideo;
     }
 
     public User getSender() {

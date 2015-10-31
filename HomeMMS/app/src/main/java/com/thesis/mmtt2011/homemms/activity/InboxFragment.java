@@ -35,15 +35,15 @@ public class InboxFragment extends Fragment {
     public void initListMessage() {
         messages = new ArrayList<>();
         List<User> receivers = new ArrayList<>();
-        User receiver = new User("Name Display", "00:00:00:00:00:00", "password", "link avatar");
+        User receiver = new User("00:00:00:00:00:00", "Name Display", "password", "link avatar", "offline");
         receivers.add(receiver);
         String content[] = new String[3];
         content[0] = "Lorem ipsum dolor sit amet, vis invenire interesset ut. Ad duo tale appareat contentiones, id per nisl tantas percipitur. Tollit mediocrem repudiandae ad vim, ad pri habeo dolorem disputando. ";
         content[1] = "Lorem ipsum dolor sit amet, vis invenire interesset ut. Ad duo tale appareat contentiones, id per nisl tantas percipitur";
         content[2] = "Lorem ipsum dolor sit amet, vis invenire interesset ut.";
         for(int i = 0; i < 15; i++) {
-            User user = new User("Pham Xuan Y", String.valueOf(i), "password", "link avatar");
-            messages.add(new Message("Title " + i, content[i%3], "Oct 2" + i, "Status " + i, user, receivers));
+            User user = new User(String.valueOf(i), "Pham Xuan Y", "password", "link avatar", "offline");
+            messages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, content[i%3], null, null, null, "Oct 2" + i, "Status " + i));
         }
     }
 
@@ -68,6 +68,7 @@ public class InboxFragment extends Fragment {
 
         // use a linear layout manager
         //mLayoutManager = new LinearLayoutManager(getActivity());
+
         //use a grid layout manager
         mLayoutManager = new GridLayoutManager(getActivity(),COLUMN_GRID);
         mRecyclerView.setLayoutManager(mLayoutManager);
