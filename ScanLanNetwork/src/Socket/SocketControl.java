@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import Database.JsonbBuilder;
 import Model.Note;
 import Model.RecieverNote;
+import SSH.PushFile;
 import Socket.KeyString.Command;
 
 import com.thesis.ServerGUI;
@@ -38,8 +39,26 @@ public class SocketControl {
 				recieveNote = checkNoteForClient(IP);
 				if (recieveNote != null) {
 					server.SendMsg(createRecieverNote(recieveNote.getNoteJson()));
+					System.out.println(recieveNote.getNoteJson());
+					// Check if mms has file attach then send it to client.
+					if (checkHasAttachFile(recieveNote.getNoteJson())) {
+						String tempA = getNameFileA(recieveNote.getNoteJson());
+						String tempP = getNameFileP(recieveNote.getNoteJson());
+						String tempV = getNameFileV(recieveNote.getNoteJson());
+						if (tempA != null && !tempA.equals("")) {
+							System.out.println("Sent " + tempA);
+							PushFile.sendFileToClient(tempA);
+						}
+						if (tempP != null && !tempP.equals("")) {
+							System.out.println("Sent " + tempP);
+							PushFile.sendFileToClient(tempP);
+						}
+						if (tempV != null && !tempV.equals("")) {
+							System.out.println("Sent " + tempV);
+							PushFile.sendFileToClient(tempV);							
+						}
+					}
 				}
-
 				break;
 
 			case RECIEVER:
@@ -64,12 +83,12 @@ public class SocketControl {
 				}
 				if (tempP != null) {
 					note.setFileAttachP(tempP);
-					sGui.updateVideoFile(tempP);
+					sGui.updatePhotoFile(tempP);
 				}
 				if (tempV != null) {
 					note.setFileAttachV(tempV);
-					sGui.updatePhotoFile(tempV);
-				}	
+					sGui.updateVideoFile(tempV);
+				}
 				break;
 
 			case PULLKEY: // Client pull from me(PI)
@@ -210,6 +229,27 @@ public class SocketControl {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private boolean checkHasAttachFile(String noteJson) {
+		try {
+			JSONObject jsonObj = new JSONObject(noteJson);
+			if (jsonObj != null) {
+				String fNameV = jsonObj.isNull(KeyString.ActtachVKey) ? null
+						: jsonObj.getString(KeyString.ActtachVKey);
+				String fNameP = jsonObj.isNull(KeyString.ActtachPKey) ? null
+						: jsonObj.getString(KeyString.ActtachPKey);
+				String fNameA = jsonObj.isNull(KeyString.ActtachAKey) ? null
+						: jsonObj.getString(KeyString.ActtachAKey);
+				if ((fNameA != null && !fNameA.equals(""))
+						|| (fNameP != null && !fNameP.equals(""))
+						|| (fNameV != null && !fNameV.equals("")))
+					return true;
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	protected boolean saveNote(Note note) {

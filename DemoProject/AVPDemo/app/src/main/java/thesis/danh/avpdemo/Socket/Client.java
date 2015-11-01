@@ -1,10 +1,6 @@
 package thesis.danh.avpdemo.Socket;
 
-import android.content.Context;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Handler;
-import android.text.format.Formatter;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -17,10 +13,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import thesis.danh.avpdemo.MainActivity;
-import thesis.danh.avpdemo.Model.Device;
 import thesis.danh.avpdemo.Model.RaspberryPiClient;
 import thesis.danh.avpdemo.Socket.KeyString.Command;
-import thesis.danh.avpdemo.Utils;
 
 /**
  * Created by CongDanh on 22/10/2015.

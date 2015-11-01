@@ -34,7 +34,7 @@
                     android:id="@+id/edIPPI"
                     android:layout_width="133dp"
                     android:layout_height="wrap_content"
-                    android:text="192.168.1.78" />
+                    android:text="192.168.0.10" />
 
                 <TextView
                     android:id="@+id/tvConnectS"
@@ -54,15 +54,15 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:text="Reciever: "
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="Reciever: " />
 
                 <EditText
                     android:id="@+id/edReciever"
                     android:layout_width="133dp"
                     android:layout_height="wrap_content"
-                    android:text="192.168.1." />
+                    android:text="192.168.0.10" />
             </LinearLayout>
 
             <Space
@@ -74,6 +74,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Message:" />
 
                 <EditText
                     android:id="@+id/edSendMessage"
@@ -84,7 +89,8 @@
                     android:id="@+id/btnSendMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/btnSendMessage" />
+                    android:text="@string/btnSendMessage"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <Space
@@ -95,7 +101,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <Button
                     android:id="@+id/btnConnectSSHPI"
@@ -151,7 +158,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:layout_below="@id/btnPlayRecordA"
-                        android:text="@string/btnPushA" />
+                        android:text="@string/btnPushA"
+                        android:visibility="gone" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -195,7 +203,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:layout_below="@id/btnPlayV"
-                        android:text="@string/btnPushV" />
+                        android:text="@string/btnPushV"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <VideoView
@@ -238,7 +247,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:layout_below="@id/btnChoosePhoto"
-                        android:text="@string/btnPushP" />
+                        android:text="@string/btnPushP"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <ImageView
@@ -252,46 +262,175 @@
                 android:layout_height="10dp" />
 
             <LinearLayout
-                android:gravity="center"
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btnFileInfoPush"
-                    android:text="Push info file"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="Send All Info" />
 
             </LinearLayout>
 
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="15dp" />
+
             <View
                 android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="#ffffff"/>
+                android:layout_height="4dp"
+                android:background="#000000" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="15dp" />
 
             <LinearLayout
                 android:id="@+id/lnRecive"
-                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:visibility="gone">
 
                 <TextView
-                    android:text="Information Revieced"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="Information Revieced" />
 
-                <TextView
-                    android:id="@+id/tvReciveInfo"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvReciverNote"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sender:" />
+
+                    <TextView
+                        android:id="@+id/tvSenderRecieve"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Messages:" />
+
+                    <TextView
+                        android:id="@+id/tvMessageRecieve"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:text="Time:"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tvTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/lnAudioRecieve"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:text="Audio Files:"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tvAudioRecieve"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:text="Play Audio"
+                        android:id="@+id/btnAudioRecieve"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/lnVideoRecieve"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:text="Video Files:"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tvVideoRecieve"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:id="@+id/btnVideoRecieve"
+                        android:text="Play Video"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lnPhotoRecieve"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:text="Photo Files:"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tvPhotoRecieve"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:id="@+id/btnPhotoRecieve"
+                        android:text="Show Photo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgvPhotoRecieve"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp" />
 
             </LinearLayout>
 

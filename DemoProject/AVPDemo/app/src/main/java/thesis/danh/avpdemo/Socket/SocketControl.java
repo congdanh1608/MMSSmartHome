@@ -40,9 +40,21 @@ public class SocketControl {
                     String temp = getRecieverNote(msg);
                     Note tempNote = getRecieveInfo(temp);
                     //Update to textview
-                    if (temp!=null) {
+                    if (temp != null) {
                         MainActivity.updateRecieveInfo(tempNote);
                         MainActivity.updateRecieverNote(temp);
+                        String tempA = tempNote.getFileAttachA();
+                        String tempP = tempNote.getFileAttachP();
+                        String tempV = tempNote.getFileAttachV();
+                        if (tempA != null && !tempA.equals("")) {
+                            RecieveFile.recieveFileFromServer(tempA);
+                        }
+                        if (tempP != null && !tempP.equals("")) {
+                            RecieveFile.recieveFileFromServer(tempP);
+                        }
+                        if (tempV != null && !tempV.equals("")) {
+                            RecieveFile.recieveFileFromServer(tempV);
+                        }
                     }
                     break;
 
@@ -184,7 +196,7 @@ public class SocketControl {
         return null;
     }
 
-    private Note getRecieveInfo(String msg){
+    private Note getRecieveInfo(String msg) {
         Note note = NoteJson.loadNote(msg);
         return note;
     }

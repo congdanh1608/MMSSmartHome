@@ -35,7 +35,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import thesis.danh.avpdemo.Model.Device;
@@ -49,13 +52,15 @@ import thesis.danh.avpdemo.Socket.Client;
 import thesis.danh.avpdemo.Socket.KeyString;
 
 public class MainActivity extends AppCompatActivity {
-    public static TextView tvConnectSSH, tvConnectS, tvSendMessage, tvReciverNote, tvReciveInfo;
+    public static TextView tvConnectSSH, tvConnectS, tvSendMessage,
+            tvSenderRecieve, tvMessageRecieve, tvAudioRecieve, tvVideoRecieve, tvPhotoRecieve, tvTime;
     EditText edIPPI, edReciever;
-    Button btnRecordA, btnPlayRecordA, btnRecordV, btnPlayV, btnPhoto, btnPushA, btnPushP, btnPushV, btnSendMessage, btnFileInfoPush;
+    Button btnRecordA, btnPlayRecordA, btnRecordV, btnPlayV, btnPhoto, btnPushA, btnPushP, btnPushV,
+            btnSendMessage, btnFileInfoPush, btnAudioRecieve, btnPhotoRecieve, btnVideoRecieve;
     public static Button btnConnectSSHPI, btnConnectSPI;
-    ImageView imgPhoto;
+    ImageView imgPhoto, imgvPhotoRecieve;
     VideoView vViewV;
-    public static LinearLayout lnRecive;
+    public static LinearLayout lnRecive, lnVideoRecieve, lnPhotoRecieve, lnAudioRecieve;
 
     private static final String LOG_TAG_A = "AudioRecordTest";
     private static String mDir = null, mFileNameA = null, mFileNameP = null, mFileNameV = null;
@@ -82,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     public static Device myDevice;
 
     //Demo info
-    RaspberryPiClient rasp;
+    public static RaspberryPiClient rasp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
         myDevice = new Device(utilsNetwork.getDeviceName(), utilsNetwork.getIpAddress(), utilsNetwork.getMacAddress());
 
         mDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileNameA = mDir + "/audiorecord.mp3";
-        mFileNameP = mDir + "/imagecapture.jpg";
-        mFileNameV = mDir + "/videorecord.mp4";
+//        mFileNameA = mDir + "/audiorecord.mp3";
+//        mFileNameP = mDir + "/imagecapture.jpg";
+//        mFileNameV = mDir + "/videorecord.mp4";
 
         btnRecordA = (Button) findViewById(R.id.btnRecordA);
         btnPlayRecordA = (Button) findViewById(R.id.btnPlayRecordA);
@@ -119,13 +124,24 @@ public class MainActivity extends AppCompatActivity {
         tvConnectSSH = (TextView) findViewById(R.id.tvConnectSSH);
         tvConnectS = (TextView) findViewById(R.id.tvConnectS);
         tvSendMessage = (TextView) findViewById(R.id.edSendMessage);
-        tvReciverNote = (TextView) findViewById(R.id.tvReciverNote);
-        tvReciveInfo = (TextView) findViewById(R.id.tvReciveInfo);
         imgPhoto = (ImageView) findViewById(R.id.imgPhoto);
         vViewV = (VideoView) findViewById(R.id.vViewV);
         edIPPI = (EditText) findViewById(R.id.edIPPI);
         edReciever = (EditText) findViewById(R.id.edReciever);
         lnRecive = (LinearLayout) findViewById(R.id.lnRecive);
+        tvSenderRecieve = (TextView) findViewById(R.id.tvSenderRecieve);
+        tvMessageRecieve = (TextView) findViewById(R.id.tvMessageRecieve);
+        tvAudioRecieve = (TextView) findViewById(R.id.tvAudioRecieve);
+        tvVideoRecieve = (TextView) findViewById(R.id.tvVideoRecieve);
+        tvPhotoRecieve = (TextView) findViewById(R.id.tvPhotoRecieve);
+        tvTime = (TextView) findViewById(R.id.tvTime);
+        btnAudioRecieve = (Button) findViewById(R.id.btnAudioRecieve);
+        btnPhotoRecieve = (Button) findViewById(R.id.btnPhotoRecieve);
+        btnVideoRecieve = (Button) findViewById(R.id.btnVideoRecieve);
+        imgvPhotoRecieve = (ImageView) findViewById(R.id.imgvPhotoRecieve);
+        lnAudioRecieve = (LinearLayout) findViewById(R.id.lnAudioRecieve);
+        lnVideoRecieve = (LinearLayout) findViewById(R.id.lnVideoRecieve);
+        lnPhotoRecieve = (LinearLayout) findViewById(R.id.lnPhotoRecieve);
 
         btnConnectSPI.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,24 +155,25 @@ public class MainActivity extends AppCompatActivity {
         btnConnectSSHPI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onConnectSSH(mStartConnectSSH);
+//                onConnectSSH(mStartConnectSSH);
             }
         });
 
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage(tvSendMessage.getText().toString());
-
-                //Temp send info reciever.
-                String reciever = edReciever.getText().toString();
-                client.SendMessageInfoReciever(reciever);
+//                sendMessage(tvSendMessage.getText().toString());
+//
+//                //Temp send info reciever.
+//                String reciever = edReciever.getText().toString();
+//                client.SendMessageInfoReciever(reciever);
             }
         });
 
         btnRecordA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mFileNameA = mDir + "/audiorecord.mp3";
                 onRecordA(mStartRecordingA);
                 if (mStartRecordingA) {
                     btnRecordA.setText("Stop recording");
@@ -183,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
         btnRecordV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mFileNameV = mDir + "/videorecord.mp4";
                 onRecordV();
             }
         });
@@ -203,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
         btnPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mFileNameP = mDir + "/imagecapture.jpg";
                 openImageIntent();
             }
         });
@@ -210,57 +229,155 @@ public class MainActivity extends AppCompatActivity {
         btnPushA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mFileNameA != null) {
-                    String[] separated = mFileNameA.split("/");
-                    //Get Name File
-                    String fName = separated[separated.length - 1];
-                    byte[] bytes = utilsSSH.loadResource(mFileNameA);
-                    if (bytes != null) {
-                        PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
-                        async.execute();
-                    }
-                }
+//                pushAudio();
             }
         });
 
         btnPushP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mFileNameP != null) {
-                    String[] separated = mFileNameP.split("/");
-                    //Get Name File
-                    String fName = separated[separated.length - 1];
-                    byte[] bytes = utilsSSH.loadResource(mFileNameP);
-                    if (bytes != null) {
-                        PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
-                        async.execute();
-                    }
-                }
+//                pushPhoto();
             }
         });
 
         btnPushV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mFileNameV != null) {
-                    String[] separated = mFileNameV.split("/");
-                    //Get Name File
-                    String fName = separated[separated.length - 1];
-                    byte[] bytes = utilsSSH.loadResource(mFileNameV);
-                    if (bytes != null) {
-                        PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
-                        async.execute();
-                    }
-                }
+//                pushVideo();
             }
         });
 
         btnFileInfoPush.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Send info reciever.
+                String reciever = edReciever.getText().toString();
+                if (client != null) {
+                    client.SendMessageInfoReciever(reciever);
+                } else utils.showMesg("You must connect Socket!");
+
+                //Send messages
+                sendMessage(tvSendMessage.getText().toString());
+
+                //Connect SSH
+                onConnectSSH(mStartConnectSSH);
+
+                //Push File
+                pushAudio();
+                pushPhoto();
+                pushVideo();
+
+                //Send File Info
                 sendFileInfoPush();
+
+                //End note.
+                if (client != null) {
+                    client.SendMessageEndNote();
+                } else utils.showMesg("Dont have info client.");
             }
         });
+
+        btnAudioRecieve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewAudioRecieve(tvAudioRecieve.getText().toString());
+            }
+        });
+
+        btnVideoRecieve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewVideoRecieve(tvVideoRecieve.getText().toString());
+            }
+        });
+
+        btnPhotoRecieve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPhotoRecieve(tvPhotoRecieve.getText().toString());
+            }
+        });
+    }
+
+
+    private void viewAudioRecieve(String fName) {
+        mPlayerA = new MediaPlayer();
+        try {
+            mPlayerA.setDataSource(mDir + "/" + fName);
+            mPlayerA.prepare();
+            mPlayerA.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+            mPlayerA.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    btnPlayRecordA.setText("Play Audio");
+                    mStartPlayingA = !mStartPlayingA;
+                }
+            });
+            mPlayerA.start();
+        } catch (IOException e) {
+            Log.e(LOG_TAG_A, "prepare() failed");
+        }
+    }
+
+    private void viewVideoRecieve(String fName) {
+        String path = mDir + "/" + fName;
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(path));
+        intent.setDataAndType(Uri.parse(path), "video/mp4");
+        startActivity(intent);
+    }
+
+    private void viewPhotoRecieve(String fName) {
+        File imgFile = new  File(mDir + "/" + fName);
+        if(imgFile.exists())
+        {
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            imgvPhotoRecieve.setImageBitmap(myBitmap);
+        }
+    }
+
+    private void pushAudio() {
+        if (mFileNameA != null) {
+            String[] separated = mFileNameA.split("/");
+            //Get Name File
+            String fName = separated[separated.length - 1];
+            byte[] bytes = utilsSSH.loadResource(mFileNameA);
+            if (bytes != null) {
+                PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
+                async.execute();
+            }
+        }
+    }
+
+    private void pushPhoto() {
+        if (mFileNameP != null) {
+            String[] separated = mFileNameP.split("/");
+            //Get Name File
+            String fName = separated[separated.length - 1];
+            byte[] bytes = utilsSSH.loadResource(mFileNameP);
+            if (bytes != null) {
+                PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
+                async.execute();
+            }
+        }
+    }
+
+    private void pushVideo() {
+        if (mFileNameV != null) {
+            String[] separated = mFileNameV.split("/");
+            //Get Name File
+            String fName = separated[separated.length - 1];
+            byte[] bytes = utilsSSH.loadResource(mFileNameV);
+            if (bytes != null) {
+                PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
+                async.execute();
+            }
+        }
     }
 
     private void onConnectSocket(boolean connect) {
@@ -454,22 +571,53 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendFileInfoPush() {
-        client.SendMessageInfoFilePush(mFileNameA, KeyString.TypeFile.Audio);
-        client.SendMessageInfoFilePush(mFileNameP, KeyString.TypeFile.Photo);
-        client.SendMessageInfoFilePush(mFileNameV, KeyString.TypeFile.Video);
-        //test End note.
-        client.SendMessageEndNote();
+        if (mFileNameP != null) {
+            String photo = mFileNameP.substring(mFileNameP.lastIndexOf("/") + 1);
+            client.SendMessageInfoFilePush(photo, KeyString.TypeFile.Photo);
+        }
+        if (mFileNameA != null) {
+            String audio = mFileNameA.substring(mFileNameA.lastIndexOf("/") + 1);
+            client.SendMessageInfoFilePush(audio, KeyString.TypeFile.Audio);
+        }
+        if (mFileNameV != null) {
+            String video = mFileNameV.substring(mFileNameV.lastIndexOf("/") + 1);
+            client.SendMessageInfoFilePush(video, KeyString.TypeFile.Video);
+        }
     }
 
     public static void updateRecieveInfo(Note note) {
-        tvReciveInfo.setText("Message: " + note.getMessage() + " Sender: " + note.getSender() + " Time: "
-                + note.getTime() + " File Attach: " + note.getFileAttachA() + note.getFileAttachP()
-                + note.getFileAttachV());
+        tvSenderRecieve.setText(note.getSender());
+        tvMessageRecieve.setText(note.getMessage());
+        if (!note.getFileAttachA().equals("")) {
+            tvAudioRecieve.setText(note.getFileAttachA());
+            lnAudioRecieve.setVisibility(View.VISIBLE);
+        }
+        if (!note.getFileAttachV().equals("")) {
+            tvVideoRecieve.setText(note.getFileAttachV());
+            lnVideoRecieve.setVisibility(View.VISIBLE);
+        }
+        if (!note.getFileAttachP().equals("")) {
+            tvPhotoRecieve.setText(note.getFileAttachP());
+            lnPhotoRecieve.setVisibility(View.VISIBLE);
+        }
+        tvTime.setText(convertDate(note.getTime()).toString());
+    }
+
+    public static Date convertDate(String dateString) {
+        Date date = null;
+        DateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        try {
+            date = df.parse(dateString);
+            return date;
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return null;
     }
 
     public static void updateRecieverNote(String msg) {
         lnRecive.setVisibility(View.VISIBLE);
-        tvReciverNote.setText(msg);
+//        tvReciverNote.setText(msg);
 
         //Call show dialog notice
         utils.showDialogNewRecieve();
@@ -478,8 +626,8 @@ public class MainActivity extends AppCompatActivity {
     public String getRealPathFromURI(Context context, Uri contentUri) {
         Cursor cursor = null;
         try {
-            String[] proj = { MediaStore.Images.Media.DATA };
-            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            String[] proj = {MediaStore.Images.Media.DATA};
+            cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
             return cursor.getString(column_index);

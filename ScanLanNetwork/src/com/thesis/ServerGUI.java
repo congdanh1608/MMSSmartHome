@@ -10,7 +10,9 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
+import SSH.PushFile;
 import Socket.Server;
+import javax.swing.JButton;
 
 public class ServerGUI {
 
@@ -20,11 +22,11 @@ public class ServerGUI {
 			lblMessages, lblPhotoFiles, lblPhotoFiles_, lblAudioFiles,
 			lblAudioFiles_, lblVideoFiles, lblVideoFiles_;
 	private JTextArea taMessages_;
-	private Button btnStartListening;
 	JProgressBar progressBar;
 
 	private static Server server = null;
 	private static int port = 2222;
+	private JButton btnStartListening;
 
 	/**
 	 * Launch the application.
@@ -133,14 +135,14 @@ public class ServerGUI {
 		progressBar = new JProgressBar();
 		progressBar.setBounds(10, 406, 411, 5);
 		frame.getContentPane().add(progressBar);
-
-		btnStartListening = new Button("Start Listening");
+		
+		btnStartListening = new JButton("Start Listening");
 		btnStartListening.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				startSocketListener();
 			}
 		});
-		btnStartListening.setBounds(430, 356, 103, 39);
+		btnStartListening.setBounds(393, 352, 140, 43);
 		frame.getContentPane().add(btnStartListening);
 	}
 
@@ -213,8 +215,8 @@ public class ServerGUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				// Demo file name.
-				String photo = photofile.substring(photofile.lastIndexOf("/") + 1);
-				lblPhotoFiles_.setText(lblPhotoFiles_.getText() + " " + photo);
+//				String photo = photofile.substring(photofile.lastIndexOf("/") + 1);
+				lblPhotoFiles_.setText(lblPhotoFiles_.getText() + " " + photofile);
 			}
 		});
 	}
@@ -223,8 +225,8 @@ public class ServerGUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				// Demo file name.
-				String audio = audioFile.substring(audioFile.lastIndexOf("/") + 1);
-				lblAudioFiles_.setText(lblAudioFiles_.getText() + " " + audio);
+//				String audio = audioFile.substring(audioFile.lastIndexOf("/") + 1);
+				lblAudioFiles_.setText(lblAudioFiles_.getText() + " " + audioFile);
 			}
 		});
 	}
@@ -233,8 +235,8 @@ public class ServerGUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				// Demo file name.
-				String video = videoFile.substring(videoFile.lastIndexOf("/") + 1);
-				lblVideoFiles_.setText(lblVideoFiles_.getText() + " " + video);
+//				String video = videoFile.substring(videoFile.lastIndexOf("/") + 1);
+				lblVideoFiles_.setText(lblVideoFiles_.getText() + " " + videoFile);
 			}
 		});
 	}
@@ -246,7 +248,7 @@ public class ServerGUI {
 			}
 		});
 	}
-
+	
 	class ServerRunning extends Thread {
 		public void run() {
 			server.StartSocket();
