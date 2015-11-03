@@ -37,7 +37,11 @@
         <activity
             android:name=".activity.MessageContentActivity"
             android:label="@string/title_activity_message_content"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.AppIntroSetup"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activity.ConnectConfiguredServerActivity"></activity>
     </application>
 
 </manifest>

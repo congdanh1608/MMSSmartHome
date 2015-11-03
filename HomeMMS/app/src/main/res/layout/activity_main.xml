@@ -35,41 +35,50 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/multiple_action"
+        android:layout_marginRight="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_gravity="bottom|end"
-        fab:fab_addButtonColorNormal="#fafafa"
+        fab:fab_addButtonColorNormal="@color/colorAccent"
         fab:fab_addButtonColorPressed="#f1f1f1"
-        fab:fab_addButtonPlusIconColor="#808080"
+        fab:fab_addButtonPlusIconColor="#fffafa"
         fab:fab_labelStyle="@style/FloatMenuLabelStyle">
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/fab_new_message"
-            fab:fab_icon="@android:drawable/btn_star_big_on"
-            fab:fab_title="New message"
-            fab:fab_colorNormal="#e91e63"
-            fab:fab_colorPressed="#ec407a"
-            fab:fab_size="normal"/>
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/fab_photo"
-            fab:fab_icon="@android:drawable/stat_sys_upload_done"
-            fab:fab_colorNormal="#e91e63"
-            fab:fab_colorPressed="#ec407a"
-            fab:fab_size="normal"/>
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/fab_record"
-            fab:fab_colorNormal="#e91e63"
-            fab:fab_colorPressed="#ec407a"
-            fab:fab_size="normal"/>
+
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/fab_video"
-            fab:fab_colorNormal="#e91e63"
+            fab:fab_icon="@drawable/ic_videocam_white_48dp"
+            fab:fab_title="@string/float_new_video"
+            fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="#ec407a"
-            fab:fab_size="normal"/>
+            fab:fab_size="mini"/>
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fab_record"
+            fab:fab_icon="@drawable/ic_mic_white_48dp"
+            fab:fab_title="@string/float_new_record"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:fab_colorPressed="#ec407a"
+            fab:fab_size="mini"/>
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fab_photo"
+            fab:fab_icon="@drawable/ic_camera_alt_white_48dp"
+            fab:fab_title="@string/float_take_photo"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:fab_colorPressed="#ec407a"
+            fab:fab_size="mini"/>
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fab_new_message"
+            fab:fab_icon="@drawable/ic_create_white_48dp"
+            fab:fab_title="@string/float_new_message"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:fab_colorPressed="#ec407a"
+            fab:fab_size="mini"/>
+
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 </android.support.design.widget.CoordinatorLayout>

@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.thesis.mmtt2011.homemms.activity.InboxFragment;
-import com.thesis.mmtt2011.homemms.activity.SentFragment;
+import com.thesis.mmtt2011.homemms.fragment.InboxFragment;
+import com.thesis.mmtt2011.homemms.fragment.SentFragment;
 
 /**
  * Created by ypham on 5/20/15.

@@ -18,6 +18,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.SlidingTabLayout;
 import com.thesis.mmtt2011.homemms.adapter.ViewPagerAdapter;
+import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +33,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (PreferencesHelper.getIsFirstRun(this)) {
+            PreferencesHelper.writeToPreferences(this, false);
+            Intent intent = new Intent(this, AppIntroSetup.class);
+            startActivity(intent);
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -132,11 +140,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.action_logout) {
+        /*if (id == R.id.action_logout) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }

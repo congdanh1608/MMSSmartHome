@@ -1,0 +1,77 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context="com.thesis.mmtt2011.homemms.fragment.ChooseServerFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight="2">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:src="@drawable/ic_launcher"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-thin"
+            android:textColor="@android:color/black"
+            android:textSize="28sp"
+            android:text="Choose a server"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingLeft="64dp"
+            android:paddingRight="64dp">
+            <Button
+                android:id="@+id/configured_server"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                style="?android:attr/borderlessButtonStyle"
+                android:paddingLeft="@dimen/abc_button_padding_horizontal_material"
+                android:paddingRight="@dimen/abc_button_padding_horizontal_material"
+                android:background="@android:color/white"
+                android:textColor="@color/colorAccent"
+                android:text="Server configured"
+                />
+            <Button
+                android:id="@+id/new_server"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/abc_button_padding_horizontal_material"
+                android:paddingRight="@dimen/abc_button_padding_horizontal_material"
+                android:background="@android:color/white"
+                style="?android:attr/borderlessButtonStyle"
+                android:textColor="@color/colorAccent"
+                android:text="New Server"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>
