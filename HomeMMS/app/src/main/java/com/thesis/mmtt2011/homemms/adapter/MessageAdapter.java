@@ -95,7 +95,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
 
     @Override
     public void onBindViewHolder(MessageAdapter.MessageViewHolder holder, int position) {
-        Message message = messages.get(position);
+        final Message message = messages.get(position);
         holder.bindMessage(message);
 
         //Highlight the item if it's selected

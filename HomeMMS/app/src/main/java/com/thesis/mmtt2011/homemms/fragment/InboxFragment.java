@@ -3,18 +3,18 @@ package com.thesis.mmtt2011.homemms.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
@@ -32,7 +32,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
 
     public static final int COLUMN_GRID = 2;
 
-    private RecyclerView mRecyclerView;
+    //private RecyclerView mRecyclerView;
     private MessageAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
@@ -55,7 +55,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
         content[2] = "Lorem ipsum dolor sit amet, vis invenire interesset ut.";
         for(int i = 0; i < 15; i++) {
             User user = new User(String.valueOf(i), "Pham Xuan Y", "password", "link avatar", "offline");
-            messages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, content[i%3], null, null, null, "Oct 2" + i, "Status " + i, (i % 2)==1));
+            messages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, content[i%3], null, null, null, "Status " + i, "Oct 2" + i, (i % 2)==1));
         }
     }
 
@@ -68,7 +68,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_inbox, container, false);
-        mRecyclerView = (RecyclerView)rootView.findViewById(R.id.inbox_recycler_view);
+        RecyclerView mRecyclerView = (RecyclerView)rootView.findViewById(R.id.inbox_recycler_view);
 
         initListMessage();
         mAdapter = new MessageAdapter(messages, this);
@@ -99,7 +99,9 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
     @Override
     public boolean onItemLongClicked(int position) {
         if (actionMode == null) {
-            actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(actionModeCallback);
+            //Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+            //toolbar.startActionMode(actionModeCallback);
+            actionMode = getActivity().startActionMode(actionModeCallback);
             Toast.makeText(getActivity(), "Long click to this message" + position, Toast.LENGTH_SHORT).show();
         }
 
@@ -123,7 +125,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
         if (count == 0) {
             actionMode.finish();
         } else {
-            actionMode.setTitle(String.valueOf(count));
+            actionMode.setTitle(String.valueOf(count) + "selected");
             actionMode.invalidate();
         }
     }
