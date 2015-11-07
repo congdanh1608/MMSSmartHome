@@ -17,10 +17,11 @@ public class Message {
     String contentVideo;
     String timestamp; //(id)
     String status;
+    private boolean read;
 
     public Message(String _mId, User _sender, List<User> _receiver, String _title, String _contentText,
                    String _contentImage, String _contentAudio, String _contentVideo, String _status,
-                   String _timestamp) {
+                   String _timestamp, boolean _read) {
 
         mId = _mId;
         sender = _sender;
@@ -32,6 +33,7 @@ public class Message {
         contentVideo = _contentVideo;
         timestamp = _timestamp;
         status = _status;
+        read = _read;
     }
 
     public String getId() {
@@ -72,5 +74,9 @@ public class Message {
 
     public List<User> getReceiver() {
         return receiver;
+    }
+
+    public boolean isRead() {
+        return read;
     }
 }

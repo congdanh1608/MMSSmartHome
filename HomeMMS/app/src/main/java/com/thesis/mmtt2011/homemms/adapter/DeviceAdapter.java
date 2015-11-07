@@ -32,8 +32,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
     @Override
     public void onBindViewHolder(DeviceViewHolder holder, int position) {
         Device device = devices.get(position);
-        holder.tvIPAddress.setText(device.getIPAddress());
-        holder.tvMACAddress.setText(device.getMacAddress());
+        holder.bindDevice(device);
     }
 
     @Override
@@ -41,15 +40,32 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         return devices.size();
     }
 
-    public static class DeviceViewHolder extends RecyclerView.ViewHolder {
+    public static class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         protected TextView tvIPAddress;
         protected TextView tvMACAddress;
+        private  Device mDevice;
 
         public DeviceViewHolder(View deviceView) {
             super(deviceView);
             tvIPAddress = (TextView)deviceView.findViewById(R.id.ipAddress);
             tvMACAddress = (TextView)deviceView.findViewById(R.id.macAddress);
+
+            deviceView.setOnClickListener(this);
+        }
+
+        //bind device properties to interface
+        public void bindDevice(Device device) {
+            mDevice = device;
+            tvIPAddress.setText(mDevice.getIPAddress());
+            tvMACAddress.setText(mDevice.getMacAddress());
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mDevice != null) {
+                //do something with device
+            }
         }
     }
 }

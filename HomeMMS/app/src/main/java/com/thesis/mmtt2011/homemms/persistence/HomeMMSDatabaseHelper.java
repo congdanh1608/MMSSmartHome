@@ -214,7 +214,8 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         final String video = cursor.getString(7);
         final String status = cursor.getString(8);
         final String timestamp = cursor.getString(9);
-        return new Message(id, sender, receivers, title, text, image, audio, video, status, timestamp);
+        //set default trang thai doc hay chua la true
+        return new Message(id, sender, receivers, title, text, image, audio, video, status, timestamp, true);
     }
 
     public static Message getMessageWith(Context context, String messageId) {
