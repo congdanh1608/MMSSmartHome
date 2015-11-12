@@ -41,8 +41,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import thesis.danh.avpdemo.Model.Device;
-import thesis.danh.avpdemo.Model.Note;
+import thesis.danh.avpdemo.Model.Message;
+import thesis.danh.avpdemo.Model.User;
 import thesis.danh.avpdemo.Model.RaspberryPiClient;
 import thesis.danh.avpdemo.SSH.ConnectSSHAsyncTask;
 import thesis.danh.avpdemo.SSH.DisConnectSSHAsyncTask;
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     public static boolean mStartConnectSSH = true;
     public static boolean mStartConnectS = true;
 
-    public static Device myDevice;
+    public static User user;
 
     //Demo info
     public static RaspberryPiClient rasp;
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         utilsNetwork = new thesis.danh.avpdemo.Network.Utils(this);
 
         //get my myDevice info
-        myDevice = new Device(utilsNetwork.getDeviceName(), utilsNetwork.getIpAddress(), utilsNetwork.getMacAddress());
+        user = new User(utilsNetwork.getMacAddress(), "Danh", "123", "avatar.jpg", "online");
 
         mDir = Environment.getExternalStorageDirectory().getAbsolutePath();
 //        mFileNameA = mDir + "/audiorecord.mp3";
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //                //Temp send info reciever.
 //                String reciever = edReciever.getText().toString();
-//                client.SendMessageInfoReciever(reciever);
+//                client.SendInfoMessage(reciever);
             }
         });
 
@@ -251,24 +251,57 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Send info reciever.
-                String reciever = edReciever.getText().toString();
+                //Demo info
+                String receiverID = edReciever.getText().toString();
+                User receiver = new User(receiverID, "", "", "", "");
+                List<User> receivers = new ArrayList<User>();
+                receivers.add(receiver);
+
+                String fNameAudio = null, fNamePhoto = null, fNameVideo = null;
+                //Get Name File Audio
+                if (mFileNameA!=null) {
+                    String[] separatedA = mFileNameA.split("/");
+                    fNameAudio = separatedA[separatedA.length - 1];
+                }
+                //Get Name file Photo
+                if (mFileNameP!=null) {
+                    String[] separatedP = mFileNameP.split("/");
+                    fNamePhoto = separatedP[separatedP.length - 1];
+                }
+                //Get Name file Video
+                if (mFileNameV!=null) {
+                    String[] separatedV = mFileNameV.split("/");
+                    fNameVideo = separatedV[separatedV.length - 1];
+                }
+                Message message = new Message();
+                message.setmId(utils.createMessageID(user.getId()));
+                message.setSender(user);
+                message.setReceiver(receivers);
+                message.setTitle("Title demo");
+                message.setContentText(tvSendMessage.getText().toString());
+                message.setContentAudio(fNameAudio);
+                message.setContentImage(fNamePhoto);
+                message.setContentVideo(fNameVideo);
+                message.setTimestamp(utils.getCurrentTime());
+
                 if (client != null) {
-                    client.SendMessageInfoReciever(reciever);
+                    client.SendInfoMessage(message);
                 } else utils.showMesg("You must connect Socket!");
 
                 //Send messages
-                sendMessage(tvSendMessage.getText().toString());
+//                sendMessage(tvSendMessage.getText().toString());
 
                 //Connect SSH
-                onConnectSSH(mStartConnectSSH);
+                if (fNameAudio!=null || fNamePhoto!=null || fNameVideo!=null) {
+                    onConnectSSH(mStartConnectSSH);
 
-                //Push File
-                pushAudio();
-                pushPhoto();
-                pushVideo();
-
+                    //Push File
+                    pushAudio(fNameAudio);
+                    pushPhoto(fNamePhoto);
+                    pushVideo(fNameVideo);
+                }
                 //Send File Info
-                sendFileInfoPush();
+//                sendFileInfoPush();
 
                 //End note.
                 if (client != null) {
@@ -341,40 +374,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void pushAudio() {
+    private void pushAudio(String fNameAudio) {
         if (mFileNameA != null) {
-            String[] separated = mFileNameA.split("/");
-            //Get Name File
-            String fName = separated[separated.length - 1];
             byte[] bytes = utilsSSH.loadResource(mFileNameA);
             if (bytes != null) {
-                PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
+                PushFileAsyncTask async = new PushFileAsyncTask(bytes, fNameAudio, rasp, MainActivity.this);
                 async.execute();
             }
         }
     }
 
-    private void pushPhoto() {
+    private void pushPhoto(String fNamePhoto) {
         if (mFileNameP != null) {
-            String[] separated = mFileNameP.split("/");
-            //Get Name File
-            String fName = separated[separated.length - 1];
             byte[] bytes = utilsSSH.loadResource(mFileNameP);
             if (bytes != null) {
-                PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
+                PushFileAsyncTask async = new PushFileAsyncTask(bytes, fNamePhoto, rasp, MainActivity.this);
                 async.execute();
             }
         }
     }
 
-    private void pushVideo() {
+    private void pushVideo(String fNameVideo) {
         if (mFileNameV != null) {
-            String[] separated = mFileNameV.split("/");
-            //Get Name File
-            String fName = separated[separated.length - 1];
             byte[] bytes = utilsSSH.loadResource(mFileNameV);
             if (bytes != null) {
-                PushFileAsyncTask async = new PushFileAsyncTask(bytes, fName, rasp, MainActivity.this);
+                PushFileAsyncTask async = new PushFileAsyncTask(bytes, fNameVideo, rasp, MainActivity.this);
                 async.execute();
             }
         }
@@ -585,22 +609,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static void updateRecieveInfo(Note note) {
-        tvSenderRecieve.setText(note.getSender());
-        tvMessageRecieve.setText(note.getMessage());
-        if (!note.getFileAttachA().equals("")) {
-            tvAudioRecieve.setText(note.getFileAttachA());
+    public static void updateRecieveInfo(Message message) {
+        //Chờ khi có database tren client -> dùng hàm get User from userid.
+//        tvSenderRecieve.setText(message.getSender().getId());
+        lnRecive.setVisibility(View.VISIBLE);
+        tvMessageRecieve.setText(message.getContentText());
+        if (!message.getContentAudio().equals("")) {
+            tvAudioRecieve.setText(message.getContentAudio());
             lnAudioRecieve.setVisibility(View.VISIBLE);
         }
-        if (!note.getFileAttachV().equals("")) {
-            tvVideoRecieve.setText(note.getFileAttachV());
+        if (!message.getContentVideo().equals("")) {
+            tvVideoRecieve.setText(message.getContentVideo());
             lnVideoRecieve.setVisibility(View.VISIBLE);
         }
-        if (!note.getFileAttachP().equals("")) {
-            tvPhotoRecieve.setText(note.getFileAttachP());
+        if (!message.getContentImage().equals("")) {
+            tvPhotoRecieve.setText(message.getContentImage());
             lnPhotoRecieve.setVisibility(View.VISIBLE);
         }
-        tvTime.setText(convertDate(note.getTime()).toString());
+        tvTime.setText(convertDate(message.getTimestamp()).toString());
     }
 
     public static Date convertDate(String dateString) {
@@ -616,7 +642,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void updateRecieverNote(String msg) {
-        lnRecive.setVisibility(View.VISIBLE);
 //        tvReciverNote.setText(msg);
 
         //Call show dialog notice

@@ -5,11 +5,13 @@ package thesis.danh.avpdemo.Socket;
  */
 public class KeyString {
 
-    public static final String cmdKey = "cmdKey", IPKey = "IPKEY", NameKey = "NAMEKEY",
-            MacKey = "MACKEY", titleKey = "TITLENOTE", msgKey = "MSG", ActtachAKey = "ATTACHAKEY",
-            ActtachVKey = "ATTACHVKEY", ActtachPKey = "ATTACHPKEY", recieverNoteKey = "RECIEVERNOTEKEY";
+    public static final String cmdKey = "cmdKey", IDUserKey = "IDUSERKEY", NameKey = "NAMEKEY",
+    PassKey = "PASSWORDKEY", AvatarKey = "AVATARKEY", StatusKey = "STATUSKEY",
+    recieverNoteKey = "RECIEVERNOTEKEY";
 
-    public static final String timeKey = "TIMEKEY", senderKey = "SENDERKEY", recieverKey = "RECIEVERKEY";
+    public static final String timeKey = "TIMEKEY", senderKey = "SENDERKEY", recieverKey = "RECIEVERKEY",
+            mIDKey = "MID", titleKey = "TITLENOTE", contentTextKey = "MSG", contentAudioKey = "ATTACHAKEY",
+            contentVideoKey = "ATTACHVKEY", contentImageKey = "ATTACHPKEY";
 
     public enum Command {
         INFOKEY, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE;

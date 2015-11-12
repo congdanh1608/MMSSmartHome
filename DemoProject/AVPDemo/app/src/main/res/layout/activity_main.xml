@@ -34,7 +34,7 @@
                     android:id="@+id/edIPPI"
                     android:layout_width="133dp"
                     android:layout_height="wrap_content"
-                    android:text="192.168.0.10" />
+                    android:text="192.168.1.114" />
 
                 <TextView
                     android:id="@+id/tvConnectS"
@@ -62,7 +62,7 @@
                     android:id="@+id/edReciever"
                     android:layout_width="133dp"
                     android:layout_height="wrap_content"
-                    android:text="192.168.0.10" />
+                    android:text="11:22:33:44:55:66" />
             </LinearLayout>
 
             <Space
@@ -81,6 +81,7 @@
                     android:text="Message:" />
 
                 <EditText
+                    android:text="demo msg"
                     android:id="@+id/edSendMessage"
                     android:layout_width="250dp"
                     android:layout_height="40dp" />
@@ -294,7 +295,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"

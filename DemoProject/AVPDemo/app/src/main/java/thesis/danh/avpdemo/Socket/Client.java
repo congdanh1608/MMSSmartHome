@@ -13,6 +13,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import thesis.danh.avpdemo.MainActivity;
+import thesis.danh.avpdemo.Model.Message;
 import thesis.danh.avpdemo.Model.RaspberryPiClient;
 import thesis.danh.avpdemo.Socket.KeyString.Command;
 
@@ -34,7 +35,7 @@ public class Client {
         this.port = port;
 
         handler = new Handler();
-        socketControl = new SocketControl(this, MainActivity.myDevice);
+        socketControl = new SocketControl(this, MainActivity.user);
     }
 
     public void StartSocket() {
@@ -42,6 +43,7 @@ public class Client {
     }
 
     public class ClientThread implements Runnable {
+        BufferedReader input;
 
         @Override
         public void run() {
@@ -50,7 +52,7 @@ public class Client {
                 socketB = new Socket(rasp.getIPAddress(), 2222);
                 SendMessageInfoOfClient();
 
-                BufferedReader input = new BufferedReader(new InputStreamReader(socketB.getInputStream()));
+                input = new BufferedReader(new InputStreamReader(socketB.getInputStream()));
                 final String temp = input.readLine();
                 handler.post(new Runnable() {
                     public void run() {
@@ -70,21 +72,23 @@ public class Client {
     }
 
     public boolean CloseConnectSocket() {
-        if (socketB != null && socketB.isConnected()) try {
-            SendMessageDisconnnect();
-            socketB.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (socketB != null && socketB.isConnected()) {
+            try {
+                SendMessageDisconnnect();
+                socketB.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return true;
     }
 
     //Send message contain info reciver who client want send to.
-    public boolean SendMessageInfoReciever(String reciever) {
+    public boolean SendInfoMessage(Message message) {
         if (socketB.isConnected()) {
             try {
                 printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
-                printWriter.println(socketControl.createInfoReciever(reciever));
+                printWriter.println(socketControl.createInfoMessage(message));
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();

@@ -11,6 +11,9 @@ import android.widget.Toast;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import thesis.danh.avpdemo.Model.Device;
 import thesis.danh.avpdemo.Model.RaspberryPiClient;
@@ -42,5 +45,28 @@ public class Utils {
                 .show();
     }
 
+    public String createMessageID(String mac){
+        String mID = null;
+        if (mac!=null && !mac.equals("")) {
+            mID = mac.substring(9, 10) + mac.substring(12, 13) + mac.substring(15, 16) + getCurrentTimeHms();
+        }
+        return mID;
+    }
 
+    public String getCurrentTimeHms() {
+        String time = null;
+        DateFormat dateFormat = new SimpleDateFormat("HHmmss");
+        Date date = new Date();
+        time = dateFormat.format(date); // 075959
+        return time;
+    }
+
+
+    public String getCurrentTime() {
+        String time = null;
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        Date date = new Date();
+        time = dateFormat.format(date); // 20151030_075959
+        return time;
+    }
 }

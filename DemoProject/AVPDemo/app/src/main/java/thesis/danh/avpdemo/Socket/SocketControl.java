@@ -4,28 +4,26 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import thesis.danh.avpdemo.Database.NoteJson;
+import thesis.danh.avpdemo.Database.Utils;
 import thesis.danh.avpdemo.MainActivity;
-import thesis.danh.avpdemo.Model.Device;
-import thesis.danh.avpdemo.Model.Note;
+import thesis.danh.avpdemo.Model.Message;
+import thesis.danh.avpdemo.Model.User;
 import thesis.danh.avpdemo.Socket.KeyString.Command;
-import thesis.danh.avpdemo.Utils;
 
 /**
  * Created by CongDanh on 22/10/2015.
  */
 public class SocketControl {
-    public static String IP = null, Name = null, Mac = null;
     private Client client;
+    private User user;
 
     public SocketControl(Client client) {
         this.client = client;
     }
 
-    public SocketControl(Client client, Device device) {
+    public SocketControl(Client client, User user) {
         this.client = client;
-        this.IP = device.getIPAddress();
-        this.Name = device.getDeviceName();
-        this.Mac = device.getMacAddress();
+        this.user = user;
     }
 
     protected void getCommand(String msg) {
@@ -37,15 +35,16 @@ public class SocketControl {
                     break;
 
                 case RECIEVERNOTE:
-                    String temp = getRecieverNote(msg);
-                    Note tempNote = getRecieveInfo(temp);
+
+                    Message messageReceive = new Message();
+                    messageReceive = getRecieveInfo(getRecieverNote(msg));
                     //Update to textview
-                    if (temp != null) {
-                        MainActivity.updateRecieveInfo(tempNote);
-                        MainActivity.updateRecieverNote(temp);
-                        String tempA = tempNote.getFileAttachA();
-                        String tempP = tempNote.getFileAttachP();
-                        String tempV = tempNote.getFileAttachV();
+                    if (messageReceive != null) {
+                        MainActivity.updateRecieveInfo(messageReceive);
+//                        MainActivity.updateRecieverNote(temp);
+                        String tempA = messageReceive.getContentAudio();
+                        String tempP = messageReceive.getContentImage();
+                        String tempV = messageReceive.getContentVideo();
                         if (tempA != null && !tempA.equals("")) {
                             RecieveFile.recieveFileFromServer(tempA);
                         }
@@ -93,15 +92,15 @@ public class SocketControl {
 
             switch (typeFile) {
                 case Audio:
-                    jsonObj.put(KeyString.ActtachAKey, fName);
+                    jsonObj.put(KeyString.contentAudioKey, fName);
                     break;
 
                 case Video:
-                    jsonObj.put(KeyString.ActtachVKey, fName);
+                    jsonObj.put(KeyString.contentVideoKey, fName);
                     break;
 
                 case Photo:
-                    jsonObj.put(KeyString.ActtachPKey, fName);
+                    jsonObj.put(KeyString.contentImageKey, fName);
                     break;
 
                 default:
@@ -117,10 +116,17 @@ public class SocketControl {
     }
 
     //create String (Json) message contain info reciever.
-    protected String createInfoReciever(String msg) {
+    protected String createInfoMessage(Message message) {
         try {
             JSONObject jsonObj = new JSONObject();
-            jsonObj.put(KeyString.recieverKey, msg);
+            jsonObj.put(KeyString.mIDKey, message.getmId());
+            jsonObj.put(KeyString.recieverKey, Utils.convertListUserToString(message.getReceiver()));
+            jsonObj.put(KeyString.titleKey, message.getTitle());
+            jsonObj.put(KeyString.contentTextKey, message.getContentText());
+            jsonObj.put(KeyString.contentAudioKey, message.getContentAudio());
+            jsonObj.put(KeyString.contentImageKey, message.getContentImage());
+            jsonObj.put(KeyString.contentVideoKey, message.getContentVideo());
+            jsonObj.put(KeyString.timeKey, message.getTimestamp());
             jsonObj.put(KeyString.cmdKey, Command.RECIEVER);
             return jsonObj.toString();
         } catch (JSONException e) {
@@ -133,7 +139,7 @@ public class SocketControl {
     protected String createSendMessage(String msg) {
         try {
             JSONObject jsonObj = new JSONObject();
-            jsonObj.put(KeyString.msgKey, msg);
+            jsonObj.put(KeyString.contentTextKey, msg);
             jsonObj.put(KeyString.cmdKey, Command.MSGKEY);
             return jsonObj.toString();
         } catch (JSONException e) {
@@ -144,17 +150,17 @@ public class SocketControl {
 
     //create String (Json) message contain info of client: IP, Mac , Name...
     protected String createInfoClient() {
-        if (IP != null || Name != null || Mac != null) {
-            try {
-                JSONObject jsonObj = new JSONObject();
-                jsonObj.put(KeyString.IPKey, IP);
-                jsonObj.put(KeyString.NameKey, Name);
-                jsonObj.put(KeyString.MacKey, Mac);
-                jsonObj.put(KeyString.cmdKey, Command.INFOKEY);
-                return jsonObj.toString();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        try {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put(KeyString.IDUserKey, user.getId());
+            jsonObj.put(KeyString.NameKey, user.getNameDisplay());
+            jsonObj.put(KeyString.PassKey, user.getPassword());
+            jsonObj.put(KeyString.AvatarKey, user.getAvatar());
+            jsonObj.put(KeyString.StatusKey, user.getStatus());
+            jsonObj.put(KeyString.cmdKey, Command.INFOKEY);
+            return jsonObj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -196,8 +202,7 @@ public class SocketControl {
         return null;
     }
 
-    private Note getRecieveInfo(String msg) {
-        Note note = NoteJson.loadNote(msg);
-        return note;
+    private Message getRecieveInfo(String msg) {
+        return NoteJson.loadNote(msg);
     }
 }
