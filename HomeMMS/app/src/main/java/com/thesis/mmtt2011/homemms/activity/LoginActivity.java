@@ -23,7 +23,7 @@ import com.thesis.mmtt2011.homemms.R;
 public class LoginActivity extends AppCompatActivity {
 
     /**
-     * A dummy authentication store containing known user names and passwords.
+     * A dummy authentication store containing known myUser names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
     public static final int MIN_LENGTH_PASSWORD = 3;
@@ -109,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        //Check for a valid password, if the user entered one.
+        //Check for a valid password, if the myUser entered one.
         if (!TextUtils.isEmpty(password) && ! isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
@@ -122,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+            // perform the myUser login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(macAddress, password);
             mAuthTask.execute((Void) null);
@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
-     * the user
+     * the myUser
      */
 
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {

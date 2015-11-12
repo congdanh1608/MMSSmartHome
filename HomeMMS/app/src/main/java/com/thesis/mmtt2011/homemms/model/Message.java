@@ -19,6 +19,19 @@ public class Message {
     String status;
     private boolean read;
 
+    public Message(){
+        mId = null;
+        sender = null;
+        receiver = null;
+        title = null;
+        contentText = null;
+        contentImage = null;
+        contentAudio = null;
+        contentVideo = null;
+        timestamp = null;
+        status = null;
+    }
+
     public Message(String _mId, User _sender, List<User> _receiver, String _title, String _contentText,
                    String _contentImage, String _contentAudio, String _contentVideo, String _status,
                    String _timestamp, boolean _read) {
@@ -78,5 +91,49 @@ public class Message {
 
     public boolean isRead() {
         return read;
+    }
+
+    public void setContentAudio(String contentAudio) {
+        this.contentAudio = contentAudio;
+    }
+
+    public void setContentImage(String contentImage) {
+        this.contentImage = contentImage;
+    }
+
+    public void setContentText(String contentText) {
+        this.contentText = contentText;
+    }
+
+    public void setContentVideo(String contentVideo) {
+        this.contentVideo = contentVideo;
+    }
+
+    public void setMId(String mId) {
+        this.mId = mId;
+    }
+
+    public void setReceiver(List<User> receiver) {
+        this.receiver = receiver;
+    }
+
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
     }
 }

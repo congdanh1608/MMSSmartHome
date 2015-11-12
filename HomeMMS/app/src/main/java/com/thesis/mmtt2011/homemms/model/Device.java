@@ -3,11 +3,11 @@ package com.thesis.mmtt2011.homemms.model;
 import android.graphics.drawable.Drawable;
 
 /**
- * Created by Xpie on 10/22/2015.
+ * Created by Y Pham on 4/20/2015.
  */
 public class Device {
     private String deviceName;
-    //private int iconIndex; //0 is rpi device, 1 PC device, 2 other
+    //private int iconIndex; //0 is rpi myDevice, 1 PC myDevice, 2 other
     private Drawable deviceIcon;
     private String IPAddress;
     private String MacAddress;
@@ -15,7 +15,35 @@ public class Device {
     protected String password;
     protected int deviceType;   //0-Unknown 1-Rash 2-PC 3-Smart.
 
-    public Device(String deviceName, Drawable deviceIcon, String IPAddress, String MacAddress) {
+    public Device(String deviceName, String IPAddress, String MacAddress){
+        this.deviceName = deviceName;
+        this.IPAddress = IPAddress;
+        this.MacAddress = MacAddress;
+        username = null;
+        password = null;
+        deviceType = 0;
+    }
+
+    public Device(String deviceName, String IPAddress, String MacAddress, int deviceType){
+        this.deviceName = deviceName;
+        this.IPAddress = IPAddress;
+        this.MacAddress = MacAddress;
+        username = null;
+        password = null;
+        this.deviceType = deviceType;
+    }
+
+    public Device(String deviceName, Drawable deviceIcon, String IPAddress){
+        this.deviceName = deviceName;
+        this.deviceIcon = deviceIcon;
+        this.IPAddress = IPAddress;
+        MacAddress = null;
+        username = null;
+        password = null;
+        deviceType = 0;
+    }
+
+    public Device(String deviceName, Drawable deviceIcon, String IPAddress, String MacAddress){
         this.deviceName = deviceName;
         this.deviceIcon = deviceIcon;
         this.IPAddress = IPAddress;
@@ -23,6 +51,16 @@ public class Device {
         username = null;
         password = null;
         deviceType = 0;
+    }
+
+    public Device(String deviceName, Drawable deviceIcon, String IPAddress, String MacAddress, String username, String password, int deviceType){
+        this.deviceName = deviceName;
+        this.deviceIcon = deviceIcon;
+        this.IPAddress = IPAddress;
+        this.MacAddress = MacAddress;
+        this.username = username;
+        this.password = password;
+        this.deviceType = deviceType;
     }
 
     public void setUsername(String username) {

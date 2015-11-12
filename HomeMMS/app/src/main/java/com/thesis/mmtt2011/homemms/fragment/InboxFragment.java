@@ -1,6 +1,7 @@
 package com.thesis.mmtt2011.homemms.fragment;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -33,13 +34,14 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
     public static final int COLUMN_GRID = 2;
 
     //private RecyclerView mRecyclerView;
-    private MessageAdapter mAdapter;
+    private static MessageAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
 
-    List<Message> messages;
+    static List<Message> messages;
+    private static Activity mActivity;
 
     //Khoi tao danh sach cach message mau
     public void initListMessage() {
@@ -70,6 +72,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
         View rootView = inflater.inflate(R.layout.fragment_inbox, container, false);
         RecyclerView mRecyclerView = (RecyclerView)rootView.findViewById(R.id.inbox_recycler_view);
 
+        mActivity = getActivity();
         initListMessage();
         mAdapter = new MessageAdapter(messages, this);
         mRecyclerView.setAdapter(mAdapter);
@@ -85,6 +88,12 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
         mLayoutManager = new GridLayoutManager(getActivity(),COLUMN_GRID);
         mRecyclerView.setLayoutManager(mLayoutManager);
         return rootView;
+    }
+
+    public static void UpdateNewMessageReceive(String mID){
+        Message message = HomeMMSDatabaseHelper.getMessageWith(mActivity, mID);
+        messages.add(0, message);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override

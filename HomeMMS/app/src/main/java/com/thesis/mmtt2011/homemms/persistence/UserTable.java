@@ -6,7 +6,7 @@ import android.provider.BaseColumns;
  * Created by Xpie on 10/31/2015.
  */
 public interface UserTable {
-    String NAME = "user";
+    String NAME = "myUser";
 
     String COLUMN_ID = BaseColumns._ID; //MAC address android device
     //String COLUMN_MAC = "mac";

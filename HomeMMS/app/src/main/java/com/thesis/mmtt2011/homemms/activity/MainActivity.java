@@ -1,38 +1,84 @@
 package com.thesis.mmtt2011.homemms.activity;
 
 import android.content.Intent;
-import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.thesis.mmtt2011.homemms.Network.Utils;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.SlidingTabLayout;
+import com.thesis.mmtt2011.homemms.Socket.Client;
 import com.thesis.mmtt2011.homemms.adapter.ViewPagerAdapter;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
+import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.User;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
+import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
     ViewPager pager;
     ViewPagerAdapter adapter;
     SlidingTabLayout tabs;
-    CharSequence Titles[]={"Message","Sent"};
+    CharSequence Titles[] = {"Message", "Sent"};
     final int NumbOfTabs = 2;
     SearchView searchView;
+
+    public static Client client;
+    private static final int port = 2222;
+    public static User myUser;
+    private Utils utilsNetwork;
+    private com.thesis.mmtt2011.homemms.Utils utils;
+    //Demo info
+    public static RaspberryPiClient rasp;
+    public static String mDir = null, mFileNameAudio = null, mFileNameImage = null, mFileNameVideo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        //create Utils.
+        utilsNetwork = new Utils(this);
+        utils = new com.thesis.mmtt2011.homemms.Utils(this);
+
+
+        //Demo info
+        rasp = new RaspberryPiClient("Pi", "192.168.1.114", "B8:27:EB:57:07:1C");
+        //get my User info Vì chưa biết user đã có đăng ký hay chưa?
+        //Nếu đã dk rồi thì sẽ có full info myUser.
+        //Nếu chưa sẽ chỉ có ID (Mac) trong info myUser.;
+        User user = HomeMMSDatabaseHelper.getUserWith_(getBaseContext(), utilsNetwork.getMacAddress());
+        if (user!=null){
+            myUser = user;
+        }else {
+            myUser = new User(utilsNetwork.getMacAddress(), null, null, null
+                    , ContantsHomeMMS.UserStatus.online.name());
+        }
 
         if (PreferencesHelper.getIsFirstRun(this)) {
             PreferencesHelper.writeToPreferences(this, false);
@@ -86,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,NumbOfTabs);
+        adapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, NumbOfTabs);
 
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager);
@@ -106,6 +152,19 @@ public class MainActivity extends AppCompatActivity {
 
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
+
+        //Load connect to Pi and listen receive message from Pi..
+        init();;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -162,4 +221,95 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ContantsHomeMMS.CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
+            final boolean isCamera;
+            if (data == null) {
+                isCamera = true;
+            } else {
+                final String action = data.getAction();
+                if (action == null) {
+                    isCamera = false;
+                } else {
+                    isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+                }
+            }
+
+            Uri selectedImageUri = null;
+            if (isCamera) {
+//                selectedImageUri = outputFileUri;
+                //Bitmap factory
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                // downsizing image as it throws OutOfMemory Exception for larger
+                // images
+                options.inSampleSize = 8;
+//                final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
+                Bitmap bitmap = BitmapFactory.decodeFile(mFileNameImage, options);
+                //rotete image.
+                try {
+                    ExifInterface ei = new ExifInterface(mFileNameImage);
+                    int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                    Matrix matrix;
+                    switch (orientation) {
+                        case ExifInterface.ORIENTATION_ROTATE_90:
+                            matrix = new Matrix();
+                            matrix.postRotate(90);
+                            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                            break;
+                        case ExifInterface.ORIENTATION_ROTATE_180:
+                            matrix = new Matrix();
+                            matrix.postRotate(180);
+                            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                            break;
+                        default:
+                            break;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //set image to viewimage
+//                imgPhoto.setImageBitmap(bitmap);
+            } else {
+                selectedImageUri = data == null ? null : data.getData();
+                // /Bitmap factory
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                // downsizing image as it throws OutOfMemory Exception for larger
+                // images
+                options.inSampleSize = 8;
+                try {//Using Input Stream to get uri did the trick
+                    InputStream input = getContentResolver().openInputStream(selectedImageUri);
+                    final Bitmap bitmap = BitmapFactory.decodeStream(input);
+                    //set image to viewimage
+//                    imgPhoto.setImageBitmap(bitmap);
+                    mFileNameImage = utils.getRealPathFromURI(this, selectedImageUri);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else if (requestCode == ContantsHomeMMS.REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
+//            Uri videoUri = data.getData();
+//            vViewV.setVideoURI(videoUri);
+            //set video to viewimage
+//            vViewV.setVideoURI(Uri.fromFile(new File(mFileNameVideo)));
+        } else if (resultCode == RESULT_CANCELED) {
+            // myUser cancelled Image capture
+            Toast.makeText(getApplicationContext(),
+                    "User cancelled", Toast.LENGTH_SHORT)
+                    .show();
+        } else {
+            // failed to capture image
+            Toast.makeText(getApplicationContext(),
+                    "Sorry! Failed.", Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
+    private void init(){
+        //connect socket.
+        client = new Client(rasp, port, this);
+        client.StartSocket();
+    }
 }

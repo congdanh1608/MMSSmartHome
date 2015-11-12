@@ -2,14 +2,10 @@ package com.thesis.mmtt2011.homemms.persistence;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.TextUtils;
-import android.util.Log;
 
-import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.model.JsonAttributes;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
@@ -18,10 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +31,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
     private static List<User> mUsers;
     private static HomeMMSDatabaseHelper mInstance;
 
-    private HomeMMSDatabaseHelper(Context context) {
+    public HomeMMSDatabaseHelper(Context context) {
         //prevents external instance creation
         super(context, DB_NAME + DB_SUFFIX, null, DB_VERSION);
     }
@@ -61,8 +54,8 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         /*
-         * create the user table first, as message table has foreign key
-         * constraint on user id
+         * create the myUser table first, as message table has foreign key
+         * constraint on myUser id
          */
         db.execSQL(UserTable.CREATE);
         db.execSQL(MessageTable.CREATE);
@@ -84,8 +77,8 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
     /**
      * CRUD USERS *
      */
-    //Lay tat ca thong tin user dang json duoc server tra ve insert vao user table trong database
-    private void fillUsers(SQLiteDatabase db, String usersJson) throws JSONException, IOException{
+    //Lay tat ca thong tin myUser dang json duoc server tra ve insert vao myUser table trong database
+    public void fillUsers(SQLiteDatabase db, String usersJson) throws JSONException, IOException{
         ContentValues values = new ContentValues();
         JSONArray jsonArray = new JSONArray(usersJson);
         JSONObject user;
@@ -107,6 +100,40 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         db.insert(UserTable.NAME, null, values);
     }
 
+    public void addUser(User user) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(UserTable.COLUMN_ID, user.getId());
+        values.put(UserTable.COLUMN_AVATAR, user.getAvatar());
+        values.put(UserTable.COLUMN_NAME, user.getNameDisplay());
+        values.put(UserTable.COLUMN_STATUS, user.getStatus());
+        db.insert(UserTable.NAME, null, values);
+    }
+
+    public void updateUser(Context context, User user) {
+        if (mUsers != null && mUsers.contains(user)) {
+            final int location = mUsers.indexOf(user);
+            mUsers.remove(location);
+            mUsers.add(location, user);
+        }
+        SQLiteDatabase writableDatabase = getWritableDatabase(context);
+        ContentValues userValues = createUserValueFor(user);
+        writableDatabase.update(UserTable.NAME, userValues, UserTable.COLUMN_ID + "=?",
+                new String[]{user.getId()});
+    }
+
+    public void UpdateUser_(User user) {
+        SQLiteDatabase writableDatabase = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(UserTable.COLUMN_NAME, user.getNameDisplay());
+        values.put(UserTable.COLUMN_AVATAR, user.getAvatar());
+        values.put(UserTable.COLUMN_STATUS, user.getStatus());
+
+        writableDatabase.update(UserTable.NAME, values, UserTable.COLUMN_ID + " =?",
+                new String[]{String.valueOf(user.getId())});
+        writableDatabase.close();
+    }
+
     /**
      * Gets all users wrapped in a {@link Cursor} positioned at it's first element.
      * @param context
@@ -121,12 +148,12 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Gets a user from the given position of the cursor provided
+     * Gets a myUser from the given position of the cursor provided
      *
      * @param cursor The cursor containing the data.
-     * @return The found user
+     * @return The found myUser
      */
-    private static User getUser(Cursor cursor) {
+    public static User getUser(Cursor cursor) {
         // "magic numbers" based on UserTable#PROJECTION
         final String id = cursor.getString(0);
         final String name = cursor.getString(1);
@@ -136,13 +163,21 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return new User(id, name, null, avatar, status);
     }
 
+    public static User getUserWith_(Context context, String userId){
+        SQLiteDatabase readableDatabase = getReadableDatabase(context);
+        String sql = "SELECT * FROM " + UserTable.NAME + " where " + UserTable.COLUMN_ID + "='" + userId + "'";
+        Cursor data = readableDatabase.rawQuery(sql, null);
+        if (data==null || !data.moveToFirst()) return null;
+        return getUser(data);
+    }
+
     public static User getUserWith(Context context, String userId) {
         SQLiteDatabase readableDatabase = getReadableDatabase(context);
         String[] selectionArgs = {userId};
         Cursor data = readableDatabase
                 .query(UserTable.NAME, UserTable.PROJECTION, UserTable.COLUMN_ID + "?=",
                         selectionArgs, null, null, null);
-        data.moveToFirst();
+        if (!data.moveToFirst()) return null;
         return getUser(data);
     }
 
@@ -153,6 +188,13 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
      * @param fromDatabase <code>true</code> if a data refresh is needed, else <code>false</code>.
      * @return All users stored in database
      */
+
+    public ContentValues createUserValueFor(User user) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(UserTable.COLUMN_STATUS, user.getStatus());
+        return contentValues;
+    }
+
     public static List<User> getUsers(Context context, boolean fromDatabase) {
         if (null == mUsers || fromDatabase) {
             mUsers = loadUsers(context);
@@ -160,7 +202,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return mUsers;
     }
 
-    private static List<User> loadUsers(Context context) {
+    public static List<User> loadUsers(Context context) {
         Cursor data = HomeMMSDatabaseHelper.getUserCursor(context);
         List<User> tmpUsers = new ArrayList<>(data.getCount());
         final SQLiteDatabase readableDatabase = HomeMMSDatabaseHelper.getReadableDatabase(context);
@@ -191,7 +233,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return  mMessages;
     }
 
-    private static List<Message> loadMessages(Context context) {
+    public static List<Message> loadMessages(Context context) {
         Cursor data = HomeMMSDatabaseHelper.getMessagesCursor(context);
         List<Message> tmpMessages = new ArrayList<>(data.getCount());
         final SQLiteDatabase readableDatabase = HomeMMSDatabaseHelper.getReadableDatabase(context);
@@ -202,9 +244,9 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return tmpMessages;
     }
 
-    private static Message getMessage(Context context, Cursor cursor, SQLiteDatabase readableDatabase) {
+    public static Message getMessage(Context context, Cursor cursor, SQLiteDatabase readableDatabase) {
         final String id = cursor.getString(0);
-        User sender = getUserWith(context, cursor.getString(1));
+        User sender = getUserWith_(context, cursor.getString(1));
         List<User> receivers = getListReceiver(context, cursor.getString(2));
 
         final String title = cursor.getString(3);
@@ -272,13 +314,16 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
      * Gets list receivers (User) from String receivers
      * @param context
      * @param strReceivers MAC addresses of receivers MACReceiver1-MACReceiver2
-     * @return list user receivers
+     * @return list myUser receivers
      */
-    private static List<User> getListReceiver(Context context, String strReceivers) {
-        String[] macReceivers = strReceivers.split("-");
-        ArrayList<User> receivers = new ArrayList<>();
-        for (String receiverMac : macReceivers) {
-            receivers.add(getUserWith(context, receiverMac));
+    public static List<User> getListReceiver(Context context, String strReceivers) {
+        ArrayList<User> receivers = null;
+        if (strReceivers!=null) {
+            String[] macReceivers = strReceivers.split("-");
+            receivers = new ArrayList<>();
+            for (String receiverMac : macReceivers) {
+                receivers.add(getUserWith_(context, receiverMac));
+            }
         }
         return receivers;
     }
@@ -309,7 +354,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //insert message from json into MessageTable in database
-    private void fillMessage(SQLiteDatabase db, ContentValues values, JSONObject message,
+    public void fillMessage(SQLiteDatabase db, ContentValues values, JSONObject message,
                              String messageId) throws JSONException{
         values.clear();
         values.put(MessageTable.COLUMN_ID, messageId);
@@ -325,7 +370,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         db.insert(MessageTable.NAME, null, values);
     }
 
-    private void createMessage(Message message) {
+    public void addMessage(Message message) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(MessageTable.COLUMN_ID, message.getId());
@@ -341,7 +386,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         db.insert(MessageTable.NAME, null, values);
     }
 
-    private String ConvertStringReceiver(List<User> receivers) {
+    public String ConvertStringReceiver(List<User> receivers) {
         StringBuilder strReceivers = new StringBuilder();
         strReceivers.append(receivers.get(0).getId());
         for (int i = 1; i < receivers.size(); i++) {
@@ -351,7 +396,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //update
-    private  void updateMessage(Context context, Message message) {
+    public  void updateMessage(Context context, Message message) {
         if (mMessages != null && mMessages.contains(message)) {
             final int location = mMessages.indexOf(message);
             mMessages.remove(location);
@@ -371,14 +416,14 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
      * @param message The message to update
      * @return ContentValues containing update data
      */
-    private ContentValues createMessageValueFor(Message message) {
+    public ContentValues createMessageValueFor(Message message) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MessageTable.COLUMN_STATUS, message.getStatus());
         return contentValues;
     }
 
     //delete
-    private void deleteMessage(String messageId) {
+    public void deleteMessage(String messageId) {
         SQLiteDatabase db = getReadableDatabase();
         String[] selectionArgs = {messageId};
         db.delete(MessageTable.NAME, MessageTable.COLUMN_ID + "=?", selectionArgs);

@@ -96,7 +96,7 @@ public class ConnectConfiguredServerActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        //Check for a valid password, if the user entered one.
+        //Check for a valid password, if the myUser entered one.
         if (!TextUtils.isEmpty(ipServer) && ! isIPServerValid(ipServer)) {
             etIPServer.setError(getString(R.string.error_incorrect_ip_address));
             focusView = etIPServer;
@@ -109,7 +109,7 @@ public class ConnectConfiguredServerActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+            // perform the myUser login attempt.
             showProgress(true);
             mConnectTask = new ServerConnectTask(ipServer);
             mConnectTask.execute((Void) null);

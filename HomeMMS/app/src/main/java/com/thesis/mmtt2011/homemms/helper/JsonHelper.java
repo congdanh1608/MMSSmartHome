@@ -1,9 +1,19 @@
 package com.thesis.mmtt2011.homemms.helper;
 
+import android.content.Context;
 import android.util.Log;
+
+import com.thesis.mmtt2011.homemms.model.User;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
+import com.thesis.mmtt2011.homemms.model.Message;
+import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Xpie on 11/3/2015.
@@ -55,5 +65,89 @@ public class JsonHelper {
             Log.e(TAG, "Error during Json processing: ", e);
         }
         return new int[0];
+    }
+
+    public static Message loadNote(String msg, Context context) {
+        Message message = new Message();
+        if (msg != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(msg);
+
+                //Get list receiver
+                String receiversStr = jsonObj.isNull(ContantsHomeMMS.recieverKey) ? null : jsonObj.getString(ContantsHomeMMS.recieverKey);
+                List<User> receivers = new ArrayList<User>();
+                receivers = HomeMMSDatabaseHelper.getListReceiver(context, receiversStr);
+
+                //Get Sender myUser.
+                String senderStr = jsonObj.isNull(ContantsHomeMMS.senderKey) ? null : jsonObj.getString(ContantsHomeMMS.senderKey);
+                User sender = new User();
+                sender = HomeMMSDatabaseHelper.getUserWith_(context, senderStr);
+
+                message.setMId(jsonObj.isNull(ContantsHomeMMS.mIDKey) ? null : jsonObj.getString(ContantsHomeMMS.mIDKey));
+                message.setTitle(jsonObj.isNull(ContantsHomeMMS.titleKey) ? null : jsonObj.getString(ContantsHomeMMS.titleKey));
+                message.setContentText(jsonObj.isNull(ContantsHomeMMS.contentTextKey) ? null
+                        : jsonObj.getString(ContantsHomeMMS.contentTextKey));
+                message.setContentAudio(jsonObj.isNull(ContantsHomeMMS.contentAudioKey) ? null
+                        : jsonObj.getString(ContantsHomeMMS.contentAudioKey));
+                message.setContentImage(jsonObj.isNull(ContantsHomeMMS.contentImageKey) ? null
+                        : jsonObj.getString(ContantsHomeMMS.contentImageKey));
+                message.setContentVideo(jsonObj.isNull(ContantsHomeMMS.contentVideoKey) ? null
+                        : jsonObj.getString(ContantsHomeMMS.contentVideoKey));
+//                Dung ham convert from String receiver to List User receiver.
+                message.setReceiver(receivers);
+                message.setSender(sender);
+                message.setTimestamp(jsonObj.isNull(ContantsHomeMMS.timeKey) ? null
+                        : jsonObj.getString(ContantsHomeMMS.timeKey));
+                message.setStatus("received");
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return message;
+    }
+
+    public static boolean loadHasRegister(String msg) {
+        if (msg != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(msg);
+                String hasRegister = jsonObj.isNull(ContantsHomeMMS.registerKey) ? null : jsonObj.getString(ContantsHomeMMS.registerKey);
+                if (hasRegister!=null && hasRegister.equals(ContantsHomeMMS.registeredKey))
+                    return true;
+                else if (hasRegister!=null && hasRegister.equals(ContantsHomeMMS.notRegistered))
+                    return false;
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public static List<User> loadUserDatabase(String msg) {
+        List<User> userList = new ArrayList<User>();
+        if (msg != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(msg);
+                String usersJson = jsonObj.isNull(ContantsHomeMMS.userDatabase) ? null : jsonObj.getString(ContantsHomeMMS.userDatabase);
+                if (usersJson!=null) {
+                    JSONArray users = new JSONArray(usersJson);
+                    for (int i = 0; i < users.length(); i++){
+                        JSONObject user = new JSONObject(users.getString(i));
+                        String IDUser = user.getString(ContantsHomeMMS.IDUserKey);
+                        String NameUser = user.getString(ContantsHomeMMS.NameKey);
+                        String AvatarUser = user.getString(ContantsHomeMMS.AvatarKey);
+                        String StatusUser = user.getString(ContantsHomeMMS.StatusKey);
+
+                        User u = new User(IDUser, NameUser, null, AvatarUser, StatusUser);
+                        userList.add(u);
+                    }
+                }
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return userList;
     }
 }

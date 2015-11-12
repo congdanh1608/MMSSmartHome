@@ -100,7 +100,7 @@ public class RegisterActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        //Check for a valid password, if the user entered one.
+        //Check for a valid password, if the myUser entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
@@ -124,7 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+            // perform the myUser login attempt.
             showProgress(true);
             mAuthTask = new UserRegisterTask(macAddress, nameDisplay, password);
             mAuthTask.execute((Void) null);
@@ -147,7 +147,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
-     * the user
+     * the myUser
      */
 
     public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
@@ -170,7 +170,7 @@ public class RegisterActivity extends AppCompatActivity {
             } catch (InterruptedException e){
                 return false;
             }
-            //Create user and send register information to server
+            //Create myUser and send register information to server
             //Check account exists
             /*for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split("-");
