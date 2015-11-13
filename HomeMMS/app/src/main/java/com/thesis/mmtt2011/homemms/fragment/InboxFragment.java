@@ -101,6 +101,8 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
         if (actionMode != null) {
             toggleSelection(position);
         } else {
+            //Update isRead for Message in message table.
+
             mAdapter.removeMessage(position);
         }
     }

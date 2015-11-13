@@ -1,18 +1,16 @@
 package com.thesis;
 
-import java.awt.Button;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
-import SSH.PushFile;
 import Socket.Server;
-import javax.swing.JButton;
 
 public class ServerGUI {
 

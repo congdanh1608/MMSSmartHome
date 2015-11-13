@@ -408,6 +408,17 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 new String[]{message.getId()});
     }
 
+    //update Status of Message.
+    public void updateMessageStatus(Context context, String mID, String status) {
+        SQLiteDatabase writableDatabase = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(MessageTable.COLUMN_STATUS, status);
+
+        writableDatabase.update(MessageTable.NAME, values, MessageTable.COLUMN_ID + " =?",
+                new String[]{String.valueOf(mID)});
+        writableDatabase.close();
+    }
+
     /**
      * Creates the content values to update a message in the database
      *  update status of message

@@ -31,7 +31,6 @@ public class ContantsHomeMMS {
         draft, sent, received;
     }
 
-
     public static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 1111;
     public static final int REQUEST_VIDEO_CAPTURE = 2222;
 }

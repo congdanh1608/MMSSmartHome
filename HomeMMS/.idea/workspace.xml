@@ -42,124 +42,21 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/Socket/SocketControl.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="49" column="33" selection-start-line="49" selection-start-column="33" selection-end-line="49" selection-end-column="33" />
+              <caret line="50" column="45" selection-start-line="50" selection-start-column="45" selection-end-line="50" selection-end-column="45" />
               <folding>
-                <element signature="e#1076#1077#0" expanded="true" />
-                <element signature="e#1112#1113#0" expanded="true" />
                 <element signature="e#9294#9295#0" expanded="true" />
                 <element signature="e#9350#9351#0" expanded="true" />
-                <element signature="e#10449#10920#0" expanded="true" />
-                <element signature="e#10919#10920#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ComposeMessageActivity.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/activity/ComposeMessageActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.62215906">
-              <caret line="150" column="23" selection-start-line="150" selection-start-column="23" selection-end-line="150" selection-end-column="23" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2763#2915#0" expanded="true" />
-                <element signature="e#2914#2915#0" expanded="true" />
-                <element signature="method#pushFileAttachToPi#0;class#ComposeMessageActivity#0" expanded="false" />
-                <element signature="method#onActivityResult#0;class#ComposeMessageActivity#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Message.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/model/Message.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="InboxFragment.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/fragment/InboxFragment.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="37" column="54" selection-start-line="37" selection-start-column="54" selection-end-line="37" selection-end-column="54" />
-              <folding>
-                <element signature="method#onItemClicked#0;class#InboxFragment#0" expanded="false" />
-                <element signature="method#onItemLongClicked#0;class#InboxFragment#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="HomeMMSDatabaseHelper.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/HomeMMSDatabaseHelper.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="372" column="16" selection-start-line="372" selection-start-column="16" selection-end-line="372" selection-end-column="26" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Utils.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/Utils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="195" column="0" selection-start-line="195" selection-start-column="0" selection-end-line="195" selection-end-column="0" />
-              <folding>
-                <element signature="e#1135#1136#0" expanded="true" />
-                <element signature="e#1175#1176#0" expanded="true" />
-                <element signature="e#6932#7350#0" expanded="true" />
-                <element signature="e#7349#7350#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/activity/MainActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="84" column="41" selection-start-line="84" selection-start-column="41" selection-end-line="84" selection-end-column="41" />
-              <folding>
-                <element signature="e#6513#6514#0" expanded="true" />
-                <element signature="e#6544#6545#0" expanded="true" />
-                <element signature="e#6589#6590#0" expanded="true" />
-                <element signature="e#6619#6620#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ContantsHomeMMS.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ContantsHomeMMS.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/ContantsHomeMMS.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="30" column="29" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
+            <state vertical-scroll-proportion="0.56534094">
+              <caret line="27" column="5" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Client.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/Socket/Client.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="108" column="60" selection-start-line="108" selection-start-column="50" selection-end-line="108" selection-end-column="66" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#1343#1344#0" expanded="true" />
-                <element signature="e#1397#1398#0" expanded="true" />
-                <element signature="e#1913#2235#0" expanded="true" />
-                <element signature="e#2234#2235#0" expanded="true" />
-                <element signature="e#6542#6543#0" expanded="true" />
-                <element signature="e#6575#6576#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -1668,17 +1565,17 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/activity/MessageContentActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_compose_message.xml" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/helper/JsonHelper.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/HomeMMSDatabaseHelper.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/MessageTable.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/fragment/InboxFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/model/User.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/activity/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/Socket/Client.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/Utils.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/Socket/SocketControl.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/ContantsHomeMMS.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/activity/ComposeMessageActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/ContantsHomeMMS.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/helper/JsonHelper.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/HomeMMSDatabaseHelper.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/fragment/InboxFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/Socket/SocketControl.java" />
       </list>
     </option>
   </component>
@@ -2429,7 +2326,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -2537,12 +2434,8 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="217" column="47" selection-start-line="217" selection-start-column="47" selection-end-line="217" selection-end-column="47" />
           <folding>
-            <element signature="e#1076#1077#0" expanded="true" />
-            <element signature="e#1112#1113#0" expanded="true" />
             <element signature="e#9294#9295#0" expanded="true" />
             <element signature="e#9350#9351#0" expanded="true" />
-            <element signature="e#10449#10920#0" expanded="true" />
-            <element signature="e#10919#10920#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2763,14 +2656,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/helper/JsonHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.689655">
-          <caret line="83" column="52" selection-start-line="83" selection-start-column="52" selection-end-line="83" selection-end-column="52" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../../Android-sdk/sources/android-22/android/database/sqlite/SQLiteClosable.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -2793,14 +2678,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="1442" column="0" selection-start-line="1442" selection-start-column="0" selection-end-line="1442" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/MessageTable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.70454544">
-          <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -2829,14 +2706,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/SSH/ConnectSSHAsyncTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.39782017">
-          <caret line="45" column="25" selection-start-line="45" selection-start-column="25" selection-end-line="45" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/model/User.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5831063">
@@ -2861,24 +2730,8 @@
         <state vertical-scroll-proportion="0.33242506">
           <caret line="78" column="24" selection-start-line="78" selection-start-column="24" selection-end-line="78" selection-end-column="24" />
           <folding>
-            <element signature="e#3088#3089#0" expanded="true" />
-            <element signature="e#3115#3116#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/Socket/Client.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="108" column="60" selection-start-line="108" selection-start-column="50" selection-end-line="108" selection-end-column="66" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1343#1344#0" expanded="true" />
-            <element signature="e#1397#1398#0" expanded="true" />
-            <element signature="e#1913#2235#0" expanded="true" />
-            <element signature="e#2234#2235#0" expanded="true" />
-            <element signature="e#6542#6543#0" expanded="true" />
-            <element signature="e#6575#6576#0" expanded="true" />
+            <element signature="e#3088#3089#0" expanded="false" />
+            <element signature="e#3115#3116#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2896,33 +2749,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/Socket/SocketControl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="49" column="33" selection-start-line="49" selection-start-column="33" selection-end-line="49" selection-end-column="33" />
-          <folding>
-            <element signature="e#1076#1077#0" expanded="true" />
-            <element signature="e#1112#1113#0" expanded="true" />
-            <element signature="e#9294#9295#0" expanded="true" />
-            <element signature="e#9350#9351#0" expanded="true" />
-            <element signature="e#10449#10920#0" expanded="true" />
-            <element signature="e#10919#10920#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/ContantsHomeMMS.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="30" column="29" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/activity/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="84" column="41" selection-start-line="84" selection-start-column="41" selection-end-line="84" selection-end-column="41" />
+        <state vertical-scroll-proportion="0.56534094">
+          <caret line="312" column="21" selection-start-line="312" selection-start-column="21" selection-end-line="312" selection-end-column="21" />
           <folding>
             <element signature="e#6513#6514#0" expanded="true" />
             <element signature="e#6544#6545#0" expanded="true" />
@@ -2932,39 +2762,68 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/HomeMMSDatabaseHelper.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/Socket/Client.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="372" column="16" selection-start-line="372" selection-start-column="16" selection-end-line="372" selection-end-column="26" />
+        <state vertical-scroll-proportion="0.62215906">
+          <caret line="64" column="52" selection-start-line="64" selection-start-column="52" selection-end-line="64" selection-end-column="52" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1343#1344#0" expanded="true" />
+            <element signature="e#1397#1398#0" expanded="true" />
+            <element signature="e#1913#2235#0" expanded="true" />
+            <element signature="e#2234#2235#0" expanded="true" />
+            <element signature="e#6542#6543#0" expanded="true" />
+            <element signature="e#6575#6576#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/SSH/ConnectSSHAsyncTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4005682">
+          <caret line="45" column="25" selection-start-line="45" selection-start-column="25" selection-end-line="45" selection-end-column="25" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/fragment/InboxFragment.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/helper/JsonHelper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="37" column="54" selection-start-line="37" selection-start-column="54" selection-end-line="37" selection-end-column="54" />
-          <folding>
-            <element signature="method#onItemClicked#0;class#InboxFragment#0" expanded="false" />
-            <element signature="method#onItemLongClicked#0;class#InboxFragment#0" expanded="false" />
-          </folding>
+          <caret line="101" column="37" selection-start-line="101" selection-start-column="37" selection-end-line="101" selection-end-column="37" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/model/Message.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.62784094">
+          <caret line="19" column="24" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="24" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/MessageTable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.32386363">
+          <caret line="18" column="36" selection-start-line="18" selection-start-column="36" selection-end-line="18" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/HomeMMSDatabaseHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.13068181">
+          <caret line="415" column="0" selection-start-line="415" selection-start-column="0" selection-end-line="415" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/activity/ComposeMessageActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.62215906">
-          <caret line="150" column="23" selection-start-line="150" selection-start-column="23" selection-end-line="150" selection-end-column="23" />
+        <state vertical-scroll-proportion="0.81534094">
+          <caret line="132" column="122" selection-start-line="132" selection-start-column="122" selection-end-line="132" selection-end-column="122" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2763#2915#0" expanded="true" />
@@ -2972,6 +2831,35 @@
             <element signature="method#pushFileAttachToPi#0;class#ComposeMessageActivity#0" expanded="false" />
             <element signature="method#onActivityResult#0;class#ComposeMessageActivity#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/fragment/InboxFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6761364">
+          <caret line="101" column="35" selection-start-line="101" selection-start-column="35" selection-end-line="101" selection-end-column="35" />
+          <folding>
+            <element signature="method#onItemLongClicked#0;class#InboxFragment#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/Socket/SocketControl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="50" column="45" selection-start-line="50" selection-start-column="45" selection-end-line="50" selection-end-column="45" />
+          <folding>
+            <element signature="e#9294#9295#0" expanded="true" />
+            <element signature="e#9350#9351#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/thesis/mmtt2011/homemms/persistence/ContantsHomeMMS.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.56534094">
+          <caret line="27" column="5" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>

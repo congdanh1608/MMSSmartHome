@@ -5,19 +5,22 @@
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="ScanLanNetwork">
     <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../Eclipse"/>
+    <property name="ECLIPSE_HOME" value="../../../usr/eclipse/"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.7"/>
     <property name="source" value="1.7"/>
     <path id="ScanLanNetwork.classpath">
         <pathelement location="bin"/>
-        <pathelement location="../Libs/java-json.jar/java-json.jar"/>
-        <pathelement location="../Libs/swt-4.5.1-gtk-linux-x86/swt.jar"/>
+        <pathelement location="../../Libs/java-json.jar/java-json.jar"/>
+        <pathelement location="../../Libs/ganymed-ssh2-build210.jar"/>
+        <pathelement location="../../Libs/swt-4.5.1-gtk-linux-x86/swt.jar"/>
+        <pathelement location="../../Libs/mysql-connector-java-5.1.37/mysql-connector-java-5.1.37-bin.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
+                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -48,16 +51,6 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
-    </target>
-    <target name="Server (2)">
-        <java classname="Socket.Server" failonerror="true" fork="yes">
-            <classpath refid="ScanLanNetwork.classpath"/>
-        </java>
-    </target>
-    <target name="ServerGUIswt">
-        <java classname="com.thesis.ServerGUIswt" failonerror="true" fork="yes">
-            <classpath refid="ScanLanNetwork.classpath"/>
-        </java>
     </target>
     <target name="ServerGUI">
         <java classname="com.thesis.ServerGUI" failonerror="true" fork="yes">

@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import Model.RaspberryPiClient;
 import ch.ethz.ssh2.SCPClient;
 
 public class Utils {

@@ -8,10 +8,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import Model.Note;
-import Model.RecieverNote;
-
 import com.thesis.ServerGUI;
+
+import Model.Message;
 
 public class Server {
 	private static ServerSocket serverSocketA;
@@ -20,9 +19,8 @@ public class Server {
 	private int port;
 	private ServerGUI sGui;
 	private String ServerName = "Pi";
-	private SocketControl socketControl;
 	private boolean keepGoing;
-	private ArrayList<ClientThread_> al;
+	private ArrayList<ClientThread_> clients;
 
 	public Server(int port) {
 		this(port, null);
@@ -31,8 +29,8 @@ public class Server {
 	public Server(int port, ServerGUI sGui) {
 		this.port = port;
 		this.sGui = sGui;
-		socketControl = new SocketControl(this, sGui);
-		al = new ArrayList<ClientThread_>();
+		// socketControl = new SocketControl(this, sGui);
+		clients = new ArrayList<ClientThread_>();
 	}
 
 	public void StartSocket() {
@@ -41,20 +39,21 @@ public class Server {
 			serverSocketA = new ServerSocket(port);
 			while (keepGoing) {
 				socket = serverSocketA.accept();
+				System.out.println("Accepted connection : " + socket);
 				if (!keepGoing)
 					break;
-				ClientThread_ t = new ClientThread_(socket);
+				ClientThread_ clientThread = new ClientThread_(socket);
 
-				al.add(t);
-				t.start();
+				clients.add(clientThread);
+				clientThread.start();
 			}
 
 			try {
 				serverSocketA.close();
-				for (int i = 0; i < al.size(); ++i) {
-					ClientThread_ tc = al.get(i);
+				for (int i = 0; i < clients.size(); ++i) {
+					ClientThread_ tc = clients.get(i);
 					try {
-						tc.recieve.close();
+						tc.receive.close();
 						tc.socket.close();
 					} catch (IOException ioE) {
 						ioE.printStackTrace();
@@ -79,6 +78,7 @@ public class Server {
 
 	protected void SendMsg(String msg) {
 		try {
+			System.out.println("Server send " + msg);
 			printWriter = new PrintWriter(socket.getOutputStream(), true);
 			printWriter.println(msg);
 		} catch (IOException e) {
@@ -89,51 +89,40 @@ public class Server {
 	// Sau nay can tao SocketControl cho moi thread.
 	class ClientThread_ extends Thread {
 		Socket socket;
-		BufferedReader recieve;
+		BufferedReader receive;
 		String tempMsg = "";
-		Note note = new Note();
-		RecieverNote recieveNote = new RecieverNote();
+		SocketControl socketControl = new SocketControl(Server.this);
 
 		ClientThread_(Socket socket) {
 			this.socket = socket;
-			// reciever
-			try {
-				recieve = new BufferedReader(new InputStreamReader(
-						socket.getInputStream()));
-				String temp = "";
-				while ((temp = recieve.readLine()) != null) {
-					tempMsg += temp;
-					System.out.println(tempMsg);
-					if (temp != null && !temp.equals("")) {
-						socketControl.getCommand(temp, note, recieveNote);
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 
 		@Override
 		public void run() {
-			// boolean keepGoing = true;
-			// while (keepGoing) {
-			// try {
-			// String temp = "";
-			// while ((temp = recieve.readLine()) != null) {
-			// msgRecieve = msgRecieve + temp + "\n";
-			// System.out.println(msgRecieve);
-			// socketControl.getCommand();
-			// }
-			// } catch (IOException e) {
-			// e.printStackTrace();
-			// }
-			// }
+			// reciever
+			try {
+				receive = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				String temp = "";
+				while ((temp = receive.readLine()) != null) {
+					tempMsg += temp;
+					System.out.println(tempMsg);
+					if (temp != null && !temp.equals("")) {
+						socketControl.getCommand(temp);
+					}
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		public void close() {
 			try {
 				if (socket != null)
 					socket.close();
+				if (receive !=null){
+					receive.close();
+				}
 			} catch (Exception e) {
 			}
 		}

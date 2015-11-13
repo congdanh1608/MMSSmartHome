@@ -115,10 +115,7 @@ public class ComposeMessageActivity extends MainActivity {
         homeMMSDatabaseHelper.addMessage(message);
 
         if (client != null) {
-            if (client.SendInfoMessage(message)) {
-                //After send message successful, save message to database.
-                homeMMSDatabaseHelper.addMessage(message);
-            }
+            client.SendInfoMessage(message);
         }
         if (mFileNameAudio!=null || mFileNameImage!=null || mFileNameVideo!=null) {
             //Connect SSH.
@@ -131,7 +128,10 @@ public class ComposeMessageActivity extends MainActivity {
 
         //Notify server myUser finished note.
         if (client != null) {
-            client.SendMessageEndNote();
+            //After send message successful, update message in database status sent.
+            if (client.SendMessageEndNote()) {
+                homeMMSDatabaseHelper.updateMessageStatus(this, message.getId(), ContantsHomeMMS.MessageStatus.sent.name());
+            }
         }
     }
 

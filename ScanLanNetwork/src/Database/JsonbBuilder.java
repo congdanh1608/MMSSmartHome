@@ -3,32 +3,32 @@ package Database;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import Model.Note;
+import Model.Message;
 import Model.RecieverNote;
-import Socket.KeyString;
+import presistence.ContantsHomeMMS;
 
 import com.thesis.Utils;
 
 public class JsonbBuilder {
 
-	public static boolean saveNote(Note note) {
+	public static boolean saveNote(Message note) {
 		JSONObject jsonObj = new JSONObject();
 		try {
-			jsonObj.put(KeyString.titleKey,
+			jsonObj.put(ContantsHomeMMS.titleKey,
 					note.getTitle() != null ? note.getTitle() : "");
-			jsonObj.put(KeyString.msgKey,
-					note.getMessage() != null ? note.getMessage() : "");
-			jsonObj.put(KeyString.ActtachAKey,
-					note.getFileAttachA() != null ? note.getFileAttachA() : "");
-			jsonObj.put(KeyString.ActtachVKey,
-					note.getFileAttachV() != null ? note.getFileAttachV() : "");
-			jsonObj.put(KeyString.ActtachPKey,
-					note.getFileAttachP() != null ? note.getFileAttachP() : "");
-			jsonObj.put(KeyString.timeKey, Utils.getCurrentTime());
-			jsonObj.put(KeyString.senderKey,
+			jsonObj.put(ContantsHomeMMS.contentTextKey,
+					note.getContentText() != null ? note.getContentText() : "");
+			jsonObj.put(ContantsHomeMMS.contentAudioKey,
+					note.getContentAudio() != null ? note.getContentAudio() : "");
+			jsonObj.put(ContantsHomeMMS.contentVideoKey,
+					note.getContentVideo() != null ? note.getContentVideo() : "");
+			jsonObj.put(ContantsHomeMMS.contentImageKey,
+					note.getContentImage() != null ? note.getContentImage() : "");
+			jsonObj.put(ContantsHomeMMS.timeKey, Utils.getCurrentTime());
+			jsonObj.put(ContantsHomeMMS.senderKey,
 					note.getSender() != null ? note.getSender() : "");
-			jsonObj.put(KeyString.recieverKey,
-					note.getReciever() != null ? note.getReciever() : "");
+			jsonObj.put(ContantsHomeMMS.recieverKey,
+					note.getReceiver() != null ? note.getReceiver() : "");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -43,28 +43,28 @@ public class JsonbBuilder {
 		return false;
 	}
 
-	public static Note loadNote() {
-		Note note = new Note();
+	public static Message loadNote() {
+		Message note = new Message();
 		String msg = Utils.readFile("data.json");
 		if (msg != null) {
 			try {
 				JSONObject jsonObj = new JSONObject(msg);
-				note.setTitle(jsonObj.isNull(KeyString.titleKey) ? null
-						: jsonObj.getString(KeyString.titleKey));
-				note.setMessage(jsonObj.isNull(KeyString.msgKey) ? null
-						: jsonObj.getString(KeyString.msgKey));
-				note.setFileAttachA(jsonObj.isNull(KeyString.ActtachAKey) ? null
-						: jsonObj.getString(KeyString.ActtachAKey));
-				note.setFileAttachP(jsonObj.isNull(KeyString.ActtachPKey) ? null
-						: jsonObj.getString(KeyString.ActtachPKey));
-				note.setFileAttachV(jsonObj.isNull(KeyString.ActtachVKey) ? null
-						: jsonObj.getString(KeyString.ActtachVKey));
-				note.setReciever(jsonObj.isNull(KeyString.recieverKey) ? null
-						: jsonObj.getString(KeyString.recieverKey));
-				note.setSender(jsonObj.isNull(KeyString.senderKey) ? null
-						: jsonObj.getString(KeyString.senderKey));
-				note.setTime(jsonObj.isNull(KeyString.timeKey) ? null : jsonObj
-						.getString(KeyString.timeKey));
+				note.setTitle(jsonObj.isNull(ContantsHomeMMS.titleKey) ? null
+						: jsonObj.getString(ContantsHomeMMS.titleKey));
+				note.setContentText(jsonObj.isNull(ContantsHomeMMS.contentTextKey) ? null
+						: jsonObj.getString(ContantsHomeMMS.contentTextKey));
+				note.setContentAudio(jsonObj.isNull(ContantsHomeMMS.contentAudioKey) ? null
+						: jsonObj.getString(ContantsHomeMMS.contentAudioKey));
+				note.setContentImage(jsonObj.isNull(ContantsHomeMMS.contentImageKey) ? null
+						: jsonObj.getString(ContantsHomeMMS.contentImageKey));
+				note.setContentVideo(jsonObj.isNull(ContantsHomeMMS.contentVideoKey) ? null
+						: jsonObj.getString(ContantsHomeMMS.contentVideoKey));
+				note.setReceiver(jsonObj.isNull(ContantsHomeMMS.recieverKey) ? null
+						: Database.Utils.getListUserFromReciver(jsonObj.getString(ContantsHomeMMS.recieverKey)));
+				note.setSender(jsonObj.isNull(ContantsHomeMMS.senderKey) ? null
+						: Database.Utils.getUserFromSender(jsonObj.getString(ContantsHomeMMS.senderKey)));
+				note.setTimestamp(jsonObj.isNull(ContantsHomeMMS.timeKey) ? null : jsonObj
+						.getString(ContantsHomeMMS.timeKey));
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -79,8 +79,8 @@ public class JsonbBuilder {
 		if (msg != null) {
 			try {
 				JSONObject jsonObj = new JSONObject(msg);
-				rNote.setReciever(jsonObj.isNull(KeyString.recieverKey) ? null
-						: jsonObj.getString(KeyString.recieverKey));
+				rNote.setReciever(jsonObj.isNull(ContantsHomeMMS.recieverKey) ? null
+						: jsonObj.getString(ContantsHomeMMS.recieverKey));
 				rNote.setNoteJson(msg);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
