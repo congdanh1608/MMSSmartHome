@@ -1,30 +1,51 @@
 package com.thesis;
 
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JProgressBar;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
 
+import Database.MessageModel;
+import Database.Utils;
+import Model.Message;
 import Socket.Server;
 
 public class ServerGUI {
 
 	private JFrame frame;
-	private JLabel lblDeviceInfo, lblServerStatus, lblName, lblName_,
-			lblIpaddr, lblIpaddr_, lblMac, lblMac_, lblReciever, lblReciever_,
-			lblMessages, lblPhotoFiles, lblPhotoFiles_, lblAudioFiles,
-			lblAudioFiles_, lblVideoFiles, lblVideoFiles_;
-	private JTextArea taMessages_;
-	JProgressBar progressBar;
+	private JLabel lblServerStatus, lblTime, lblCurrentday, lblCurrenttime;;
+
+	private JButton btnStartListening;
+	private JPanel panelLeft, panelRight;
+	private int col = 4, rows = 3;
+	private List<JPanel> jPanels;
+	private JLabel lblSender, lblTitle;
+	private JTextArea tAMessage;
 
 	private static Server server = null;
 	private static int port = 2222;
-	private JButton btnStartListening;
+	private MessageModel messageModel;
 
 	/**
 	 * Launch the application.
@@ -47,113 +68,181 @@ public class ServerGUI {
 	 */
 	public ServerGUI() {
 		initialize();
+		UpdateTime();
+		ShowMessage();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		jPanels = new ArrayList<JPanel>();
+		messageModel = new MessageModel();
+
 		frame = new JFrame();
 		frame.setBounds(100, 100, 562, 458);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		frame.setUndecorated(true); // Hide bar Window
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		frame.setVisible(true);
 
-		lblDeviceInfo = new JLabel("Device Info");
-		lblDeviceInfo.setBounds(10, 11, 78, 14);
-		frame.getContentPane().add(lblDeviceInfo);
+		panelLeft = new JPanel();
+		panelLeft.setBounds(0, 0, 1110, 702);
+		frame.getContentPane().add(panelLeft);
+		GridBagLayout gbl_panelLeft = new GridBagLayout();
+		gbl_panelLeft.columnWidths = new int[] { 0, 0, 0, 0, 0 };
+		gbl_panelLeft.rowHeights = new int[] { 0, 0, 0, 0 };
+		gbl_panelLeft.columnWeights = new double[] { 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE };
+		gbl_panelLeft.rowWeights = new double[] { 1.0, 1.0, 1.0, Double.MIN_VALUE };
+		panelLeft.setLayout(gbl_panelLeft);
 
-		lblServerStatus = new JLabel("Server has stopped");
-		lblServerStatus.setBounds(221, 11, 312, 14);
-		frame.getContentPane().add(lblServerStatus);
+		// create List Panel Items
+		createListPanelwithContents();
 
-		lblName = new JLabel("Name:");
-		lblName.setBounds(10, 36, 78, 14);
-		frame.getContentPane().add(lblName);
+		panelRight = new JPanel();
+		panelRight.setBounds(1120, 0, 246, 702);
+		frame.getContentPane().add(panelRight);
 
-		lblName_ = new JLabel("Unknow");
-		lblName_.setBounds(94, 36, 140, 14);
-		frame.getContentPane().add(lblName_);
-
-		lblIpaddr = new JLabel("IPAddr:");
-		lblIpaddr.setBounds(10, 61, 78, 14);
-		frame.getContentPane().add(lblIpaddr);
-
-		lblIpaddr_ = new JLabel("0.0.0.0");
-		lblIpaddr_.setBounds(94, 61, 140, 14);
-		frame.getContentPane().add(lblIpaddr_);
-
-		lblMac = new JLabel("Mac:");
-		lblMac.setBounds(10, 86, 78, 14);
-		frame.getContentPane().add(lblMac);
-
-		lblMac_ = new JLabel("00:00:00:00:00:00");
-		lblMac_.setBounds(94, 86, 140, 14);
-		frame.getContentPane().add(lblMac_);
-
-		lblReciever = new JLabel("Reciever:");
-		lblReciever.setBounds(10, 111, 78, 14);
-		frame.getContentPane().add(lblReciever);
-
-		lblReciever_ = new JLabel("Unknow");
-		lblReciever_.setBounds(94, 111, 140, 14);
-		frame.getContentPane().add(lblReciever_);
-
-		lblMessages = new JLabel("Messages:");
-		lblMessages.setBounds(10, 139, 78, 14);
-		frame.getContentPane().add(lblMessages);
-
-		taMessages_ = new JTextArea();
-		taMessages_.setBounds(10, 172, 411, 139);
-		frame.getContentPane().add(taMessages_);
-
-		lblAudioFiles = new JLabel("Audio Files:");
-		lblAudioFiles.setBounds(10, 331, 110, 14);
-		frame.getContentPane().add(lblAudioFiles);
-
-		lblVideoFiles = new JLabel("Video Files:");
-		lblVideoFiles.setBounds(10, 356, 110, 14);
-		frame.getContentPane().add(lblVideoFiles);
-
-		lblPhotoFiles = new JLabel("Photo Files:");
-		lblPhotoFiles.setBounds(10, 381, 110, 14);
-		frame.getContentPane().add(lblPhotoFiles);
-
-		lblAudioFiles_ = new JLabel("");
-		lblAudioFiles_.setBounds(130, 331, 179, 14);
-		frame.getContentPane().add(lblAudioFiles_);
-
-		lblVideoFiles_ = new JLabel("");
-		lblVideoFiles_.setBounds(130, 356, 179, 14);
-		frame.getContentPane().add(lblVideoFiles_);
-
-		lblPhotoFiles_ = new JLabel("");
-		lblPhotoFiles_.setBounds(130, 381, 179, 14);
-		frame.getContentPane().add(lblPhotoFiles_);
-
-		progressBar = new JProgressBar();
-		progressBar.setBounds(10, 406, 411, 5);
-		frame.getContentPane().add(progressBar);
-		
 		btnStartListening = new JButton("Start Listening");
+		btnStartListening.setBounds(52, 665, 144, 25);
 		btnStartListening.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				startSocketListener();
 			}
 		});
-		btnStartListening.setBounds(393, 352, 140, 43);
-		frame.getContentPane().add(btnStartListening);
+		panelRight.setLayout(null);
+
+		lblServerStatus = new JLabel("Server has stopped");
+		lblServerStatus.setBounds(53, 12, 143, 15);
+		panelRight.add(lblServerStatus);
+		panelRight.add(btnStartListening);
+
+		lblCurrenttime = new JLabel("12:00");
+		lblCurrenttime.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCurrenttime.setFont(new Font("Dialog", Font.BOLD, 60));
+		lblCurrenttime.setBounds(22, 39, 212, 73);
+		panelRight.add(lblCurrenttime);
+
+		lblCurrentday = new JLabel("Sun 01/11/2015");
+		lblCurrentday.setFont(new Font("Dialog", Font.BOLD, 20));
+		lblCurrentday.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCurrentday.setBounds(22, 112, 212, 40);
+		panelRight.add(lblCurrentday);
 	}
 
-	public void onClear() {
-		lblAudioFiles_.setText("");
-		lblPhotoFiles_.setText("");
-		lblVideoFiles_.setText("");
-		lblIpaddr_.setText("");
-		lblMac_.setText("");
-		lblName_.setText("");
-		lblReciever_.setText("");
-		taMessages_.setText("");
-		lblServerStatus.setText("Server is listening");
+	// create Panel
+	private void createListPanelwithContents() {
+		for (int r = 0; r < rows; r++) {
+			for (int c = 0; c < col; c++) {
+				String name_note = "note" + c + r;
+				JPanel note = new JPanel();
+				note.setName(name_note);
+				note.setLayout(new BoxLayout(note, BoxLayout.Y_AXIS));
+//				note.setVisible(false);
+				GridBagConstraints gbc = new GridBagConstraints();
+				gbc.insets = new Insets(10, 10, 10, 10);
+				gbc.fill = GridBagConstraints.BOTH;
+				gbc.gridx = c;
+				gbc.gridy = r;
+				panelLeft.add(note, gbc);
+
+				// Set label...
+				lblSender = new JLabel("Sender");
+				note.add(lblSender);
+
+				lblTitle = new JLabel("Title");
+				note.add(lblTitle);
+
+				tAMessage = new JTextArea();
+				tAMessage.setEditable(false);
+				note.add(tAMessage);
+
+				lblTime = new JLabel("7:00 am 30/10/2015");
+				note.add(lblTime);
+
+				// Add note to List JPanels
+				jPanels.add(note);
+			}
+		}
+	}
+
+	// Update info lable, textArea into Panel
+	private void updateMessageForListPanel(List<JPanel> jPanels, final List<Message> messages) {
+		for (int i = 0; i < jPanels.size(); i++) {
+			if (messages.size() > i) {
+//				jPanels.get(i).setVisible(true);
+				JLabel lbSender = (JLabel) jPanels.get(i).getComponent(0);
+				JLabel lbTitle = (JLabel) jPanels.get(i).getComponent(1);
+				JTextArea tAMessage = (JTextArea) jPanels.get(i).getComponent(2);
+				JLabel lbTime = (JLabel) jPanels.get(i).getComponent(3);
+
+				if (lbSender != null) {
+					lbSender.setText(messages.get(i).getSender().getNameDisplay());
+					lbSender.setAlignmentX(Component.LEFT_ALIGNMENT);
+				}
+				if (lbTitle != null) {
+					lbTitle.setText(messages.get(i).getTitle());
+					lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+				}
+				if (tAMessage != null) {
+					tAMessage.setText(messages.get(i).getContentText());
+					tAMessage.setAlignmentX(Component.LEFT_ALIGNMENT);
+				}
+				if (lbTime != null) {
+					lbTime.setText(Utils.convertStringToDate(messages.get(i).getTimestamp()));
+					lbTime.setAlignmentX(Component.LEFT_ALIGNMENT);
+				}
+
+				// Action click on JPanel.
+				addMouseListener(jPanels.get(i), messages.get(i));
+			}
+		}
+	}
+
+	private void addMouseListener(final JPanel jPanel, final Message message) {
+		jPanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				super.mouseEntered(e);
+				Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+				jPanel.setCursor(cursor);
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				super.mousePressed(e);
+				System.out.println(message.getmId());
+			}
+		});
+	}
+
+	// Show message from database in Desktop
+	private void ShowMessage() {
+		List<Message> messages = new ArrayList<Message>();
+		messages = messageModel.get12Message();
+		updateMessageForListPanel(jPanels, messages);
+	}
+
+	private void UpdateTime() {
+		Timer timer = new Timer(30000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				DateFormat dateFormat = new SimpleDateFormat("HH:mm"); // 12:00
+				DateFormat dateFormat2 = new SimpleDateFormat("EEE dd/MM/yyyy");// Sun
+																				// 10/11/2015
+
+				Date date = new Date();
+				lblCurrenttime.setText(dateFormat.format(date));
+				lblCurrentday.setText(dateFormat2.format(date));
+			}
+		});
+		timer.setRepeats(true);
+		timer.setCoalesce(true);
+		timer.setInitialDelay(0);
+		timer.start();
 	}
 
 	private void startSocketListener() {
@@ -162,91 +251,6 @@ public class ServerGUI {
 		lblServerStatus.setText("Server is listening");
 	}
 
-	public JLabel getlblIP_() {
-		return lblIpaddr_;
-	}
-
-	public JLabel getlblName_() {
-		return lblName_;
-	}
-
-	public JLabel getlblMac_() {
-		return lblMac_;
-	}
-
-	public JTextArea getMessages() {
-		return taMessages_;
-	}
-
-	public JLabel getlblStatus() {
-		return lblServerStatus;
-	}
-
-	public void updateInfo(final String IP, final String Name, final String Mac) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				lblServerStatus.setText("Connected to " + Name);
-				lblIpaddr_.setText(IP);
-				lblName_.setText(Name);
-				lblMac_.setText(Mac);
-			}
-		});
-	}
-
-	public void updateReciever(final String msg) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				lblReciever_.setText(msg);
-			}
-		});
-	}
-
-	public void updateMessages(final String msg) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				taMessages_.setText(msg);
-			}
-		});
-	}
-
-	public void updatePhotoFile(final String photofile) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				// Demo file name.
-//				String photo = photofile.substring(photofile.lastIndexOf("/") + 1);
-				lblPhotoFiles_.setText(lblPhotoFiles_.getText() + " " + photofile);
-			}
-		});
-	}
-
-	public void updateAudioFile(final String audioFile) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				// Demo file name.
-//				String audio = audioFile.substring(audioFile.lastIndexOf("/") + 1);
-				lblAudioFiles_.setText(lblAudioFiles_.getText() + " " + audioFile);
-			}
-		});
-	}
-
-	public void updateVideoFile(final String videoFile) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				// Demo file name.
-//				String video = videoFile.substring(videoFile.lastIndexOf("/") + 1);
-				lblVideoFiles_.setText(lblVideoFiles_.getText() + " " + videoFile);
-			}
-		});
-	}
-
-	public void updateOnClear() {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				onClear();
-			}
-		});
-	}
-	
 	class ServerRunning extends Thread {
 		public void run() {
 			server.StartSocket();

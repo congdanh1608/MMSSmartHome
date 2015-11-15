@@ -1,6 +1,9 @@
 package Database;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import Model.User;
@@ -40,5 +43,26 @@ public class Utils {
 		}
 		return reciever;
 	}
+	
+	public String getCurrentTime() {
+        String time = null;
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        Date date = new Date();
+        time = dateFormat.format(date); // 20151030_075959
+        return time;
+    }
+
+    public static String convertStringToDate(String dateString) {
+        Date date = null;
+        DateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        DateFormat dfExport = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+        try {
+            date = df.parse(dateString);
+            return dfExport.format(date).toString();
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return null;
+    }
 
 }

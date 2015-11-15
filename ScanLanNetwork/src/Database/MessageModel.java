@@ -319,4 +319,42 @@ public class MessageModel {
 		}
 		return messages;
 	}
+	
+	public List<Message> get12Message() {
+		List<Message> messages = new ArrayList<Message>();
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			conn = MysqlConnect.getConnectMysql();
+			stmt = conn.createStatement();
+			String sql = "SELECT * FROM " + handler.TABLE_MESSAGE + " ORDER BY " + handler.TIMESTAMP + " DESC LIMIT 12";
+			ResultSet rset = stmt.executeQuery(sql);
+			while (rset.next()) {
+				Message message = new Message(rset.getString(handler.MID),
+						Utils.getUserFromSender(rset.getString(handler.SENDER)),
+						Utils.getListUserFromReciver(rset.getString(handler.RECIEVER)), rset.getString(handler.TITLE),
+						rset.getString(handler.CONTENTTEXT), rset.getString(handler.CONTENTIMAGE),
+						rset.getString(handler.CONTENTAUDIO), rset.getString(handler.CONTENTVIDEO),
+						rset.getString(handler.STATUS_MSG), rset.getString(handler.TIMESTAMP));
+
+				messages.add(message);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null)
+					conn.close();
+			} catch (SQLException se) {
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return messages;
+	}
+	
 }
