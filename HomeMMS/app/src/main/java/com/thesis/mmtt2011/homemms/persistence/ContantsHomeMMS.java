@@ -1,9 +1,17 @@
 package com.thesis.mmtt2011.homemms.persistence;
 
+import android.os.Environment;
+
+import java.io.File;
+
 /**
  * Created by CongDanh on 29/10/2015.
  */
 public class ContantsHomeMMS {
+
+    public static final File SD_Scard = Environment.getExternalStorageDirectory();
+    public static final String AppName = "HOMEMMS";
+    public static final String AppFolder = SD_Scard + "/" + AppName;
 
     public static final String cmdKey = "cmdKey", IDUserKey = "IDUSERKEY", NameKey = "NAMEKEY",
     PassKey = "PASSWORDKEY", AvatarKey = "AVATARKEY", StatusKey = "STATUSKEY",

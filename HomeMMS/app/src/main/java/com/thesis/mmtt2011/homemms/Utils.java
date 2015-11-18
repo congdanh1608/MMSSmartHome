@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -21,8 +22,13 @@ import com.thesis.mmtt2011.homemms.activity.ComposeMessageActivity;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,8 +42,52 @@ public class Utils {
     private Activity activity;
     private MediaRecorder mRecorderAudio = null;
 
-    public Utils(Activity activity){
+    public Utils(Activity activity) {
         this.activity = activity;
+    }
+
+    public static Boolean CreateFolder(String dir) {
+        File folder = new File(dir);
+        if (folder.exists())
+            return true;
+        else {
+            try {
+                folder.mkdirs();
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+    }
+
+    public static boolean copyAsset(AssetManager assetManager,
+                                    String fromAssetPath, String toPath) {
+
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = assetManager.open(fromAssetPath);
+
+            File file = new File(toPath);
+            if (file.exists())
+                file.delete();
+            file = new File(toPath);
+            boolean created = file.createNewFile();
+            System.out.println("created file = " + created);
+            out = new FileOutputStream(toPath);
+//            copyFile(in, out);
+            in.close();
+            in = null;
+            out.flush();
+            out.close();
+            out = null;
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void startRecordingA(String mFileNameAudio) {
@@ -121,11 +171,11 @@ public class Utils {
         }
     }
 
-    protected void showMesg(String msg){
+    protected void showMesg(String msg) {
         Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
     }
 
-    protected void showDialogNewRecieve(){
+    protected void showDialogNewRecieve() {
         new AlertDialog.Builder(activity)
                 .setTitle("Recieved")
                 .setMessage("You have recieved a new note.")
@@ -138,9 +188,9 @@ public class Utils {
                 .show();
     }
 
-    public String createMessageID(String mac){
+    public String createMessageID(String mac) {
         String mID = null;
-        if (mac!=null && !mac.equals("")) {
+        if (mac != null && !mac.equals("")) {
             mID = mac.substring(9, 10) + mac.substring(12, 13) + mac.substring(15, 16) + getCurrentTimeHms();
         }
         return mID;
@@ -175,7 +225,7 @@ public class Utils {
         return null;
     }
 
-    public void showDialog(){
+    public void showDialog() {
         final EditText input = new EditText(activity);
         input.setText("");
         new AlertDialog.Builder(activity)
@@ -193,5 +243,36 @@ public class Utils {
                 .show();
     }
 
+    public static boolean isX86Cpu() {
+        boolean bool;
+        StringBuilder localStringBuilder;
+        try {
+            BufferedReader localBufferedReader = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec("getprop ro.product.cpu.abi").getInputStream()));
+            char[] arrayOfChar = new char[4096];
+            localStringBuilder = new StringBuilder();
+            for (; ; ) {
+                int i = localBufferedReader.read(arrayOfChar);
+                if (i <= 0) {
+                    break;
+                }
+                localStringBuilder.append(arrayOfChar, 0, i);
+            }
+            localBufferedReader.close();
+        } catch (IOException localIOException) {
+            localIOException.printStackTrace();
+            return false;
+        }
+        bool = localStringBuilder.toString().contains("x86");
+        return bool;
+    }
+
+    public static Boolean ChecknmblookupAvalability(String dir) {
+        File file = new File(dir);
+        if (file.exists())
+            return true;
+        else {
+            return false;
+        }
+    }
 
 }

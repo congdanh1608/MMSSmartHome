@@ -11,10 +11,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.thesis.mmtt2011.homemms.Network.ScanDevicesAsyncTask;
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.Utils;
 import com.thesis.mmtt2011.homemms.adapter.DeviceAdapter;
 import com.thesis.mmtt2011.homemms.model.Device;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,16 +28,15 @@ public class ScanDevicesActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    List<Device> devices;
+    public static List<Device> devices;
 
-    //Khoi tao danh sach cach message mau
-    public void initListMessage() {
-        devices = new ArrayList<>();
-        for(int i = 0; i < 15; i++) {
-            Device device = new Device("", null, "0.0.0." + String.valueOf(i), "00:00:00:00:00:0" + String.valueOf(i));
-            devices.add(device);
-        }
+    private com.thesis.mmtt2011.homemms.Network.Utils utilsNetwork;
+
+    private void initScan(){
+        devices = new ArrayList<Device>();
+        new ScanDevicesAsyncTask(this).execute();
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,8 +44,13 @@ public class ScanDevicesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        utilsNetwork = new com.thesis.mmtt2011.homemms.Network.Utils(this);
+
+        //Copy nmblookup file to Android.
+
+
         mRecyclerView = (RecyclerView)findViewById(R.id.device_recycler_view);
-        initListMessage();
+        initScan();
         mAdapter = new DeviceAdapter(devices);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -84,6 +92,7 @@ public class ScanDevicesActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_scan) {
+            new ScanDevicesAsyncTask(this).execute();
             return true;
         }
 
@@ -92,5 +101,26 @@ public class ScanDevicesActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void Installnmblookup(){
+        String nmblookupPath = utilsNetwork.getnmbLookupLocation();
+
+        //Check CPU x86?
+        Boolean x86Cpu = Utils.isX86Cpu();
+
+//        Scan Network with nmblookup.
+//        if (Utils.CreateFolder(ContantsHomeMMS.AppFolder) && !Utils.ChecknmblookupAvalability(nmblookupPath)) {
+//            if (x86Cpu) {
+//                Utils.copyAsset(getAssets(), "x86/" + ConstPath.nmblookupName, ConstPath.getnmbLookupLocation(this));
+//            } else {
+//                Utils.copyAsset(getAssets(), ConstPath.nmblookupName, ConstPath.getnmbLookupLocation(this));
+//            }
+//            try {
+//                Process p = Runtime.getRuntime().exec("chmod 774 " + ConstPath.getnmbLookupLocation(this));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 }

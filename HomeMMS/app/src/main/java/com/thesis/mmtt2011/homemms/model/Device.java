@@ -13,7 +13,7 @@ public class Device {
     private String MacAddress;
     protected String username;
     protected String password;
-    protected int deviceType;   //0-Unknown 1-Rash 2-PC 3-Smart.
+    protected int deviceType;   //0-Unknown 1-Rash Pi 2-PC 3-Smart.
 
     public Device(String deviceName, String IPAddress, String MacAddress){
         this.deviceName = deviceName;

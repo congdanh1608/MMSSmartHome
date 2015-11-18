@@ -8,6 +8,8 @@ import android.text.format.Formatter;
 
 import com.thesis.mmtt2011.homemms.model.Device;
 
+import ch.ethz.ssh2.Connection;
+
 
 /**
  * Created by CongDanh on 31/10/2015.
@@ -55,7 +57,6 @@ public class Utils {
         }
     }
 
-
     private String capitalize(String s) {
         if (s == null || s.length() == 0) {
             return "";
@@ -67,4 +68,63 @@ public class Utils {
             return Character.toUpperCase(first) + s.substring(1);
         }
     }
+
+    public static boolean CheckMacPi(String MacAddress){
+        if (MacAddress.contains("b8:27:eb")){
+            return true;
+        };
+        return false;
+    }
+
+    public static long ipToLong(String ipAddress) {
+        long result = 0;
+        String[] atoms = ipAddress.split("\\.");
+        for (int i = 3; i >= 0; i--) {
+            result |= (Long.parseLong(atoms[3 - i]) << (i * 8));
+        }
+        return result & 0xFFFFFFFF;
+    }
+
+    public static String longToIp(long ip) {
+        StringBuilder sb = new StringBuilder(15);
+        for (int i = 0; i < 4; i++) {
+            sb.insert(0, Long.toString(ip & 0xff));
+            if (i < 3) {
+                sb.insert(0, '.');
+            }
+            ip >>= 8;
+        }
+        return sb.toString();
+    }
+
+    public static String fromBinaryToIp(String binary) {
+        return longToIp(Long.parseLong(binary, 2));
+    }
+
+    public static String fromIpToHex(String ipAddress) {
+        return Long.toHexString(ipToLong(ipAddress));
+    }
+
+    public static String fromHexToIp(String hex) {
+        return longToIp(Long.parseLong(hex, 16));
+    }
+
+    public static String addTwoHexToString(String a, String b) {
+        long number = Long.parseLong(a, 16) + Long.parseLong(b, 16);
+        return Long.toHexString(number);
+    }
+
+    public static int countIP(String hexStartAddress, String hexEndAddress){
+        int cout = 0;
+        while (!hexStartAddress.equals(hexEndAddress)) {
+            cout++;
+            hexStartAddress = addTwoHexToString(hexStartAddress, "01");
+        }
+        return cout;
+    }
+
+    public String getnmbLookupLocation(){
+        return "./data/data/" + activity.getPackageName() + "/" + "nmblookup";
+    }
+
 }

@@ -34,7 +34,7 @@ public class ChooseServerFragment extends Fragment {
         btNewServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //call ScanDevices activity
+                //call ScanDevicesAsyncTask activity
                 Intent intent = new Intent(getActivity(), ScanDevicesActivity.class);
                 startActivity(intent);
             }

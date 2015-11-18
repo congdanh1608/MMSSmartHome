@@ -2,6 +2,13 @@
 <items version="2" >
 
     <item
+        jar="E:\DevelopTool\Android-sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.1\support-annotations-22.2.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
+        <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\support-annotations-22.2.1-5638e9bfc78bcc226bb596ffa508a4845405b772.jar" />
+    </item>
+    <item
         jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\libs\jsch-0.1.50.jar"
         jumboMode="false"
         revision="23.0.1"
@@ -9,18 +16,18 @@
         <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\jsch-0.1.50-d88bad026019c63a5ded4ab2fb62af8a4926155b.jar" />
     </item>
     <item
-        jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\21.0.3\jars\classes.jar"
+        jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.1\jars\classes.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="00b0b7233e1ec64acebfac40d4983d32d4712426">
-        <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\classes-2d4595f09b53447e0ff2e79deddf5bef144023a7.jar" />
+        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
+        <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\classes-9503a1cb00978e25998e84b10e1563df9ca4b963.jar" />
     </item>
     <item
-        jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\libs\internal_impl-22.2.1.jar"
+        jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\21.0.3\jars\classes.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
-        <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\internal_impl-22.2.1-1b1ba5d13471085ac98cbc4abc04eae88d003535.jar" />
+        sha1="4b8945fc23a7461c6fdde15753456d64b0a9358b">
+        <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\classes-2404f5dbf456b592220a01c0347459eb112a7ba9.jar" />
     </item>
     <item
         jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\exploded-aar\com.getbase\floatingactionbutton\1.10.1\jars\classes.jar"
@@ -37,11 +44,11 @@
         <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\classes-a8fce44dc0d15def4df9c6948aa6585074d440e2.jar" />
     </item>
     <item
-        jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\21.0.3\jars\classes.jar"
+        jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\21.0.3\jars\classes.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="4b8945fc23a7461c6fdde15753456d64b0a9358b">
-        <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\classes-2404f5dbf456b592220a01c0347459eb112a7ba9.jar" />
+        sha1="00b0b7233e1ec64acebfac40d4983d32d4712426">
+        <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\classes-2d4595f09b53447e0ff2e79deddf5bef144023a7.jar" />
     </item>
     <item
         jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\exploded-aar\com.android.support\design\22.2.1\jars\classes.jar"
@@ -58,25 +65,18 @@
         <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\ganymed-ssh2-build210-1a3fdc67501784c748441001dd2568dc108bca68.jar" />
     </item>
     <item
+        jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\libs\internal_impl-22.2.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
+        <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\internal_impl-22.2.1-1b1ba5d13471085ac98cbc4abc04eae88d003535.jar" />
+    </item>
+    <item
         jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\exploded-aar\de.hdodenhof\circleimageview\1.2.1\jars\classes.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="4b868b833b0887aa48c4e581558eef4f1196f6a2">
         <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\classes-b2e27059cbb664971461a020fe35553a0af43b4d.jar" />
-    </item>
-    <item
-        jar="E:\DevelopTool\Android-sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.1\support-annotations-22.2.1.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
-        <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\support-annotations-22.2.1-5638e9bfc78bcc226bb596ffa508a4845405b772.jar" />
-    </item>
-    <item
-        jar="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
-        <dex dex="E:\DevelopTool\Thesis\SmartMMS\trunk\HomeMMS\app\build\intermediates\pre-dexed\debug\classes-9503a1cb00978e25998e84b10e1563df9ca4b963.jar" />
     </item>
 
 </items>
