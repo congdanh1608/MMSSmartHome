@@ -11,7 +11,6 @@ import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
  * Created by CongDanh on 21/10/2015.
  */
 public class PushFileAsyncTask extends AsyncTask<Void, Void, Integer> {
-    Utils utils;
     ProgressDialog pd;
     byte[] bytes;
     String fName;
@@ -24,7 +23,6 @@ public class PushFileAsyncTask extends AsyncTask<Void, Void, Integer> {
         this.rasp = rasp;
         this.activity = activity;
 
-        utils = new Utils(activity);
         pd = new ProgressDialog(activity);
     }
 
@@ -40,7 +38,7 @@ public class PushFileAsyncTask extends AsyncTask<Void, Void, Integer> {
 
     @Override
     protected Integer doInBackground(Void... params) {
-        return utils.pushFile(bytes, fName, rasp);
+        return Utils.pushFile(bytes, fName, rasp);
     }
 
     @Override

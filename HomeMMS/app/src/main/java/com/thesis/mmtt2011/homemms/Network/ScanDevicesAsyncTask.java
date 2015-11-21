@@ -142,8 +142,8 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
         //Clear List devices
         ScanDevicesActivity.devices.clear();
         //Show ProgressDialog
-        pd.setTitle("Scanning...");
-        pd.setMessage("Running. Please Wait...");
+        pd.setTitle("Scan device");
+        pd.setMessage("Scanning. Please Wait...");
         pd.setProgressStyle(pd.STYLE_HORIZONTAL);
         pd.setProgress(0);
         pd.show();
@@ -201,7 +201,7 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
 
     private void UpdateAdapterDevices() {
         RecyclerView mRecyclerView = (RecyclerView) activity.findViewById(R.id.device_recycler_view);
-        RecyclerView.Adapter mAdapter = new DeviceAdapter(ScanDevicesActivity.devices);
+        RecyclerView.Adapter mAdapter = new DeviceAdapter(ScanDevicesActivity.devices, activity);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }

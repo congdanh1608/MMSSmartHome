@@ -19,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.activity.ComposeMessageActivity;
-import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 import java.io.BufferedReader;
@@ -76,7 +75,7 @@ public class Utils {
             boolean created = file.createNewFile();
             System.out.println("created file = " + created);
             out = new FileOutputStream(toPath);
-//            copyFile(in, out);
+            CopyFile(in, out);
             in.close();
             in = null;
             out.flush();
@@ -87,6 +86,14 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static void CopyFile(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while ((read = in.read(buffer)) != -1) {
+            out.write(buffer, 0, read);
         }
     }
 
@@ -275,4 +282,7 @@ public class Utils {
         }
     }
 
+    public void ShowToast(String s){
+        Toast.makeText(activity, s, Toast.LENGTH_SHORT).show();
+    }
 }

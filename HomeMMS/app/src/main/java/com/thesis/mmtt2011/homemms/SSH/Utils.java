@@ -2,7 +2,9 @@ package com.thesis.mmtt2011.homemms.SSH;
 
 import android.app.Activity;
 
+import com.thesis.mmtt2011.homemms.model.Device;
 import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -11,18 +13,13 @@ import java.io.IOException;
 
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
+import ch.ethz.ssh2.Session;
 
 /**
  * Created by CongDanh on 20/10/2015.
  */
 public class Utils {
-    private Activity activity;
-
-    public Utils(Activity activity) {
-        this.activity = activity;
-    }
-
-    public boolean connectSSH(RaspberryPiClient raspberryPiClient) {
+    public static boolean connectSSH(RaspberryPiClient raspberryPiClient) {
         Connection connection = new Connection(raspberryPiClient.getIPAddress());
         try {
             connection.connect(null, 3000, 3000);
@@ -36,15 +33,15 @@ public class Utils {
         return false;
     }
 
-    public boolean disconnectSSH(RaspberryPiClient raspberryPiClient) {
+    public static boolean disconnectSSH(RaspberryPiClient raspberryPiClient) {
         Connection connection = raspberryPiClient.getConnection();
-        if (connection!=null) {
+        if (connection != null) {
             connection.close();
         }
         return true;
     }
 
-    public byte[] loadResource(String path) {
+    public static byte[] loadResourceFromPath(String path) {
         byte[] byteFileSource = null;
         try {
             File file = new File(path);
@@ -63,9 +60,9 @@ public class Utils {
         return byteFileSource;
     }
 
-    public int pushFile(byte[] byteFile, String fName , RaspberryPiClient raspberryPiClient) {
+    public static int pushFile(byte[] byteFile, String fName, RaspberryPiClient raspberryPiClient) {
         if (byteFile != null) {
-            if (raspberryPiClient.getConnection()!=null) {
+            if (raspberryPiClient.getConnection() != null) {
                 try {
                     SCPClient scpc = raspberryPiClient.getConnection().createSCPClient();
                     scpc.put(byteFile, fName, "/home/" + raspberryPiClient.getUsername() + "/");
@@ -73,9 +70,54 @@ public class Utils {
                     e.printStackTrace();
                     return -1;  //Error not know
                 }
-            }else return -2; //Error not connect PI
-        }else return 0; //Error not data byte
+            } else return -2; //Error not connect PI
+        } else return 0; //Error not data byte
         return 1;  //Error not know
     }
 
+    public static boolean CheckIsRaspPiDefault(Device device) {
+        Connection connection = new Connection(device.getIPAddress());
+        try {
+            connection.connect(null, 3000, 3000);
+            if (connection.authenticateWithPassword(ContantsHomeMMS.userRaspPi, ContantsHomeMMS.passRaspPi)) {
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static int CheckIsRaspPiConfigured(RaspberryPiClient rasp) {
+        Connection connection = new Connection(rasp.getIPAddress());
+        try {
+            connection.connect(null, 3000, 3000);
+            if (connection.authenticateWithPassword(rasp.getUsername(), rasp.getPassword())) {
+                String s = "ls /home/" + rasp.getUsername();
+                String result = excCommandStringWithResult(connection, s);
+                if (result != null && result.contains("configrasppi")) {
+                    return 1; // It is Rasp was configured.
+                }
+                return 2; // It is Rasp was not configured.
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0; //It is not Rasp
+    }
+
+    public static String excCommandStringWithResult(Connection connection, String string) {
+        String result = null;
+        if (string != null)
+            string += "\n";
+        try {
+            Session session = connection.openSession();
+            session.execCommand(string);
+            result = com.thesis.mmtt2011.homemms.implement.Utils.getResponse(session);
+            session.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 }

@@ -12,6 +12,11 @@ public class ContantsHomeMMS {
     public static final File SD_Scard = Environment.getExternalStorageDirectory();
     public static final String AppName = "HOMEMMS";
     public static final String AppFolder = SD_Scard + "/" + AppName;
+    public static final String nmblookupName = "nmblookup";
+
+    //User - Pass default of Rasp Pi.
+    public static final String userRaspPi = "pi";
+    public static final String passRaspPi = "raspberry";
 
     public static final String cmdKey = "cmdKey", IDUserKey = "IDUSERKEY", NameKey = "NAMEKEY",
     PassKey = "PASSWORDKEY", AvatarKey = "AVATARKEY", StatusKey = "STATUSKEY",

@@ -37,7 +37,7 @@ public class Utils {
         WifiManager wimanager = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
         String macAddress = wimanager.getConnectionInfo().getMacAddress();
         if (macAddress == null) {
-            macAddress = "Device don't have mac address or wi-fi is disabled";
+            macAddress = null; //"Device don't have mac address or wi-fi is disabled";
         }
         return macAddress;
     }

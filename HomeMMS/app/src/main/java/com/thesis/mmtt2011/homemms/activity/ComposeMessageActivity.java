@@ -48,7 +48,6 @@ public class ComposeMessageActivity extends MainActivity {
     private HomeMMSDatabaseHelper homeMMSDatabaseHelper;
 
     private com.thesis.mmtt2011.homemms.Utils utils;
-    private Utils utilsSSH;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,6 @@ public class ComposeMessageActivity extends MainActivity {
 
         //create Utils.
         utils = new com.thesis.mmtt2011.homemms.Utils(this);
-        utilsSSH = new Utils(this);
 
         mMessageTitleView = (EditText) findViewById(R.id.message_title);
         mMessageContentView = (EditText) findViewById(R.id.message_content);
@@ -153,7 +151,7 @@ public class ComposeMessageActivity extends MainActivity {
 
     private void pushFileAttachToPi(String mFileName) {
         if (mFileName != null) {
-            byte[] bytes = utilsSSH.loadResource(mFileName);
+            byte[] bytes = Utils.loadResourceFromPath(mFileName);
             if (bytes != null) {
                 PushFileAsyncTask async = new PushFileAsyncTask(bytes, mFileName, rasp, this);
                 async.execute();

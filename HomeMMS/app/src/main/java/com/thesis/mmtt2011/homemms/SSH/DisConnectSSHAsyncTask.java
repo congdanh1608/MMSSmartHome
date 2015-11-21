@@ -8,7 +8,6 @@ import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
 
 
 public class DisConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
-    Utils utils;
     Activity activity;
     RaspberryPiClient rasp;
     ProgressDialog pd;
@@ -16,7 +15,6 @@ public class DisConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
     public DisConnectSSHAsyncTask(Activity activity, RaspberryPiClient rasp) {
         this.activity = activity;
         this.rasp = rasp;
-        utils = new Utils(activity);
         pd = new ProgressDialog(activity);
     }
 
@@ -32,7 +30,7 @@ public class DisConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        if (utils.disconnectSSH(rasp)) return true;
+        if (Utils.disconnectSSH(rasp)) return true;
         return false;
     }
 

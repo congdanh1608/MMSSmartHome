@@ -10,7 +10,6 @@ import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
  * Created by CongDanh on 21/10/2015.
  */
 public class ConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
-    Utils utils;
     Activity activity;
     RaspberryPiClient rasp;
     ProgressDialog pd;
@@ -18,7 +17,6 @@ public class ConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
     public ConnectSSHAsyncTask(Activity activity, RaspberryPiClient rasp) {
         this.activity = activity;
         this.rasp = rasp;
-        utils = new Utils(activity);
         pd = new ProgressDialog(activity);
     }
 
@@ -34,7 +32,7 @@ public class ConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        if (utils.connectSSH(rasp)) return true;
+        if (Utils.connectSSH(rasp)) return true;
         return false;
     }
 

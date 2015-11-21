@@ -1,5 +1,6 @@
 package com.thesis.mmtt2011.homemms.adapter;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,7 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.SSH.Utils;
+import com.thesis.mmtt2011.homemms.implement.InstallRaspAsyncTask;
 import com.thesis.mmtt2011.homemms.model.Device;
+import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
 
 import java.util.List;
 
@@ -17,9 +21,14 @@ import java.util.List;
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder> {
 
     private List<Device> devices;
+    public static Activity activity;
+    public static com.thesis.mmtt2011.homemms.Utils utils;
 
-    public DeviceAdapter(List<Device> _devices) {
+    public DeviceAdapter(List<Device> _devices, Activity activity) {
         devices = _devices;
+        this.activity = activity;
+
+        utils = new com.thesis.mmtt2011.homemms.Utils(activity);
     }
 
     @Override
@@ -58,13 +67,22 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         public void bindDevice(Device device) {
             mDevice = device;
             tvIPAddress.setText(mDevice.getIPAddress());
-            tvMACAddress.setText(mDevice.getMacAddress());
+//            tvMACAddress.setText(mDevice.getMacAddress());
+            tvMACAddress.setText(mDevice.getDeviceName());
         }
 
         @Override
         public void onClick(View v) {
             if (mDevice != null) {
-                //do something with device
+                //check and create Pi client if it was Pi.
+                if (Utils.CheckIsRaspPiDefault(mDevice)){
+                    RaspberryPiClient rasp = new RaspberryPiClient(mDevice.getDeviceName(), mDevice.getIPAddress(), mDevice.getMacAddress());
+                    //Install config to Pi.
+                    new InstallRaspAsyncTask(activity, rasp, false, "", "").execute();
+                }
+                else {
+                    utils.ShowToast("It's not Rasp Pi");
+                }
             }
         }
     }

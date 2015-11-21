@@ -7,9 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 
 import com.thesis.mmtt2011.homemms.Network.ScanDevicesAsyncTask;
 import com.thesis.mmtt2011.homemms.R;
@@ -30,12 +33,8 @@ public class ScanDevicesActivity extends AppCompatActivity {
 
     public static List<Device> devices;
 
+    private Utils utils;
     private com.thesis.mmtt2011.homemms.Network.Utils utilsNetwork;
-
-    private void initScan(){
-        devices = new ArrayList<Device>();
-        new ScanDevicesAsyncTask(this).execute();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +43,16 @@ public class ScanDevicesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        utils = new Utils(this);
         utilsNetwork = new com.thesis.mmtt2011.homemms.Network.Utils(this);
 
-        //Copy nmblookup file to Android.
+        //Copy nmblookup file to data.
+        Installnmblookup();
 
-
-        mRecyclerView = (RecyclerView)findViewById(R.id.device_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.device_recycler_view);
+        // Scan devices
         initScan();
-        mAdapter = new DeviceAdapter(devices);
+        mAdapter = new DeviceAdapter(devices, this);
         mRecyclerView.setAdapter(mAdapter);
 
         // use this setting to improve performance if you know that changes
@@ -65,7 +66,6 @@ public class ScanDevicesActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabSendMsg);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +74,34 @@ public class ScanDevicesActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    private void initScan() {
+        devices = new ArrayList<Device>();
+        if (utilsNetwork.getMacAddress() != null) {
+            new ScanDevicesAsyncTask(this).execute();
+        } else utils.ShowToast("Device don't connect network or wi-fi is disabled");
+    }
+
+    private void Installnmblookup() {
+        String nmblookupPath = utilsNetwork.getnmbLookupLocation();
+
+        //Check CPU x86?
+        Boolean x86Cpu = Utils.isX86Cpu();
+
+        //Scan Network with nmblookup.
+        if (!Utils.ChecknmblookupAvalability(nmblookupPath)) {
+            if (x86Cpu) {
+                Utils.copyAsset(getAssets(), "x86/" + ContantsHomeMMS.nmblookupName, nmblookupPath);
+            } else {
+                Utils.copyAsset(getAssets(), ContantsHomeMMS.nmblookupName, nmblookupPath);
+            }
+            try {
+                Process p = Runtime.getRuntime().exec("chmod 774 " + nmblookupPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -92,35 +120,17 @@ public class ScanDevicesActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_scan) {
-            new ScanDevicesAsyncTask(this).execute();
+            //Scan devices
+            initScan();
             return true;
         }
 
         if (id == R.id.action_install_config) {
+            //InstallRaspAsyncTask into device was choosen
+
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void Installnmblookup(){
-        String nmblookupPath = utilsNetwork.getnmbLookupLocation();
-
-        //Check CPU x86?
-        Boolean x86Cpu = Utils.isX86Cpu();
-
-//        Scan Network with nmblookup.
-//        if (Utils.CreateFolder(ContantsHomeMMS.AppFolder) && !Utils.ChecknmblookupAvalability(nmblookupPath)) {
-//            if (x86Cpu) {
-//                Utils.copyAsset(getAssets(), "x86/" + ConstPath.nmblookupName, ConstPath.getnmbLookupLocation(this));
-//            } else {
-//                Utils.copyAsset(getAssets(), ConstPath.nmblookupName, ConstPath.getnmbLookupLocation(this));
-//            }
-//            try {
-//                Process p = Runtime.getRuntime().exec("chmod 774 " + ConstPath.getnmbLookupLocation(this));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 }
