@@ -44,4 +44,7 @@
     <string name="float_new_message">New message</string>
     <string name="float_new_video">New video</string>
     <string name="float_new_record">New record</string>
+    <string name="select_contact">Send to</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 </resources>

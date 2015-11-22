@@ -1,5 +1,7 @@
 package com.thesis.mmtt2011.homemms.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,8 +16,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +29,7 @@ import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.SSH.ConnectSSHAsyncTask;
 import com.thesis.mmtt2011.homemms.SSH.PushFileAsyncTask;
 import com.thesis.mmtt2011.homemms.SSH.Utils;
+import com.thesis.mmtt2011.homemms.adapter.ContactAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
@@ -49,6 +56,18 @@ public class ComposeMessageActivity extends MainActivity {
 
     private com.thesis.mmtt2011.homemms.Utils utils;
 
+    ContactAdapter mAdapter;
+    ArrayList<User> contacts = new ArrayList<>();
+    ArrayList<User> selectedContacts = new ArrayList<>();
+
+    // du lieu list contact example
+    public void initContacts() {
+        for (int i = 0; i < 10; i++) {
+            User user = new User(String.valueOf(i), "Contact " + i,
+                    String.valueOf(i), "link avatar", "online");
+            contacts.add(user);
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,9 +92,47 @@ public class ComposeMessageActivity extends MainActivity {
         add_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                utils.showDialog();
+                //utils.showDialog();
+                AlertDialog.Builder builder = new AlertDialog.Builder(ComposeMessageActivity.this);
+                builder.setAdapter(mAdapter, null);
+                builder.setTitle(R.string.select_contact);
+                builder.setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //do something with selectedContact
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog contactDialog = builder.create();
+                ListView contactList = contactDialog.getListView();
+                contactList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+                contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        LinearLayout linearLayout = (LinearLayout) view;
+                        View v = linearLayout.getChildAt(1);
+                        CheckedTextView checkedTextView = (CheckedTextView) v;
+                        checkedTextView.setChecked(!checkedTextView.isChecked());
+                        if (checkedTextView.isChecked()) {
+                            selectedContacts.add(contacts.get(position));
+                        } else {
+                            if (selectedContacts.contains(contacts.get(position))) {
+                                selectedContacts.remove(contacts.get(position));
+                            }
+                        }
+                    }
+                });
+                contactDialog.show();
             }
         });
+
         fabSendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,6 +141,7 @@ public class ComposeMessageActivity extends MainActivity {
                 onSendMessage();
             }
         });
+
     }
 
     private void onSendMessage() {
