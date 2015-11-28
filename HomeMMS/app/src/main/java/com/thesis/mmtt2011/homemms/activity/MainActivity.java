@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.thesis.mmtt2011.homemms.Network.DiscoveryThread;
 import com.thesis.mmtt2011.homemms.Network.Utils;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.SlidingTabLayout;
@@ -67,8 +68,10 @@ public class MainActivity extends AppCompatActivity {
         utils = new com.thesis.mmtt2011.homemms.Utils(this);
 
 
-        //Demo info
-        rasp = new RaspberryPiClient("Pi", "192.168.1.114", "B8:27:EB:57:07:1C");
+        //Info server Pi
+        rasp = new RaspberryPiClient();
+//        rasp = new RaspberryPiClient("Pi", "192.168.1.241", "B8:27:EB:57:07:1C");
+
         //get my User info Vì chưa biết user đã có đăng ký hay chưa?
         //Nếu đã dk rồi thì sẽ có full info myUser.
         //Nếu chưa sẽ chỉ có ID (Mac) trong info myUser.;
@@ -80,8 +83,11 @@ public class MainActivity extends AppCompatActivity {
                     , ContantsHomeMMS.UserStatus.online.name());
         }
 
+        //Load before getIsFirstRun()
+        //Load connect to Pi and listen receive message from Pi.
+        init();
+
         if (PreferencesHelper.getIsFirstRun(this)) {
-            PreferencesHelper.writeToPreferences(this, false);
             Intent intent = new Intent(this, AppIntroSetup.class);
             startActivity(intent);
         }
@@ -153,8 +159,14 @@ public class MainActivity extends AppCompatActivity {
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
-        //Load connect to Pi and listen receive message from Pi..
-        init();;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (client==null){
+            init();
+        }
     }
 
     @Override
@@ -309,7 +321,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void init(){
         //connect socket.
-        client = new Client(rasp, port, this);
-        client.StartSocket();
+        if (rasp!=null && !PreferencesHelper.getIsFirstRun(this)) {
+            client = new Client(rasp, port, this);
+            client.StartSocket();
+        }
     }
+
 }

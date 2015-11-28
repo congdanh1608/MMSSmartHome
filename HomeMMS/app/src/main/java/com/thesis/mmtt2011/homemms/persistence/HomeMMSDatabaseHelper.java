@@ -291,6 +291,30 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return tmpMessages;
     }
 
+    public static List<Message> getAllMessagesSent(Context context, String sender) {
+        SQLiteDatabase readableDatabase = getReadableDatabase(context);
+        String sql = "SELECT * FROM " + MessageTable.NAME + " where " + MessageTable.FK_USER_SENDER + "='" + sender + "'";
+        Cursor data = readableDatabase.rawQuery(sql, null);
+        List<Message> tmpMessages = new ArrayList<>(data.getCount());
+        do {
+            final Message message = getMessage(context, data, readableDatabase);
+            tmpMessages.add(message);
+        } while (data.moveToNext());
+        return tmpMessages;
+    }
+
+    public static List<Message> getAllMessagesReceived(Context context, String receiver) {
+        SQLiteDatabase readableDatabase = getReadableDatabase(context);
+        String sql = "SELECT * FROM " + MessageTable.NAME + " where " + MessageTable.COLUMN_RECEIVER + " like '%" + receiver + "%'";
+        Cursor data = readableDatabase.rawQuery(sql, null);
+        List<Message> tmpMessages = new ArrayList<>(data.getCount());
+        do {
+            final Message message = getMessage(context, data, readableDatabase);
+            tmpMessages.add(message);
+        } while (data.moveToNext());
+        return tmpMessages;
+    }
+
     /**
      * Get all messages have a status such as (draft, delivered)
      * @param context

@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
  */
 public class Discover {
 
+    private Utils utilsNetwork;
+
     //UDP port 137
     public static String getHostNameNmblookup(String IPAddress, String nmbLookupLocation){
         StringBuilder output = new StringBuilder();

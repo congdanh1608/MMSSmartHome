@@ -15,6 +15,15 @@ public class Device {
     protected String password;
     protected int deviceType;   //0-Unknown 1-Rash Pi 2-PC 3-Smart.
 
+    public Device(){
+        this.deviceName = null;
+        this.IPAddress = null;
+        this.MacAddress = null;
+        username = null;
+        password = null;
+        deviceType = 0;
+    }
+
     public Device(String deviceName, String IPAddress, String MacAddress){
         this.deviceName = deviceName;
         this.IPAddress = IPAddress;

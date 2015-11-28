@@ -240,6 +240,39 @@ public class UserModel {
 		return user;
 	}
 
+	public User getUserWithPass(String userID, String pass) {
+		Connection conn = null;
+		Statement stmt = null;
+		User user = null;
+		try {
+			conn = MysqlConnect.getConnectMysql();
+			stmt = conn.createStatement();
+			String sql = "SELECT * FROM " + handler.TABLE_USER + " WHERE " + handler.USERID + "='" + userID + "' AND "
+					+ handler.PASSWORD + "='" + pass + "'";
+			ResultSet rset = stmt.executeQuery(sql);
+			while (rset.next()) {
+				user = new User(rset.getString(handler.USERID), rset.getString(handler.NAMEDISPLAY),
+						rset.getString(handler.PASSWORD), rset.getString(handler.AVATAR),
+						rset.getString(handler.STATUS_USER));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null)
+					conn.close();
+			} catch (SQLException se) {
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return user;
+	}
+
 	public List<User> getAllUser() {
 		List<User> users = new ArrayList<User>();
 		Connection conn = null;

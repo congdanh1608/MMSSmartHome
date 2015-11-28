@@ -8,7 +8,9 @@ import android.widget.EditText;
 
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.fragment.InboxFragment;
+import com.thesis.mmtt2011.homemms.fragment.SentFragment;
 import com.thesis.mmtt2011.homemms.helper.JsonHelper;
+import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
@@ -48,15 +50,40 @@ public class SocketControl {
             Command command = Command.valueOf(cmd);
             switch (command) {
                 case HASREGISTER:
-                    if (getHasRegister(msg)){
-                        //if device was registed, server will send list myUser in database.
-                        getListUserSaveToDatabase(msg);
-                    }else {
-                        //If deivce was not registed, myUser will show register acitvity and send info of client to server.
-                        //Show register activity.
-                        showDialogRegister(context);
-                        //Send info of client to Server.
+                    switch (getHasRegister(msg)) {
+                        case REGISTERED:
+                            //if device was registered, server will send list myUser in database.
+                            getListUserSaveToDatabase(msg);
+                            break;
+                        case NOTREGISTERED:
+                            //If deivce was not registed, will show register acitvity and send info of client to server.
+                            //Show register activity.
+                            showDialogRegister(context);
+                            //Send info of client to Server.
 //                        client.SendMessageInfoOfClient();
+                            break;
+                        case REQUESTLOGIN: //Server request client login.
+                            //if login, will show Login form.
+                            showDialogLogin(context);
+                            //Send info login to Server.
+//                            client.SendLoginInfoOfClient();
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+
+                case LOGIN:
+                    if (getLoginSuccess(msg)) {      //Login success
+                        //Write preference
+                        PreferencesHelper.writeToPreferences_(context, false);
+                        //get list user was send by server.
+                        getListUserSaveToDatabase(msg);
+                        Log.d("login", "succes");
+                    } else {                         //Login fail
+                        //show notify login fail and request try to login again.
+                        Log.d("login", "fail");
+                        showDialogLogin(context);
                     }
                     break;
 
@@ -70,8 +97,11 @@ public class SocketControl {
                     if (messageReceive != null) {
                         //Save message to database.
                         homeMMSDatabaseHelper.addMessage(messageReceive);
-                        //Notify fragment myUser received a new message with mID.
-                        InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
+                        //Notify fragment myUser received or sent a new message with mID.
+                        if (messageReceive.getSender().getId().equals(myUser.getId())) {
+                            SentFragment.UpdateNewMessageSent(messageReceive.getId());
+                        }else InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
+
                         Log.d("Received", "Updated new message to Inbox");
 
                         String tempA = messageReceive.getContentAudio();
@@ -181,10 +211,11 @@ public class SocketControl {
     }
 
     //create String (Json) contain Mac to send to Pi when first connect.
-    protected String createJsonIDClient(){
+    protected String createJsonFirstInfoClient() {
         try {
             JSONObject jsonObj = new JSONObject();
             jsonObj.put(ContantsHomeMMS.IDUserKey, myUser.getId());
+            jsonObj.put(ContantsHomeMMS.firstRun, PreferencesHelper.getIsFirstRun_(context));
             jsonObj.put(ContantsHomeMMS.cmdKey, Command.HASREGISTER);
             return jsonObj.toString();
         } catch (JSONException e) {
@@ -203,6 +234,20 @@ public class SocketControl {
             jsonObj.put(ContantsHomeMMS.AvatarKey, myUser.getAvatar());
             jsonObj.put(ContantsHomeMMS.StatusKey, myUser.getStatus());
             jsonObj.put(ContantsHomeMMS.cmdKey, Command.INFOREGISTER);
+            return jsonObj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //create String (Json) message contain login info of client: IP, Pass;
+    protected String createLoginInfoClient() {
+        try {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put(ContantsHomeMMS.IDUserKey, myUser.getId());
+            jsonObj.put(ContantsHomeMMS.PassKey, myUser.getPassword());
+            jsonObj.put(ContantsHomeMMS.cmdKey, Command.LOGIN);
             return jsonObj.toString();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -251,25 +296,27 @@ public class SocketControl {
         return JsonHelper.loadNote(msg, context);
     }
 
-    private boolean getHasRegister(String msg){
+    private boolean getLoginSuccess(String msg) {
+        return JsonHelper.loadLogin(msg);
+    }
+
+    private ContantsHomeMMS.FirstStatus getHasRegister(String msg) {
         return JsonHelper.loadHasRegister(msg);
     }
 
-    private void getListUserSaveToDatabase(String msg){
-        List<User>  userList = JsonHelper.loadUserDatabase(msg);
+    private void getListUserSaveToDatabase(String msg) {
+        List<User> userList = JsonHelper.loadUserDatabase(msg);
         for (User u : userList) {
-            if (homeMMSDatabaseHelper.getUserWith_(context, u.getId())!=null) {
+            if (homeMMSDatabaseHelper.getUserWith_(context, u.getId()) != null) {
                 homeMMSDatabaseHelper.UpdateUser_(u);
-            }else{
+            } else {
                 homeMMSDatabaseHelper.addUser(u);
             }
         }
     }
 
 
-
-
-    public static void showDialogRegister(Context context){
+    public static void showDialogRegister(Context context) {
         final EditText name = new EditText(context);
         final EditText pass = new EditText(context);
         final EditText avatar = new EditText(context);
@@ -288,6 +335,23 @@ public class SocketControl {
                         MainActivity.myUser.setAvatar(avatar.getText().toString());
                         MainActivity.myUser.setPassword(avatar.getText().toString());
                         client.SendMessageInfoOfClient();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .show();
+    }
+
+    public static void showDialogLogin(Context context) {
+        final EditText pass = new EditText(context);
+        pass.setText("123456");
+        new AlertDialog.Builder(context)
+                .setView(pass)
+                .setTitle("Login form")
+                .setMessage("input your pass")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity.myUser.setPassword(pass.getText().toString());
+                        client.SendLoginInfoOfClient();
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_info)

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 public class PreferencesHelper {
     //private static final String USER_PREFERENCES = "userPreferences";
     private static final String FIRST_RUN_PREFRENCES = "isFirstRun";
+    private static final String FIRST_RUN_PREFRENCES_ = "isFirstRun_";
     /*private static final String PREFERENCE_FIRST_NAME = USER_PREFERENCES + ".nameDisplay";
     private static final String PREFERENCE_LAST_INITIAL = USER_PREFERENCES + ".lastInitial";
     private static final String PREFERENCE_AVATAR = USER_PREFERENCES + ".avatar";*/
@@ -32,9 +33,23 @@ public class PreferencesHelper {
         editor.apply();
     }
 
+    public static void writeToPreferences_(Context context, Boolean isFirstRun) {
+        SharedPreferences.Editor editor = getEditor(context);
+        editor.putBoolean(FIRST_RUN_PREFRENCES_, isFirstRun);
+        /*editor.putString(PREFERENCE_FIRST_NAME, player.getFirstName());
+        editor.putString(PREFERENCE_LAST_INITIAL, player.getLastInitial());
+        editor.putString(PREFERENCE_AVATAR, player.getAvatar().name());*/
+        editor.apply();
+    }
+
     public static boolean getIsFirstRun(Context context) {
         SharedPreferences preferences = getIsFirstRunSharedPreferences(context);
         return preferences.getBoolean(FIRST_RUN_PREFRENCES, true);
+    }
+
+    public static boolean getIsFirstRun_(Context context) {
+        SharedPreferences preferences = getIsFirstRunSharedPreferences(context);
+        return preferences.getBoolean(FIRST_RUN_PREFRENCES_, true);
     }
 
     private static SharedPreferences.Editor getEditor(Context context) {

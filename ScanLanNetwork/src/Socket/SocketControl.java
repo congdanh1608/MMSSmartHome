@@ -16,6 +16,7 @@ import Model.User;
 import SSH.PushFile;
 import presistence.ContantsHomeMMS;
 import presistence.ContantsHomeMMS.Command;
+import presistence.ContantsHomeMMS.FirstStatus;
 
 public class SocketControl {
 	// public static String IP = "0.0.0.0", Name = "None",
@@ -47,35 +48,31 @@ public class SocketControl {
 		String cmd = getCommandMsg(msg);
 		if (cmd != null) {
 			Command command = Command.valueOf(cmd);
-			String temp = null;
+			String userID = null, passUser = null;
+			boolean firstRun = true;
 			switch (command) {
 			case HASREGISTER:
-				// Load user ID from client.
-				String userID = loadIDUser(msg);
+				// Load user ID + pass from client.
+				userID = loadIDUser(msg);
+				firstRun = loadFirstRun(msg);
 				// Check user was registered?
 				// database to client.
-				boolean hasRegister = checkUserHasRegister(userID);
-				// If user was registered, sever will ask registered and send user and check msg need send to client...
-				if (hasRegister) {
-					//Update status of user.
+				ContantsHomeMMS.FirstStatus hasRegister = checkUserHasRegister(userID, firstRun);
+				// If user was registered, sever will ask registered and send
+				// user and check msg need send to client...
+				switch (hasRegister) {
+				case REGISTERED: {
+					// Update status of user.
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
 					sendAskWasRegitered();
 					user = userModel.getUser(userID);
-					
-					// sGui.updateInfo(IP, Name, Mac);
-					System.out.println(user.getNameDisplay() + " login");
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+
 					// Compare data and send client if have note need send to
 					// client.
-					messagesReceive = checkNoteForClient(user.getId());
+					messagesReceive = checkNewNoteForClient(user.getId());
 					if (messagesReceive.size() > 0) {
 						for (int i = 0; i < messagesReceive.size(); i++) {
-							System.out.println("Message " + i +" sending to" + user.getNameDisplay());
+							System.out.println("Message " + i + " sending to" + user.getNameDisplay());
 							server.SendMsg(createRecieverMessage(createMessageJson(messagesReceive.get(i))));
 							// Check if mms has file attach then send it to
 							// client.
@@ -96,25 +93,94 @@ public class SocketControl {
 									PushFile.sendFileToClient(tempV);
 								}
 							}
-							
-							//Update status of Message was sent.
-							messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(), 
+
+							// Update status of Message was sent.
+							messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(),
 									ContantsHomeMMS.MessageStatus.sent.name());
 						}
 					}
-				}else{	// If was not registed, server will ask not registed.
+				}
+					break;
+
+				case NOTREGISTERED: { // If was not registed, server will ask not registed.
 					sendAskWasNotRegistered();
+				}
+					break;
+
+				case REQUESTLOGIN:{	//Server will ask login - request client login.
+					sendAskRequestLogin();
+				}
+					break;
+
+				default:
+					break;
+				}
+				break;
+				
+			case LOGIN:		//User send info login to Server. Then server will check user, pass?
+				userID = loadIDUser(msg);
+				passUser = loadPassUser(msg);
+				User userInDB = userModel.getUser(userID);
+				if (userInDB.getPassword().equals(passUser)){ //Password true -> Response all msg + list user;
+					sendAskLoginSuccess();
+					
+					// Update status of user.
+					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
+										
+					user = userModel.getUser(userID);
+					
+					// Send all message relate with user.
+					messagesReceive = getAllNoteForClient(user.getId());
+					if (messagesReceive.size() > 0) {
+						for (int i = 0; i < messagesReceive.size(); i++) {
+							System.out.println("Message " + i + " sending to " + user.getNameDisplay());
+							server.SendMsg(createRecieverMessage(createMessageJson(messagesReceive.get(i))));
+							// Check if mms has file attach then send it to
+							// client.
+							if (checkHasAttachFile(messagesReceive.get(i))) {
+								String tempA = messagesReceive.get(i).getContentAudio();
+								String tempP = messagesReceive.get(i).getContentImage();
+								String tempV = messagesReceive.get(i).getContentVideo();
+								if (tempA != null && !tempA.equals("") && !tempA.equals("null")) {
+									System.out.println("Sent " + tempA);
+									PushFile.sendFileToClient(tempA);
+								}
+								if (tempP != null && !tempP.equals("") && !tempP.equals("null")) {
+									System.out.println("Sent " + tempP);
+									PushFile.sendFileToClient(tempP);
+								}
+								if (tempV != null && !tempV.equals("") && !tempV.equals("null")) {
+									System.out.println("Sent " + tempV);
+									PushFile.sendFileToClient(tempV);
+								}
+							}
+
+							// Update status of Message was sent.
+							messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(),
+									ContantsHomeMMS.MessageStatus.sent.name());
+							
+							//wait between every send msg
+							try {
+								Thread.sleep(500);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
+				}else{ //Password false; --> Response wrong pass.
+					sendAskLoginFail();
 				}
 				break;
 
 			case INFOREGISTER:
-				//Get user info register and save in database.
+				// Get user info register and save in database.
 				user = getInfoClient(msg);
-				//After register successfull, send List user in database.
-				sendAskWasRegitered();			
+				// After register successfull, send List user in database.
+				sendAskWasRegitered();
 				System.out.println(user.getNameDisplay() + " login");
 				break;
-				
+
 			case RECIEVER:
 				// user1-user2-user3
 				getInfoMessage(msg);
@@ -282,8 +348,12 @@ public class SocketControl {
 	 * return rNote; } return null; }
 	 */
 
-	private List<Message> checkNoteForClient(String reciever) {
+	private List<Message> checkNewNoteForClient(String reciever) {
 		return messageModel.getListNewMessageOfReciever(reciever);
+	}
+	
+	private List<Message> getAllNoteForClient(String reciever) {
+		return messageModel.getAllMessageRelateUser(reciever);
 	}
 
 	// create Message Json.
@@ -341,12 +411,29 @@ public class SocketControl {
 		return JsonHelper.loadJsonIDClient(msg);
 	}
 
-	protected boolean checkUserHasRegister(String userID) {
-		if (userModel.getUser(userID) != null) {
-			return true;
-		} else {
-			return false;
-		}
+	protected String loadPassUser(String msg) {
+		return JsonHelper.loadJsonPassClient(msg);
+	}
+
+	protected boolean loadFirstRun(String msg) {
+		return JsonHelper.loadJsonFirstRun(msg);
+	}
+	
+	protected ContantsHomeMMS.FirstStatus checkUserHasRegister(String userID, Boolean firstRun) {
+		if (userModel.getUser(userID) != null && !firstRun) { // User was registered.
+			return FirstStatus.REGISTERED;
+		} else if (userModel.getUser(userID) != null && firstRun) { // User need to login.
+			return FirstStatus.REQUESTLOGIN;
+		} else
+			return FirstStatus.NOTREGISTERED; // User was not registered.s
+	}
+	
+	protected void sendAskLoginSuccess() {
+		server.SendMsg(JsonHelper.createJsonLoginSuccess());
+	}
+	
+	protected void sendAskLoginFail() {
+		server.SendMsg(JsonHelper.createJsonLoginFail());
 	}
 
 	protected void sendAskWasRegitered() {
@@ -355,5 +442,9 @@ public class SocketControl {
 
 	protected void sendAskWasNotRegistered() {
 		server.SendMsg(JsonHelper.createJsonNotRegisted());
+	}
+	
+	protected void sendAskRequestLogin() {
+		server.SendMsg(JsonHelper.createJsonRequestLogin());
 	}
 }

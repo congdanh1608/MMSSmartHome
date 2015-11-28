@@ -105,7 +105,7 @@ public class Server {
 				String temp = "";
 				while ((temp = receive.readLine()) != null) {
 					tempMsg += temp;
-					System.out.println(tempMsg);
+					System.out.println("Server receive: " + tempMsg);
 					if (temp != null && !temp.equals("")) {
 						socketControl.getCommand(temp);
 					}

@@ -13,7 +13,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.thesis.mmtt2011.homemms.Network.Discover;
+import com.thesis.mmtt2011.homemms.Network.DiscoveryThread;
+import com.thesis.mmtt2011.homemms.Network.Utils;
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 
 public class ConnectConfiguredServerActivity extends AppCompatActivity {
 
@@ -26,10 +30,14 @@ public class ConnectConfiguredServerActivity extends AppCompatActivity {
 
     private ServerConnectTask mConnectTask = null;
     private String ipAddressServer;
+    private Utils utils;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_configured_server);
+
+        utils = new Utils(this);
+
         etIPServer = (EditText) findViewById(R.id.ipServer);
         etIPServer.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -53,6 +61,7 @@ public class ConnectConfiguredServerActivity extends AppCompatActivity {
                         "Finding server.Please wait...",
                         Toast.LENGTH_SHORT).show();
                 //Scan network find and connect to configured server raspberry
+                onAutoFindAndConnectToServer();
             }
         });
 
@@ -80,6 +89,20 @@ public class ConnectConfiguredServerActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void onAutoFindAndConnectToServer(){
+        //Find by broadcast.
+        BroadcastFindServer();
+        //Connect.
+
+        //
+        PreferencesHelper.writeToPreferences(this, false);
+    }
+
+    public void BroadcastFindServer(){
+        Thread thread = new Thread(DiscoveryThread.getInstance(this));
+        thread.start();
     }
 
     private void attemptConnect() {
@@ -113,6 +136,7 @@ public class ConnectConfiguredServerActivity extends AppCompatActivity {
             showProgress(true);
             mConnectTask = new ServerConnectTask(ipServer);
             mConnectTask.execute((Void) null);
+            PreferencesHelper.writeToPreferences(this, false);
         }
     }
 
@@ -136,6 +160,9 @@ public class ConnectConfiguredServerActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
+                MainActivity.rasp.setIPAddress(ipServer);
+                MainActivity.rasp.setMacAddress(Discover.getMacFromArpCache(ipServer));
+                MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utils.getnmbLookupLocation()));
                 //Simulate network access.
                 Thread.sleep(2000);
             } catch (InterruptedException e){
@@ -152,9 +179,13 @@ public class ConnectConfiguredServerActivity extends AppCompatActivity {
 
             if (success) {
                 //show activity register
-                Intent intent = new Intent(ConnectConfiguredServerActivity.this, RegisterActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(ConnectConfiguredServerActivity.this, RegisterActivity.class);
+//                startActivity(intent);
+                ConnectConfiguredServerActivity.this.finish();
                 finish();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             } else {
                 etIPServer.setError(getString(R.string.error_incorrect_ip_address));
                 etIPServer.requestFocus();

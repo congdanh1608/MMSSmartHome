@@ -77,7 +77,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
                 //check and create Pi client if it was Pi.
                 if (Utils.CheckIsRaspPiDefault(mDevice)){
                     RaspberryPiClient rasp = new RaspberryPiClient(mDevice.getDeviceName(), mDevice.getIPAddress(), mDevice.getMacAddress());
-                    //Install config to Pi.
+                    //Install config to Pi with Info of Access Point.
                     new InstallRaspAsyncTask(activity, rasp, false, "", "").execute();
                 }
                 else {

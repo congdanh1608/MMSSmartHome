@@ -249,8 +249,8 @@ public class MessageModel {
 		try {
 			conn = MysqlConnect.getConnectMysql();
 			stmt = conn.createStatement();
-			String sql = "SELECT * FROM " + handler.TABLE_MESSAGE + " WHERE " + handler.SENDER + " like '%" + userID
-					+ "%'";
+			String sql = "SELECT * FROM " + handler.TABLE_MESSAGE + " WHERE " + handler.SENDER + "='" + userID
+					+ "'";
 			ResultSet rset = stmt.executeQuery(sql);
 			while (rset.next()) {
 				Message message = new Message(rset.getString(handler.MID),
@@ -289,8 +289,8 @@ public class MessageModel {
 		try {
 			conn = MysqlConnect.getConnectMysql();
 			stmt = conn.createStatement();
-			String sql = "SELECT * FROM " + handler.TABLE_MESSAGE + " WHERE " + handler.STATUS_MSG + "="
-					+ ContantsHomeMMS.MessageStatus.sending + " AND " + handler.RECIEVER + " like '%" + userID + "%'";
+			String sql = "SELECT * FROM " + handler.TABLE_MESSAGE + " WHERE " + handler.STATUS_MSG + "='"
+					+ ContantsHomeMMS.MessageStatus.sending.name() + "' AND " + handler.RECIEVER + " like '%" + userID + "%'";
 			ResultSet rset = stmt.executeQuery(sql);
 			while (rset.next()) {
 				Message message = new Message(rset.getString(handler.MID),
@@ -319,7 +319,46 @@ public class MessageModel {
 		}
 		return messages;
 	}
-	
+
+	// Trả về list message mà lien quan user. (Trường hợp sau khi login)
+	public List<Message> getAllMessageRelateUser(String userID) {
+		List<Message> messages = new ArrayList<Message>();
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			conn = MysqlConnect.getConnectMysql();
+			stmt = conn.createStatement();
+			String sql = "SELECT * FROM " + handler.TABLE_MESSAGE + " WHERE " + handler.SENDER + "='" + userID
+					+ "' OR " + handler.RECIEVER + " like '%" + userID + "%'";
+			ResultSet rset = stmt.executeQuery(sql);
+			while (rset.next()) {
+				Message message = new Message(rset.getString(handler.MID),
+						Utils.getUserFromSender(rset.getString(handler.SENDER)),
+						Utils.getListUserFromReciver(rset.getString(handler.RECIEVER)), rset.getString(handler.TITLE),
+						rset.getString(handler.CONTENTTEXT), rset.getString(handler.CONTENTIMAGE),
+						rset.getString(handler.CONTENTAUDIO), rset.getString(handler.CONTENTVIDEO),
+						rset.getString(handler.STATUS_MSG), rset.getString(handler.TIMESTAMP));
+
+				messages.add(message);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null)
+					conn.close();
+			} catch (SQLException se) {
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return messages;
+	}
+
 	public List<Message> get12Message() {
 		List<Message> messages = new ArrayList<Message>();
 		Connection conn = null;
@@ -356,5 +395,5 @@ public class MessageModel {
 		}
 		return messages;
 	}
-	
+
 }

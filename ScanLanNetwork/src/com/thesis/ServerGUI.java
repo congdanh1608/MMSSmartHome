@@ -29,9 +29,11 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+import Database.DatabaseHandler;
 import Database.MessageModel;
 import Database.Utils;
 import Model.Message;
+import Network.DiscoveryThread;
 import Socket.Server;
 
 public class ServerGUI {
@@ -49,6 +51,7 @@ public class ServerGUI {
 	private static Server server = null;
 	private static int port = 2222;
 	private MessageModel messageModel;
+	private DatabaseHandler databaseHandler;
 
 	/**
 	 * Launch the application.
@@ -72,6 +75,7 @@ public class ServerGUI {
 	public ServerGUI() {
 		initialize();
 		UpdateTime();
+		FirstCheckDatabase();
 		ShowMessage();
 	}
 
@@ -80,6 +84,7 @@ public class ServerGUI {
 	 */
 	private void initialize() {
 		jPanels = new ArrayList<JPanel>();
+		databaseHandler = new DatabaseHandler();
 		messageModel = new MessageModel();
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -101,8 +106,8 @@ public class ServerGUI {
 		panelLeft.setBounds(0, 0, widthLeft, screenSize.height);
 		frame.getContentPane().add(panelLeft);
 		GridBagLayout gbl_panelLeft = new GridBagLayout();
-//		gbl_panelLeft.columnWidths = new int[] { 0, 0, 0, 0 };
-//		gbl_panelLeft.rowHeights = new int[] { 0, 0, 0, 0 };
+		// gbl_panelLeft.columnWidths = new int[] { 0, 0, 0, 0 };
+		// gbl_panelLeft.rowHeights = new int[] { 0, 0, 0, 0 };
 		gbl_panelLeft.columnWeights = createArrayDouble();
 		gbl_panelLeft.rowWeights = createArrayDouble();
 		panelLeft.setLayout(gbl_panelLeft);
@@ -120,6 +125,8 @@ public class ServerGUI {
 		btnStartListening.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				startSocketListener();
+				// start socket listen broadcast
+				startListenBroadcase();
 			}
 		});
 		panelRight.setLayout(null);
@@ -144,22 +151,20 @@ public class ServerGUI {
 
 	// create array columnWeights and columnHeight
 	private double[] createArrayDouble() {
-		double[] d = {1.0};	//default has a value 1.0
-		for (int i = 1; i < rows; i++) {	//add number rows-1 value 1.0
+		double[] d = { 1.0 }; // default has a value 1.0
+		for (int i = 1; i < rows; i++) { // add number rows-1 value 1.0
 			d = addElement(d, 1.0);
 		}
-		d = addElement(d, Double.MIN_VALUE);	//add default value in end array.
+		d = addElement(d, Double.MIN_VALUE); // add default value in end array.
 		return d;
 	}
-	
-	//Function add element to array double
+
+	// Function add element to array double
 	private double[] addElement(double[] a, double e) {
-	    a  = Arrays.copyOf(a, a.length + 1);
-	    a[a.length - 1] = e;
-	    return a;
+		a = Arrays.copyOf(a, a.length + 1);
+		a[a.length - 1] = e;
+		return a;
 	}
-	
-	
 
 	// create Panel
 	private void createListPanelwithContents() {
@@ -276,14 +281,30 @@ public class ServerGUI {
 	}
 
 	private void startSocketListener() {
+		// start socket listen command
 		server = new Server(port, this);
 		new ServerRunning().start();
 		lblServerStatus.setText("Server is listening");
+	}
+
+	// check if not exit tables then create it.
+	private void FirstCheckDatabase() {
+		if (!databaseHandler.checkTableExits(databaseHandler.TABLE_MESSAGE)) {
+			databaseHandler.createTableMessage();
+		}
+		if (!databaseHandler.checkTableExits(databaseHandler.TABLE_USER)) {
+			databaseHandler.createTableUser();
+		}
 	}
 
 	class ServerRunning extends Thread {
 		public void run() {
 			server.StartSocket();
 		}
+	}
+
+	private void startListenBroadcase() {
+		Thread discoveryThread = new Thread(DiscoveryThread.getInstance());
+		discoveryThread.start();
 	}
 }

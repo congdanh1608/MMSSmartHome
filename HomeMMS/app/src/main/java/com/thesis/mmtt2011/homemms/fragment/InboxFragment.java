@@ -18,6 +18,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
@@ -46,8 +47,8 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
     //Khoi tao danh sach cach message mau
     public void initListMessage() {
         //Get messages from database
-        //messages = HomeMMSDatabaseHelper.getMessages(getActivity(), true);
         messages = new ArrayList<>();
+//        messages = HomeMMSDatabaseHelper.getAllMessagesReceived(getActivity(), MainActivity.myUser.getId());
         List<User> receivers = new ArrayList<>();
         User receiver = new User("00:00:00:00:00:00", "Name Display", "password", "link avatar", "offline");
         receivers.add(receiver);
@@ -55,9 +56,9 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
         content[0] = "Lorem ipsum dolor sit amet, vis invenire interesset ut. Ad duo tale appareat contentiones, id per nisl tantas percipitur. Tollit mediocrem repudiandae ad vim, ad pri habeo dolorem disputando. ";
         content[1] = "Lorem ipsum dolor sit amet, vis invenire interesset ut. Ad duo tale appareat contentiones, id per nisl tantas percipitur";
         content[2] = "Lorem ipsum dolor sit amet, vis invenire interesset ut.";
-        for(int i = 0; i < 15; i++) {
+        for (int i = 0; i < 15; i++) {
             User user = new User(String.valueOf(i), "Pham Xuan Y", "password", "link avatar", "offline");
-            messages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, content[i%3], null, null, null, "Status " + i, "Oct 2" + i, (i % 2)==1));
+            messages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, content[i % 3], null, null, null, "Status " + i, "Oct 2" + i, (i % 2) == 1));
         }
     }
 
@@ -70,7 +71,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_inbox, container, false);
-        RecyclerView mRecyclerView = (RecyclerView)rootView.findViewById(R.id.inbox_recycler_view);
+        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.inbox_recycler_view);
 
         mActivity = getActivity();
         initListMessage();
@@ -85,12 +86,12 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
         //mLayoutManager = new LinearLayoutManager(getActivity());
 
         //use a grid layout manager
-        mLayoutManager = new GridLayoutManager(getActivity(),COLUMN_GRID);
+        mLayoutManager = new GridLayoutManager(getActivity(), COLUMN_GRID);
         mRecyclerView.setLayoutManager(mLayoutManager);
         return rootView;
     }
 
-    public static void UpdateNewMessageReceive(String mID){
+    public static void UpdateNewMessageReceive(String mID) {
         Message message = HomeMMSDatabaseHelper.getMessageWith(mActivity, mID);
         messages.add(0, message);
         mAdapter.notifyDataSetChanged();
@@ -123,7 +124,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
 
     /**
      * Toggle the selection state of an item.
-     *
+     * <p/>
      * If the item was the last one in the selection and is unselected, the selection is stopped.
      * Note that the selection must already be started (actionMode must not be null).
      *
@@ -147,7 +148,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate (R.menu.selected_menu, menu);
+            mode.getMenuInflater().inflate(R.menu.selected_menu, menu);
             return true;
         }
 

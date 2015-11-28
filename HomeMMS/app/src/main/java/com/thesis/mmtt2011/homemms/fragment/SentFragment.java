@@ -1,6 +1,7 @@
 package com.thesis.mmtt2011.homemms.fragment;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -15,9 +16,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
+import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +31,12 @@ import java.util.List;
 public class SentFragment extends Fragment implements MessageAdapter.MessageViewHolder.ClickListener {
 
     private RecyclerView mRecyclerView;
-    private MessageAdapter mAdapter;
+    private static MessageAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private static Activity mActivity;
 
-    List<Message> sentMessages;
+
+    static List<Message> sentMessages;
 
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
@@ -39,12 +44,13 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
     //Khoi tao danh sach cach message mau
     public void initListMessage() {
         sentMessages = new ArrayList<>();
+//        sentMessages = HomeMMSDatabaseHelper.getAllMessagesSent(getActivity(), MainActivity.myUser.getId());
         List<User> receivers = new ArrayList<>();
         User receiver = new User("00:00:00:00:00:00", "Name Display", "password", "link avatar", "offline");
         receivers.add(receiver);
-        for(int i = 0; i < 15; i++) {
+        for (int i = 0; i < 15; i++) {
             User user = new User("00:00:00:00:00:00", "Name Display " + String.valueOf(i), "password", "link avatar", "online");
-            sentMessages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, "Content" + i, null, null, null, "Oct 1" + i, "Status " + i, (i%2)==1));
+            sentMessages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, "Content" + i, null, null, null, "Oct 1" + i, "Status " + i, (i % 2) == 1));
         }
     }
 
@@ -63,7 +69,10 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_sent, container, false);
-        mRecyclerView = (RecyclerView)rootView.findViewById(R.id.sent_recycler_view);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.sent_recycler_view);
+
+        mActivity = getActivity();
+
         initListMessage();
         mAdapter = new MessageAdapter(sentMessages, this);
         mRecyclerView.setAdapter(mAdapter);
@@ -75,9 +84,15 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
         // use a linear layout manager
         //mLayoutManager = new LinearLayoutManager(getActivity());
         //use a grid layout manager
-        mLayoutManager = new GridLayoutManager(getActivity(),2);
+        mLayoutManager = new GridLayoutManager(getActivity(), 2);
         mRecyclerView.setLayoutManager(mLayoutManager);
         return rootView;
+    }
+
+    public static void UpdateNewMessageSent(String mID) {
+        Message message = HomeMMSDatabaseHelper.getMessageWith(mActivity, mID);
+        sentMessages.add(0, message);
+        mAdapter.notifyDataSetChanged();
     }
 
 
@@ -100,7 +115,7 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
 
     /**
      * Toggle the selection state of an item.
-     *
+     * <p/>
      * If the item was the last one in the selection and is unselected, the selection is stopped.
      * Note that the selection must already be started (actionMode must not be null).
      *
@@ -124,7 +139,7 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate (R.menu.selected_menu, menu);
+            mode.getMenuInflater().inflate(R.menu.selected_menu, menu);
             return true;
         }
 

@@ -53,7 +53,7 @@ public class Client {
             // TODO Auto-generated method stub
             try {
                 socketB = new Socket(rasp.getIPAddress(), 2222);
-                SendIDOfClient();
+                SendFirstInfoOfClient();
 
                 while (true) {
                     input = new BufferedReader(new InputStreamReader(socketB.getInputStream()));
@@ -116,11 +116,25 @@ public class Client {
     }
 
     //Send message contain info of client.
-    public boolean SendIDOfClient() {
+    public boolean SendLoginInfoOfClient() {
         if (socketB.isConnected()) {
             try {
                 printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
-                printWriter.println(socketControl.createJsonIDClient());
+                printWriter.println(socketControl.createLoginInfoClient());
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else return false;
+        return false;
+    }
+
+    //Send message contain info of client.
+    public boolean SendFirstInfoOfClient() {
+        if (socketB.isConnected()) {
+            try {
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
+                printWriter.println(socketControl.createJsonFirstInfoClient());
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();

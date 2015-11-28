@@ -16,6 +16,16 @@ public class RaspberryPiClient extends Device {
     private Socket socket;
     private boolean isChosenConfig;
 
+    public RaspberryPiClient(){
+        super();
+        isConfigured = false;
+        isChosenConfig = true;
+        connection = null;
+        socket = null;
+        this.username = "pi";
+        this.password = "raspberry";
+    }
+
     public RaspberryPiClient(String deviceName, String IPAddress, String MacAddress) {
         super(deviceName, IPAddress, MacAddress);
         isConfigured = false;

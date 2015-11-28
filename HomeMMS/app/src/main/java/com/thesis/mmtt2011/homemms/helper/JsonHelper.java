@@ -108,14 +108,14 @@ public class JsonHelper {
         return message;
     }
 
-    public static boolean loadHasRegister(String msg) {
+    public static boolean loadLogin(String msg) {
         if (msg != null) {
             try {
                 JSONObject jsonObj = new JSONObject(msg);
-                String hasRegister = jsonObj.isNull(ContantsHomeMMS.registerKey) ? null : jsonObj.getString(ContantsHomeMMS.registerKey);
-                if (hasRegister!=null && hasRegister.equals(ContantsHomeMMS.registeredKey))
+                String login = jsonObj.isNull(ContantsHomeMMS.loginKey) ? null : jsonObj.getString(ContantsHomeMMS.loginKey);
+                if (login != null && login.equals(ContantsHomeMMS.loginSuccess))     //Login successful.
                     return true;
-                else if (hasRegister!=null && hasRegister.equals(ContantsHomeMMS.notRegistered))
+                else if (login != null && login.equals(ContantsHomeMMS.loginFail))  //Login fail.
                     return false;
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
@@ -125,15 +125,37 @@ public class JsonHelper {
         return false;
     }
 
+    public static ContantsHomeMMS.FirstStatus loadHasRegister(String msg) {
+        if (msg != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(msg);
+                String hasRegister = jsonObj.isNull(ContantsHomeMMS.registerKey) ? null : jsonObj.getString(ContantsHomeMMS.registerKey);
+                if (hasRegister != null) {
+                    if (hasRegister.equals(ContantsHomeMMS.registered))     //Was Registered.
+                        return ContantsHomeMMS.FirstStatus.REGISTERED;
+                    else if (hasRegister.equals(ContantsHomeMMS.notRegistered))//Was not Registered.
+                        return ContantsHomeMMS.FirstStatus.NOTREGISTERED;
+                    else if (hasRegister.equals(ContantsHomeMMS.requestloginKey)) {          //Was Login
+                        return ContantsHomeMMS.FirstStatus.REQUESTLOGIN;
+                    }
+                }
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     public static List<User> loadUserDatabase(String msg) {
         List<User> userList = new ArrayList<User>();
         if (msg != null) {
             try {
                 JSONObject jsonObj = new JSONObject(msg);
                 String usersJson = jsonObj.isNull(ContantsHomeMMS.userDatabase) ? null : jsonObj.getString(ContantsHomeMMS.userDatabase);
-                if (usersJson!=null) {
+                if (usersJson != null) {
                     JSONArray users = new JSONArray(usersJson);
-                    for (int i = 0; i < users.length(); i++){
+                    for (int i = 0; i < users.length(); i++) {
                         JSONObject user = new JSONObject(users.getString(i));
                         String IDUser = user.getString(ContantsHomeMMS.IDUserKey);
                         String NameUser = user.getString(ContantsHomeMMS.NameKey);

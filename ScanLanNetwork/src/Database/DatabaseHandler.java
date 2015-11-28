@@ -1,8 +1,11 @@
 package Database;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import com.mysql.jdbc.DatabaseMetaData;
 
 public class DatabaseHandler {
 	public static final String DATABASE_NAME = "homemmsdb";
@@ -27,6 +30,34 @@ public class DatabaseHandler {
 	
 	public DatabaseHandler() {
 
+	}
+	
+	public boolean checkTableExits(String tableName){
+		Connection conn = null;
+		try {
+			conn = MysqlConnect.getConnectMysql();
+			DatabaseMetaData dbm = (DatabaseMetaData) conn.getMetaData();
+			// check if "employee" table is there
+			ResultSet tables = dbm.getTables(null, null, tableName, null);
+			if (tables.next()) {
+				return true;
+			}
+			else {
+			  return false;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}// end finally try
+		}
+		return false;
 	}
 
 	public void createTableUser() {

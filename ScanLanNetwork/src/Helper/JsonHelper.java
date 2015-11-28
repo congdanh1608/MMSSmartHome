@@ -33,6 +33,37 @@ public class JsonHelper {
 		return null;
 	}
 	
+	public static String loadJsonPassClient(String msg) {
+		String PassUser = null;
+		if (msg != null) {
+			try {
+				JSONObject jsonObj = new JSONObject(msg);
+				PassUser = jsonObj.isNull(ContantsHomeMMS.PassKey) ? null
+						: jsonObj.getString(ContantsHomeMMS.PassKey);
+					return PassUser;
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
+	public static boolean loadJsonFirstRun(String msg) {
+		boolean firstRun = true;
+		if (msg != null) {
+			try {
+				JSONObject jsonObj = new JSONObject(msg);
+				firstRun = jsonObj.isNull(ContantsHomeMMS.firstRun) ? true
+						: jsonObj.getBoolean(ContantsHomeMMS.firstRun);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return firstRun;
+	}
+	
 	public static User loadJsonInfoRegister(String msg){
 		User user = new User();
 		try {
@@ -56,13 +87,54 @@ public class JsonHelper {
 		return user;
 	}
 	
+	public static String createJsonLoginSuccess(){
+		List<User> users = new ArrayList<User>();
+		users = userModel.getAllUser();
+		
+		try {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put(ContantsHomeMMS.loginKey, ContantsHomeMMS.loginSuccess);
+			
+			JSONArray jsonArray = new JSONArray();
+			for (int i = 0; i < users.size(); i++){
+				 JSONObject user = new JSONObject();
+				 user.put(ContantsHomeMMS.IDUserKey, users.get(i).getId());
+                 user.put(ContantsHomeMMS.NameKey, users.get(i).getNameDisplay());
+                 user.put(ContantsHomeMMS.AvatarKey, users.get(i).getAvatar());
+                 user.put(ContantsHomeMMS.StatusKey, users.get(i).getStatus());
+                 
+                 jsonArray.put(user);
+			}
+			jsonObj.put(ContantsHomeMMS.userDatabase, jsonArray);
+			
+			jsonObj.put(ContantsHomeMMS.cmdKey, Command.LOGIN);
+			return jsonObj.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String createJsonLoginFail(){
+		try {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put(ContantsHomeMMS.loginKey, ContantsHomeMMS.loginFail);
+			
+			jsonObj.put(ContantsHomeMMS.cmdKey, Command.LOGIN);
+			return jsonObj.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static String createJsonRegisted(){
 		List<User> users = new ArrayList<User>();
 		users = userModel.getAllUser();
 		
 		try {
 			JSONObject jsonObj = new JSONObject();
-			jsonObj.put(ContantsHomeMMS.registerKey, ContantsHomeMMS.registeredKey);
+			jsonObj.put(ContantsHomeMMS.registerKey, ContantsHomeMMS.registered);
 			
 			JSONArray jsonArray = new JSONArray();
 			for (int i = 0; i < users.size(); i++){
@@ -88,6 +160,19 @@ public class JsonHelper {
 		try {
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put(ContantsHomeMMS.registerKey, ContantsHomeMMS.notRegistered);
+			
+			jsonObj.put(ContantsHomeMMS.cmdKey, Command.HASREGISTER);
+			return jsonObj.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String createJsonRequestLogin(){
+		try {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put(ContantsHomeMMS.registerKey, ContantsHomeMMS.requestLoginKey);
 			
 			jsonObj.put(ContantsHomeMMS.cmdKey, Command.HASREGISTER);
 			return jsonObj.toString();

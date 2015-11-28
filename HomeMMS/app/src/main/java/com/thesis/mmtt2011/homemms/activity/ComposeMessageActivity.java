@@ -30,6 +30,7 @@ import com.thesis.mmtt2011.homemms.SSH.ConnectSSHAsyncTask;
 import com.thesis.mmtt2011.homemms.SSH.PushFileAsyncTask;
 import com.thesis.mmtt2011.homemms.SSH.Utils;
 import com.thesis.mmtt2011.homemms.adapter.ContactAdapter;
+import com.thesis.mmtt2011.homemms.fragment.SentFragment;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
@@ -184,9 +185,12 @@ public class ComposeMessageActivity extends MainActivity {
 
         //Notify server myUser finished note.
         if (client != null) {
-            //After send message successful, update message in database status sent.
+            //After send message successful,
             if (client.SendMessageEndNote()) {
+                //update message in database status sent.
                 homeMMSDatabaseHelper.updateMessageStatus(this, message.getId(), ContantsHomeMMS.MessageStatus.sent.name());
+                //update message in Sent Fragment.
+                SentFragment.UpdateNewMessageSent(message.getId());
             }
         }
     }

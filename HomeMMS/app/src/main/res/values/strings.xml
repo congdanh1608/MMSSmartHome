@@ -47,4 +47,6 @@
     <string name="select_contact">Send to</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+
+    <string name="contact_name">contact_name</string>
 </resources>

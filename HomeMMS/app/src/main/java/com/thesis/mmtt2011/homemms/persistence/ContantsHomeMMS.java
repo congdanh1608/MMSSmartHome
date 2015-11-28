@@ -26,10 +26,18 @@ public class ContantsHomeMMS {
             mIDKey = "MID", titleKey = "TITLENOTE", contentTextKey = "MSG", contentAudioKey = "ATTACHAKEY",
             contentVideoKey = "ATTACHVKEY", contentImageKey = "ATTACHPKEY";
 
-    public static final String registerKey="REGISTER" , registeredKey ="REGISTERED", notRegistered ="NOTREGISTERED", userDatabase="USERDATABASE";
+    public static final String registerKey="REGISTER" , requestloginKey ="ReqLOGIN", registered ="REGISTERED",
+            notRegistered ="NOTREGISTERED", userDatabase="USERDATABASE", firstRun = "FIRSTRUN";
+
+    public static final String loginKey = "LOGIN", loginSuccess = "LOGINSUCCESS", loginFail = "LOGINFAIL";
 
     public enum Command {
-        HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE;
+        LOGIN, HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE;
+    }
+
+    //Status of first load app
+    public enum FirstStatus {
+        REQUESTLOGIN, REGISTERED, NOTREGISTERED;
     }
 
     public enum TypeFile{
