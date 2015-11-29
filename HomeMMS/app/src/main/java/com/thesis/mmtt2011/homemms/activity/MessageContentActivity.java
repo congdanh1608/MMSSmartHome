@@ -42,7 +42,7 @@ public class MessageContentActivity extends AppCompatActivity {
         // Get the message from the intent
         Intent intent = getIntent();
         String messageId = intent.getStringExtra(TAG);
-        mMessage = HomeMMSDatabaseHelper.getMessageWith(this, messageId);
+        mMessage = HomeMMSDatabaseHelper.getMessage(this, messageId);
 
         mTitleView = (TextView) findViewById(R.id.message_title);
         mTitleView.setText(mMessage.getTitle());

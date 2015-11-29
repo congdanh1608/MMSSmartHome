@@ -81,7 +81,7 @@ public class JsonHelper {
                 //Get Sender myUser.
                 String senderStr = jsonObj.isNull(ContantsHomeMMS.senderKey) ? null : jsonObj.getString(ContantsHomeMMS.senderKey);
                 User sender = new User();
-                sender = HomeMMSDatabaseHelper.getUserWith_(context, senderStr);
+                sender = HomeMMSDatabaseHelper.getUser(context, senderStr);
 
                 message.setMId(jsonObj.isNull(ContantsHomeMMS.mIDKey) ? null : jsonObj.getString(ContantsHomeMMS.mIDKey));
                 message.setTitle(jsonObj.isNull(ContantsHomeMMS.titleKey) ? null : jsonObj.getString(ContantsHomeMMS.titleKey));

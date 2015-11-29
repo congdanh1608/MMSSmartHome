@@ -6,9 +6,9 @@ import android.provider.BaseColumns;
  * Created by Xpie on 10/31/2015.
  */
 public interface UserTable {
-    String NAME = "myUser";
+    String NAME = "user";
 
-    String COLUMN_ID = BaseColumns._ID; //MAC address android device
+    String COLUMN_ID = "id";//BaseColumns._ID; //MAC address android device
     //String COLUMN_MAC = "mac";
     String COLUMN_NAME = "name";
     //String COLUMN_PASSWORD = "password";
@@ -19,7 +19,9 @@ public interface UserTable {
 
     String CREATE = "CREATE TABLE " + NAME + " ("
             + COLUMN_ID + " TEXT PRIMARY KEY, "
-            + COLUMN_NAME + " TEXT NOT NULL, "
-            + COLUMN_AVATAR + " TEXT NOT NULL, "
+            + COLUMN_NAME + " TEXT, "
+            + COLUMN_AVATAR + " TEXT, "
             + COLUMN_STATUS + " TEXT);";
+
+    String DROP = "DROP TABLE IF EXISTS " + NAME;
 }

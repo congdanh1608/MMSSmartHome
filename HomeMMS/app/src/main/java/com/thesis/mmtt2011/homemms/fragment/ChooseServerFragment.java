@@ -1,6 +1,7 @@
 package com.thesis.mmtt2011.homemms.fragment;
 
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -10,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.thesis.mmtt2011.homemms.R;
-import com.thesis.mmtt2011.homemms.activity.ConnectConfiguredServerActivity;
+import com.thesis.mmtt2011.homemms.activity.ConnectConfiguredServerFragment;
 import com.thesis.mmtt2011.homemms.activity.ScanDevicesActivity;
 
 /**
@@ -18,6 +19,7 @@ import com.thesis.mmtt2011.homemms.activity.ScanDevicesActivity;
  */
 public class ChooseServerFragment extends Fragment {
 
+    private static final String FRAGMENT_TAG = "ConnectConfiguredServer";
     private Button btConfiguredServer;
     private Button btNewServer;
 
@@ -45,8 +47,13 @@ public class ChooseServerFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //call ConnectConfiguredServer
-                Intent intent = new Intent(getActivity(), ConnectConfiguredServerActivity.class);
-                startActivity(intent);
+                ConnectConfiguredServerFragment connectConfiguredServerFragment = new ConnectConfiguredServerFragment();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction()
+                        .replace(R.id.choose_server_fragment, connectConfiguredServerFragment, FRAGMENT_TAG);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+                /*Intent intent = new Intent(getActivity(), ConnectConfiguredServerActivity.class);
+                startActivity(intent);*/
             }
         });
 

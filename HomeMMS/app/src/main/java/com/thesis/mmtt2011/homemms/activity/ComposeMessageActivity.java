@@ -10,6 +10,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.SyncStateContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -90,6 +91,9 @@ public class ComposeMessageActivity extends MainActivity {
         mComposeMessageFormView = findViewById(R.id.compose_message_form);
 
         FloatingActionButton fabSendMsg = (FloatingActionButton) findViewById(R.id.fabSendMsg);
+
+        initContacts();
+        mAdapter = new ContactAdapter(ComposeMessageActivity.this, contacts);
         add_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,7 +173,7 @@ public class ComposeMessageActivity extends MainActivity {
 
         Message message = createAMessage(receivers);
         //Save message to database with status draft.
-        homeMMSDatabaseHelper.addMessage(message);
+        homeMMSDatabaseHelper.createMessage(getApplicationContext(), message);
 
         if (client != null) {
             client.SendInfoMessage(message);
@@ -188,7 +192,8 @@ public class ComposeMessageActivity extends MainActivity {
             //After send message successful,
             if (client.SendMessageEndNote()) {
                 //update message in database status sent.
-                homeMMSDatabaseHelper.updateMessageStatus(this, message.getId(), ContantsHomeMMS.MessageStatus.sent.name());
+                message.setStatus(ContantsHomeMMS.MessageStatus.sent.name());
+                homeMMSDatabaseHelper.updateMessage(message);
                 //update message in Sent Fragment.
                 SentFragment.UpdateNewMessageSent(message.getId());
             }

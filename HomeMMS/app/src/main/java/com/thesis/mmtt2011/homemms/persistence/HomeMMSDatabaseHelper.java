@@ -65,6 +65,11 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         /* no-op */
+        db.execSQL(UserTable.DROP);
+        db.execSQL(MessageTable.DROP);
+
+        //create new tables
+        onCreate(db);
     }
 
     public void closeDB() {
@@ -77,8 +82,98 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
     /**
      * CRUD USERS *
      */
-    //Lay tat ca thong tin myUser dang json duoc server tra ve insert vao myUser table trong database
+    public static long createUser(Context context, User user) {
+        ContentValues values = new ContentValues();
+        values.put(UserTable.COLUMN_ID, user.getId());
+        values.put(UserTable.COLUMN_NAME, user.getNameDisplay());
+        values.put(UserTable.COLUMN_AVATAR, user.getAvatar());
+        values.put(UserTable.COLUMN_STATUS, user.getStatus());
+
+        //insert
+        return getWritableDatabase(context).insert(UserTable.NAME, null, values);
+    }
+
+    public static User getUser(Context context, String userId) {
+        String[] selectionArgs = {userId};
+        Cursor data = getReadableDatabase(context)
+                .query(UserTable.NAME, null, UserTable.COLUMN_ID + " = ?",
+                        selectionArgs, null, null, null);
+        if (data.moveToFirst()) {
+            User user = new User();
+            user.setId(data.getString(data.getColumnIndex(UserTable.COLUMN_ID)));
+            user.setNameDisplay(data.getString(data.getColumnIndex(UserTable.COLUMN_NAME)));
+            user.setNameDisplay(data.getString(data.getColumnIndex(UserTable.COLUMN_AVATAR)));
+            user.setStatus(data.getString(data.getColumnIndex(UserTable.COLUMN_STATUS)));
+            return user;
+        } else {
+            return null;
+        }
+    }
+
+    public static List<User> getAllUsers(Context context) {
+        List<User> users = new ArrayList<User>();
+        Cursor data = getReadableDatabase(context)
+                .query(UserTable.NAME, UserTable.PROJECTION, null, null, null, null, null);
+        if (data.moveToFirst()) {
+            do {
+                User user = new User();
+                user.setId(data.getString(data.getColumnIndex(UserTable.COLUMN_ID)));
+                user.setNameDisplay(data.getString(data.getColumnIndex(UserTable.COLUMN_NAME)));
+                user.setNameDisplay(data.getString(data.getColumnIndex(UserTable.COLUMN_AVATAR)));
+                user.setStatus(data.getString(data.getColumnIndex(UserTable.COLUMN_STATUS)));
+
+                users.add(user);
+            } while (data.moveToNext());
+        }
+        return users;
+    }
+
+    public static List<User> getAllUsersBy(Context context, String byColumn, String value) {
+        List<User> users = new ArrayList<User>();
+        String[] selectionArgs = {value};
+        Cursor data = getReadableDatabase(context)
+                .query(UserTable.NAME, UserTable.PROJECTION, byColumn + " = ?",
+                        selectionArgs, null, null, null);
+        if (data.moveToFirst()) {
+            do {
+                User user = new User();
+                user.setId(data.getString(data.getColumnIndex(UserTable.COLUMN_ID)));
+                user.setNameDisplay(data.getString(data.getColumnIndex(UserTable.COLUMN_NAME)));
+                user.setNameDisplay(data.getString(data.getColumnIndex(UserTable.COLUMN_AVATAR)));
+                user.setStatus(data.getString(data.getColumnIndex(UserTable.COLUMN_STATUS)));
+
+                users.add(user);
+            } while (data.moveToNext());
+        }
+        return users;
+    }
+
+    public int getUserCount() {
+        Cursor data = getReadableDatabase()
+                .query(UserTable.NAME, UserTable.PROJECTION, null, null, null, null, null);
+        int count = data.getCount();
+        return count;
+    }
+
+    public int updateUser(User user) {
+        ContentValues values = new ContentValues();
+        values.put(UserTable.COLUMN_NAME, user.getNameDisplay());
+        values.put(UserTable.COLUMN_STATUS, user.getStatus());
+        String[] selectionArgs = {user.getId()};
+        return getWritableDatabase().update(UserTable.NAME, values, UserTable.COLUMN_ID + " = ?",
+                selectionArgs);
+    }
+
+    public void deleteUser(String userId) {
+        String[] selectionArgs = {userId};
+        getWritableDatabase().delete(UserTable.NAME, UserTable.COLUMN_ID + " = ?",
+                selectionArgs);
+    }
+
+
+    /*//Lay tat ca thong tin myUser dang json duoc server tra ve insert vao myUser table trong database
     public void fillUsers(SQLiteDatabase db, String usersJson) throws JSONException, IOException{
+
         ContentValues values = new ContentValues();
         JSONArray jsonArray = new JSONArray(usersJson);
         JSONObject user;
@@ -98,9 +193,9 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         values.put(UserTable.COLUMN_AVATAR, user.getString(JsonAttributes.AVATAR));
         values.put(UserTable.COLUMN_STATUS, user.getString(JsonAttributes.STATUS));
         db.insert(UserTable.NAME, null, values);
-    }
+    }*/
 
-    public void addUser(User user) {
+    /*public void addUser(User user) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(UserTable.COLUMN_ID, user.getId());
@@ -134,11 +229,11 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         writableDatabase.close();
     }
 
-    /**
+    *//**
      * Gets all users wrapped in a {@link Cursor} positioned at it's first element.
      * @param context
      * @return All users stored in the database
-     */
+     *//*
     private static Cursor getUserCursor(Context context) {
         SQLiteDatabase readableDatabase = getReadableDatabase(context);
         Cursor data = readableDatabase
@@ -147,12 +242,12 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    /**
+    *//**
      * Gets a myUser from the given position of the cursor provided
      *
      * @param cursor The cursor containing the data.
      * @return The found myUser
-     */
+     *//*
     public static User getUser(Cursor cursor) {
         // "magic numbers" based on UserTable#PROJECTION
         final String id = cursor.getString(0);
@@ -181,13 +276,10 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return getUser(data);
     }
 
-    /**
+    *//**
      * Gets all users
      *
-     * @param context The context this is running in
-     * @param fromDatabase <code>true</code> if a data refresh is needed, else <code>false</code>.
-     * @return All users stored in database
-     */
+     *//*
 
     public ContentValues createUserValueFor(User user) {
         ContentValues contentValues = new ContentValues();
@@ -211,13 +303,188 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
             tmpUsers.add(user);
         } while (data.moveToNext());
         return tmpUsers;
-    }
+    }*/
 
 
 
     /**
      * CRUD MESSAGES *
      */
+
+    public long createMessage(Context context, Message message) {
+        ContentValues values = new ContentValues();
+        values.put(MessageTable.COLUMN_ID, message.getId());
+        values.put(MessageTable.COLUMN_SENDER, message.getSender().getId());
+        values.put(MessageTable.COLUMN_RECEIVER, ConvertStringReceiver(message.getReceiver()));
+        values.put(MessageTable.COLUMN_TITLE, message.getTitle());
+        values.put(MessageTable.COLUMN_CONTENT_TEXT, message.getContentText());;
+        values.put(MessageTable.COLUMN_CONTENT_IMAGE, message.getContentImage());
+        values.put(MessageTable.COLUMN_CONTENT_AUDIO, message.getContentAudio());
+        values.put(MessageTable.COLUMN_CONTENT_VIDEO, message.getContentVideo());
+        values.put(MessageTable.COLUMN_STATUS, message.getStatus());
+        values.put(MessageTable.COLUMN_TIMESTAMP, message.getTimestamp());
+
+        //insert
+        return getWritableDatabase(context).insert(MessageTable.NAME, null, values);
+    }
+
+    /**
+     * Gets list receivers (User) from String receivers
+     * @param context
+     * @param strReceivers MAC addresses of receivers MACReceiver1-MACReceiver2
+     * @return list myUser receivers
+     */
+    public static List<User> getListReceiver(Context context, String strReceivers) {
+        ArrayList<User> receivers = null;
+        if (strReceivers!=null) {
+            String[] macReceivers = strReceivers.split("-");
+            receivers = new ArrayList<>();
+            for (String receiverMac : macReceivers) {
+                receivers.add(getUser(context, receiverMac));
+            }
+        }
+        return receivers;
+    }
+
+    public static Message getMessage(Context context, String messageId) {
+        String[] selectionArgs = {messageId};
+        Cursor data = getReadableDatabase(context)
+                .query(MessageTable.NAME, null, MessageTable.COLUMN_ID + " = ?",
+                        selectionArgs, null, null, null);
+        if (data.moveToFirst()) {
+            Message message = new Message();
+            message.setMId(data.getString(data.getColumnIndex(MessageTable.COLUMN_ID)));
+            User sender = getUser(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_SENDER)));
+            message.setSender(sender);
+            List<User> receivers = getListReceiver(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_RECEIVER)));
+            message.setTitle(data.getString(data.getColumnIndex(MessageTable.COLUMN_TITLE)));
+            message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
+            message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
+            message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
+            message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+            message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
+            return message;
+        } else {
+            return null;
+        }
+    }
+
+    public static List<Message> getAllMessages(Context context) {
+        List<Message> messages = new ArrayList<Message>();
+        Cursor data = getReadableDatabase(context)
+                .query(MessageTable.NAME, MessageTable.PROJECTION, null, null, null, null, null);
+        if (data.moveToFirst()) {
+            do {
+                Message message = new Message();
+                message.setMId(data.getString(data.getColumnIndex(MessageTable.COLUMN_ID)));
+                User sender = getUser(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_SENDER)));
+                message.setSender(sender);
+                List<User> receivers = getListReceiver(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_RECEIVER)));
+                message.setTitle(data.getString(data.getColumnIndex(MessageTable.COLUMN_TITLE)));
+                message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
+                message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
+                message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
+                message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
+
+                messages.add(message);
+            } while (data.moveToNext());
+        }
+        return messages;
+    }
+
+    //viet 1 ham lay cac tin nhan da nhan
+    //like receiver
+    public static List<Message> getAllMessagesByReceiver(Context context, String value) {
+        List<Message> messages = new ArrayList<Message>();
+        String[] selectionArgs = {value};
+        Cursor data = getReadableDatabase(context)
+                .query(MessageTable.NAME, MessageTable.PROJECTION, MessageTable.COLUMN_RECEIVER + " LIKE % ? % ",
+                        selectionArgs, null, null, null);
+        if (data.moveToFirst()) {
+            do {
+                Message message = new Message();
+                message.setMId(data.getString(data.getColumnIndex(MessageTable.COLUMN_ID)));
+                User sender = getUser(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_SENDER)));
+                message.setSender(sender);
+                List<User> receivers = getListReceiver(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_RECEIVER)));
+                message.setTitle(data.getString(data.getColumnIndex(MessageTable.COLUMN_TITLE)));
+                message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
+                message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
+                message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
+                message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
+
+                messages.add(message);
+            } while (data.moveToNext());
+        }
+        return messages;
+    }
+    //
+    public static List<Message> getAllMessagesBy(Context context, String byColumn, String value) {
+        List<Message> messages = new ArrayList<Message>();
+        String[] selectionArgs = {value};
+        Cursor data = getReadableDatabase(context)
+                .query(MessageTable.NAME, MessageTable.PROJECTION, byColumn + " = ?",
+                        selectionArgs, null, null, null);
+        if (data.moveToFirst()) {
+            do {
+                Message message = new Message();
+                message.setMId(data.getString(data.getColumnIndex(MessageTable.COLUMN_ID)));
+                User sender = getUser(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_SENDER)));
+                message.setSender(sender);
+                List<User> receivers = getListReceiver(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_RECEIVER)));
+                message.setTitle(data.getString(data.getColumnIndex(MessageTable.COLUMN_TITLE)));
+                message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
+                message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
+                message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
+                message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
+
+                messages.add(message);
+            } while (data.moveToNext());
+        }
+        return messages;
+    }
+
+    public int getMessageCount() {
+        Cursor data = getReadableDatabase()
+                .query(MessageTable.NAME, MessageTable.PROJECTION, null, null, null, null, null);
+        int count = data.getCount();
+        return count;
+    }
+
+    public String ConvertStringReceiver(List<User> receivers) {
+        StringBuilder strReceivers = new StringBuilder();
+        strReceivers.append(receivers.get(0).getId());
+        for (int i = 1; i < receivers.size(); i++) {
+            strReceivers.append("-" + receivers.get(i));
+        }
+        return strReceivers.toString();
+    }
+
+    public int updateMessage(Message message) {
+        ContentValues values = new ContentValues();
+        values.put(MessageTable.COLUMN_TITLE, message.getTitle());
+        values.put(MessageTable.COLUMN_SENDER, message.getSender().getId());
+        values.put(MessageTable.COLUMN_RECEIVER, ConvertStringReceiver(message.getReceiver()));
+        values.put(MessageTable.COLUMN_CONTENT_TEXT, message.getContentText());
+        values.put(MessageTable.COLUMN_CONTENT_IMAGE, message.getContentImage());
+        values.put(MessageTable.COLUMN_CONTENT_AUDIO, message.getContentAudio());
+        values.put(MessageTable.COLUMN_CONTENT_VIDEO, message.getContentVideo());
+        values.put(MessageTable.COLUMN_TIMESTAMP, message.getTimestamp());
+        values.put(MessageTable.COLUMN_STATUS, message.getStatus());
+
+        String[] selectionArgs = {message.getId()};
+        return getWritableDatabase().update(MessageTable.NAME, values, MessageTable.COLUMN_ID + " = ?",
+                selectionArgs);
+    }
+
+    public void deleteMessage(String messageId) {
+        String[] selectionArgs = {messageId};
+        getWritableDatabase().delete(MessageTable.NAME, MessageTable.COLUMN_ID + " = ?",
+                selectionArgs);
+    }
 
     /**
      * Gets all messages
@@ -226,7 +493,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
      * @param fromDatabase <code>true</code> if a data refresh is needed, else <code>false</code>.
      * @return All messages stored in the database.
      */
-    public static List<Message> getMessages(Context context, boolean fromDatabase) {
+    /*public static List<Message> getMessages(Context context, boolean fromDatabase) {
         if (null == mMessages || fromDatabase) {
             mMessages = loadMessages(context);
         }
@@ -246,7 +513,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
 
     public static Message getMessage(Context context, Cursor cursor, SQLiteDatabase readableDatabase) {
         final String id = cursor.getString(0);
-        User sender = getUserWith_(context, cursor.getString(1));
+        User sender = getUser(context, cursor.getString(1));
         List<User> receivers = getListReceiver(context, cursor.getString(2));
 
         final String title = cursor.getString(3);
@@ -270,18 +537,18 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return getMessage(context, data, readableDatabase);
     }
 
-    /**
+    *//**
      * Get all messages of sender sent
      * @param context
      * @param sender MAC address of sender present
      * @return All messages of sender
-     */
+     *//*
     public static List<Message> getMessagesSender(Context context, String sender, String status) {
         SQLiteDatabase readableDatabase = getReadableDatabase(context);
         String[] selectionArgs = {sender, status};
         Cursor data = readableDatabase
                 .query(MessageTable.NAME, MessageTable.PROJECTION,
-                        MessageTable.FK_USER_SENDER + "=? AND " + MessageTable.COLUMN_STATUS + "=?",
+                        MessageTable.COLUMN_SENDER + "=? AND " + MessageTable.COLUMN_STATUS + "=?",
                         selectionArgs, null, null, null);
         List<Message> tmpMessages = new ArrayList<>(data.getCount());
         do {
@@ -293,7 +560,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
 
     public static List<Message> getAllMessagesSent(Context context, String sender) {
         SQLiteDatabase readableDatabase = getReadableDatabase(context);
-        String sql = "SELECT * FROM " + MessageTable.NAME + " where " + MessageTable.FK_USER_SENDER + "='" + sender + "'";
+        String sql = "SELECT * FROM " + MessageTable.NAME + " where " + MessageTable.COLUMN_SENDER + "='" + sender + "'";
         Cursor data = readableDatabase.rawQuery(sql, null);
         List<Message> tmpMessages = new ArrayList<>(data.getCount());
         do {
@@ -315,12 +582,12 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return tmpMessages;
     }
 
-    /**
+    *//**
      * Get all messages have a status such as (draft, delivered)
      * @param context
      * @param status
      * @return
-     */
+     *//*
     public static List<Message> getMessagesStatus(Context context, String status) {
         SQLiteDatabase readableDatabase = getReadableDatabase(context);
         String[] selectionArgs = {status};
@@ -334,30 +601,30 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         } while (data.moveToNext());
         return tmpMessages;
     }
-    /**
+    *//**
      * Gets list receivers (User) from String receivers
      * @param context
      * @param strReceivers MAC addresses of receivers MACReceiver1-MACReceiver2
      * @return list myUser receivers
-     */
+     *//*
     public static List<User> getListReceiver(Context context, String strReceivers) {
         ArrayList<User> receivers = null;
         if (strReceivers!=null) {
             String[] macReceivers = strReceivers.split("-");
             receivers = new ArrayList<>();
             for (String receiverMac : macReceivers) {
-                receivers.add(getUserWith_(context, receiverMac));
+                receivers.add(getUser(context, receiverMac));
             }
         }
         return receivers;
     }
 
-    /**
+    *//**
      * Gets all messages wrapped in a {@link Cursor} positioned at it's first element.
      *
      * @param context The context this is running in
      * @return All messages stored in the database.
-     */
+     *//*
     private static Cursor getMessagesCursor(Context context) {
         SQLiteDatabase readableDatabase = getReadableDatabase(context);
         Cursor data = readableDatabase
@@ -382,7 +649,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                              String messageId) throws JSONException{
         values.clear();
         values.put(MessageTable.COLUMN_ID, messageId);
-        values.put(MessageTable.FK_USER_SENDER, message.getString(JsonAttributes.SENDER));
+        values.put(MessageTable.COLUMN_SENDER, message.getString(JsonAttributes.SENDER));
         values.put(MessageTable.COLUMN_RECEIVER, message.getString(JsonAttributes.RECEIVER));
         values.put(MessageTable.COLUMN_TITLE, message.getString(JsonAttributes.NAME));
         values.put(MessageTable.COLUMN_CONTENT_TEXT, message.getString(JsonAttributes.TEXT));;
@@ -398,7 +665,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(MessageTable.COLUMN_ID, message.getId());
-        values.put(MessageTable.FK_USER_SENDER, message.getSender().getId());
+        values.put(MessageTable.COLUMN_SENDER, message.getSender().getId());
         values.put(MessageTable.COLUMN_RECEIVER, ConvertStringReceiver(message.getReceiver()));
         values.put(MessageTable.COLUMN_TITLE, message.getTitle());
         values.put(MessageTable.COLUMN_CONTENT_TEXT, message.getContentText());;
@@ -443,14 +710,14 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         writableDatabase.close();
     }
 
-    /**
+    *//**
      * Creates the content values to update a message in the database
      *  update status of message
      *  can update more values of message here
      *
      * @param message The message to update
      * @return ContentValues containing update data
-     */
+     *//*
     public ContentValues createMessageValueFor(Message message) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MessageTable.COLUMN_STATUS, message.getStatus());
@@ -462,7 +729,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String[] selectionArgs = {messageId};
         db.delete(MessageTable.NAME, MessageTable.COLUMN_ID + "=?", selectionArgs);
-    }
+    }*/
 
     /*private String readMessagesFromResources() throws IOException {
         StringBuilder messagesJson = new StringBuilder();

@@ -1,5 +1,7 @@
 package com.thesis.mmtt2011.homemms.activity;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -30,9 +32,21 @@ public class AppIntroSetup extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, ComposeMessageActivity.class);
                 startActivity(intent);*/
                 chooseServerFragment = new ChooseServerFragment();
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.welcome_fragment_container, chooseServerFragment, FRAGMENT_TAG).commit();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction()
+                        .replace(R.id.welcome_fragment_container, chooseServerFragment, FRAGMENT_TAG);
+                fragmentTransaction.addToBackStack(FRAGMENT_TAG);
+                fragmentTransaction.commit();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fm = getFragmentManager();
+        if (fm.getBackStackEntryCount() > 0) {
+            fm.popBackStack();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

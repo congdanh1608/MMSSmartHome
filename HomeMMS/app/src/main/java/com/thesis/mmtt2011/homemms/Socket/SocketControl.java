@@ -96,7 +96,7 @@ public class SocketControl {
                     //Update to textview
                     if (messageReceive != null) {
                         //Save message to database.
-                        homeMMSDatabaseHelper.addMessage(messageReceive);
+                        homeMMSDatabaseHelper.createMessage(context,messageReceive);
                         //Notify fragment myUser received or sent a new message with mID.
                         if (messageReceive.getSender().getId().equals(myUser.getId())) {
                             SentFragment.UpdateNewMessageSent(messageReceive.getId());
@@ -307,10 +307,10 @@ public class SocketControl {
     private void getListUserSaveToDatabase(String msg) {
         List<User> userList = JsonHelper.loadUserDatabase(msg);
         for (User u : userList) {
-            if (homeMMSDatabaseHelper.getUserWith_(context, u.getId()) != null) {
-                homeMMSDatabaseHelper.UpdateUser_(u);
+            if (homeMMSDatabaseHelper.getUser(context, u.getId()) != null) {
+                homeMMSDatabaseHelper.updateUser(u);
             } else {
-                homeMMSDatabaseHelper.addUser(u);
+                homeMMSDatabaseHelper.createUser(context, u);
             }
         }
     }

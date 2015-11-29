@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,12 +76,14 @@ public class MainActivity extends AppCompatActivity {
         //get my User info Vì chưa biết user đã có đăng ký hay chưa?
         //Nếu đã dk rồi thì sẽ có full info myUser.
         //Nếu chưa sẽ chỉ có ID (Mac) trong info myUser.;
-        User user = HomeMMSDatabaseHelper.getUserWith_(getBaseContext(), utilsNetwork.getMacAddress());
+        User user = HomeMMSDatabaseHelper.getUser(getBaseContext(), utilsNetwork.getMacAddress());
         if (user!=null){
             myUser = user;
         }else {
             myUser = new User(utilsNetwork.getMacAddress(), null, null, null
                     , ContantsHomeMMS.UserStatus.online.name());
+            long longid = HomeMMSDatabaseHelper.createUser(getBaseContext(), myUser);
+            Log.i("HomeMMS", String.valueOf(longid));
         }
 
         //Load before getIsFirstRun()
