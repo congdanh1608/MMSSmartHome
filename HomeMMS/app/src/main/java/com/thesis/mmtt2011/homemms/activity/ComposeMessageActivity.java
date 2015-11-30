@@ -104,6 +104,15 @@ public class ComposeMessageActivity extends MainActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 //do something with selectedContact
                                 mAdapter.notifyDataSetChanged();
+                                StringBuilder contactList = new StringBuilder();
+                                for (int i = 0; i < selectedContacts.size(); i++) {
+                                    User user = selectedContacts.get(i);
+                                    contactList.append(user.getNameDisplay());
+                                    if(i < selectedContacts.size() - 1) {
+                                        contactList.append(", ");
+                                    }
+                                }
+                                contact_list.setText(contactList.toString());
                             }
                         });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -112,9 +121,11 @@ public class ComposeMessageActivity extends MainActivity {
                         dialog.dismiss();
                     }
                 });
+
                 AlertDialog contactDialog = builder.create();
                 ListView contactList = contactDialog.getListView();
                 contactList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
                 contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -143,7 +154,6 @@ public class ComposeMessageActivity extends MainActivity {
                 onSendMessage();
             }
         });
-
     }
 
     private void onSendMessage() {

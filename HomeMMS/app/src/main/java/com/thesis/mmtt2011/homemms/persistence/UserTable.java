@@ -15,7 +15,7 @@ public interface UserTable {
     String COLUMN_AVATAR = "avatar";
     String COLUMN_STATUS = "status";
 
-    String[] PROJECTION = new String[]{COLUMN_ID, COLUMN_NAME, COLUMN_AVATAR};
+    String[] PROJECTION = new String[]{COLUMN_ID, COLUMN_NAME, COLUMN_AVATAR, COLUMN_STATUS};
 
     String CREATE = "CREATE TABLE " + NAME + " ("
             + COLUMN_ID + " TEXT PRIMARY KEY, "
