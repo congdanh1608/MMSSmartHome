@@ -166,13 +166,13 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split("-");
-                if (pieces[0].equals(mMACAddress)) {
-                    //Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
+//            for (String credential : DUMMY_CREDENTIALS) {
+//                String[] pieces = credential.split("-");
+//                if (pieces[0].equals(mMACAddress)) {
+//                    //Account exists, return true if the password matches.
+//                    return pieces[1].equals(mPassword);
+//                }
+//            }
             return true;
         }
 
@@ -186,7 +186,6 @@ public class LoginActivity extends AppCompatActivity {
                 Intent resultIntent = new Intent();
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
-              finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
         mActivity = this;
 
         //Info server Pi
-        rasp = new RaspberryPiClient();
-//        rasp = new RaspberryPiClient("Pi", "192.168.1.241", "B8:27:EB:57:07:1C");
+//        rasp = new RaspberryPiClient();
+        rasp = new RaspberryPiClient("Pi", "192.168.1.240", "B8:27:EB:57:07:1C");
 
         //get my User info Vì chưa biết user đã có đăng ký hay chưa?
         //Nếu đã dk rồi thì sẽ có full info myUser.

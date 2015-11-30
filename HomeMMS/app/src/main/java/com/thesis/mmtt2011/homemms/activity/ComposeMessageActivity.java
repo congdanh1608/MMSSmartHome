@@ -157,10 +157,10 @@ public class ComposeMessageActivity extends MainActivity {
     }
 
     private void onSendMessage() {
-        //Demo info reciever.
-        User receiver = new User(receiverID, "", "", "", "");
-        List<User> receivers = new ArrayList<User>();
-        receivers.add(receiver);
+        //info reciever.
+//        User receiver = new User(receiverID, "", "", "", "");
+        List<User> receivers = selectedContacts;
+//        receivers.add(receiver);
 
         //Get Name file mms.
         if (mFileNameAudio!=null) {

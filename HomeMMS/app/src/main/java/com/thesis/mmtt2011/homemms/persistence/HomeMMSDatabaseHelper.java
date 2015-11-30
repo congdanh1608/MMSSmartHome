@@ -120,7 +120,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 User user = new User();
                 user.setId(data.getString(data.getColumnIndex(UserTable.COLUMN_ID)));
                 user.setNameDisplay(data.getString(data.getColumnIndex(UserTable.COLUMN_NAME)));
-                user.setNameDisplay(data.getString(data.getColumnIndex(UserTable.COLUMN_AVATAR)));
+                user.setAvatar(data.getString(data.getColumnIndex(UserTable.COLUMN_AVATAR)));
                 user.setStatus(data.getString(data.getColumnIndex(UserTable.COLUMN_STATUS)));
 
                 users.add(user);
