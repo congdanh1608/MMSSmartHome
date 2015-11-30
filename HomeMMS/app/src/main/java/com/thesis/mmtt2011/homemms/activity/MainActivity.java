@@ -1,5 +1,6 @@
 package com.thesis.mmtt2011.homemms.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     public static RaspberryPiClient rasp;
     public static String mDir = null, mFileNameAudio = null, mFileNameImage = null, mFileNameVideo = null;
 
+    private static Activity mActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         utilsNetwork = new Utils(this);
         utils = new com.thesis.mmtt2011.homemms.Utils(this);
 
+        mActivity = this;
 
         //Info server Pi
         rasp = new RaspberryPiClient();
@@ -77,9 +81,9 @@ public class MainActivity extends AppCompatActivity {
         //Nếu đã dk rồi thì sẽ có full info myUser.
         //Nếu chưa sẽ chỉ có ID (Mac) trong info myUser.;
         User user = HomeMMSDatabaseHelper.getUser(getBaseContext(), utilsNetwork.getMacAddress());
-        if (user!=null){
+        if (user != null) {
             myUser = user;
-        }else {
+        } else {
             myUser = new User(utilsNetwork.getMacAddress(), null, null, null
                     , ContantsHomeMMS.UserStatus.online.name());
             long longid = HomeMMSDatabaseHelper.createUser(getBaseContext(), myUser);
@@ -167,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (client==null){
+        if (client == null) {
             init();
         }
     }
@@ -239,95 +243,137 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ContantsHomeMMS.CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
-            final boolean isCamera;
-            if (data == null) {
-                isCamera = true;
-            } else {
-                final String action = data.getAction();
-                if (action == null) {
-                    isCamera = false;
-                } else {
-                    isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
-                }
-            }
-
-            Uri selectedImageUri = null;
-            if (isCamera) {
-//                selectedImageUri = outputFileUri;
-                //Bitmap factory
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                // downsizing image as it throws OutOfMemory Exception for larger
-                // images
-                options.inSampleSize = 8;
-//                final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
-                Bitmap bitmap = BitmapFactory.decodeFile(mFileNameImage, options);
-                //rotete image.
-                try {
-                    ExifInterface ei = new ExifInterface(mFileNameImage);
-                    int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                    Matrix matrix;
-                    switch (orientation) {
-                        case ExifInterface.ORIENTATION_ROTATE_90:
-                            matrix = new Matrix();
-                            matrix.postRotate(90);
-                            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                            break;
-                        case ExifInterface.ORIENTATION_ROTATE_180:
-                            matrix = new Matrix();
-                            matrix.postRotate(180);
-                            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                            break;
-                        default:
-                            break;
+        Log.d("result", requestCode + "");
+        switch (requestCode) {
+            case ContantsHomeMMS.CAMERA_CAPTURE_IMAGE_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    final boolean isCamera;
+                    if (data == null) {
+                        isCamera = true;
+                    } else {
+                        final String action = data.getAction();
+                        if (action == null) {
+                            isCamera = false;
+                        } else {
+                            isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+                        }
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+                    Uri selectedImageUri = null;
+                    if (isCamera) {
+//                        selectedImageUri = outputFileUri;
+                        //Bitmap factory
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        // downsizing image as it throws OutOfMemory Exception for larger
+                        // images
+                        options.inSampleSize = 8;
+//                        final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
+                        Bitmap bitmap = BitmapFactory.decodeFile(mFileNameImage, options);
+                        //rotete image.
+                        try {
+                            ExifInterface ei = new ExifInterface(mFileNameImage);
+                            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                            Matrix matrix;
+                            switch (orientation) {
+                                case ExifInterface.ORIENTATION_ROTATE_90:
+                                    matrix = new Matrix();
+                                    matrix.postRotate(90);
+                                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                    break;
+                                case ExifInterface.ORIENTATION_ROTATE_180:
+                                    matrix = new Matrix();
+                                    matrix.postRotate(180);
+                                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        //set image to viewimage
+//                        imgPhoto.setImageBitmap(bitmap);
+                    } else {
+                        selectedImageUri = data == null ? null : data.getData();
+                        // /Bitmap factory
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        // downsizing image as it throws OutOfMemory Exception for larger
+                        // images
+                        options.inSampleSize = 8;
+                        try {//Using Input Stream to get uri did the trick
+                            InputStream input = getContentResolver().openInputStream(selectedImageUri);
+                            final Bitmap bitmap = BitmapFactory.decodeStream(input);
+                            //set image to viewimage
+//                            imgPhoto.setImageBitmap(bitmap);
+                            mFileNameImage = utils.getRealPathFromURI(this, selectedImageUri);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else if (resultCode == RESULT_CANCELED) {
+                    // myUser cancelled Image capture
+                    Toast.makeText(getApplicationContext(),
+                            "User cancelled", Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    // failed to capture image
+                    Toast.makeText(getApplicationContext(),
+                            "Sorry! Failed.", Toast.LENGTH_SHORT)
+                            .show();
                 }
-                //set image to viewimage
-//                imgPhoto.setImageBitmap(bitmap);
-            } else {
-                selectedImageUri = data == null ? null : data.getData();
-                // /Bitmap factory
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                // downsizing image as it throws OutOfMemory Exception for larger
-                // images
-                options.inSampleSize = 8;
-                try {//Using Input Stream to get uri did the trick
-                    InputStream input = getContentResolver().openInputStream(selectedImageUri);
-                    final Bitmap bitmap = BitmapFactory.decodeStream(input);
-                    //set image to viewimage
-//                    imgPhoto.setImageBitmap(bitmap);
-                    mFileNameImage = utils.getRealPathFromURI(this, selectedImageUri);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                break;
+            case ContantsHomeMMS.REQUEST_VIDEO_CAPTURE:
+                if (resultCode == RESULT_OK) {
+                    Uri videoUri = data.getData();
+//                    vViewV.setVideoURI(videoUri);
+                    //set video to viewimage
+//                    vViewV.setVideoURI(Uri.fromFile(new File(mFileNameVideo)));
+                } else if (resultCode == RESULT_CANCELED) {
+                    // myUser cancelled Image capture
+                    Toast.makeText(getApplicationContext(),
+                            "User cancelled", Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    // failed to capture image
+                    Toast.makeText(getApplicationContext(),
+                            "Sorry! Failed.", Toast.LENGTH_SHORT)
+                            .show();
                 }
-            }
-        } else if (requestCode == ContantsHomeMMS.REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
-//            Uri videoUri = data.getData();
-//            vViewV.setVideoURI(videoUri);
-            //set video to viewimage
-//            vViewV.setVideoURI(Uri.fromFile(new File(mFileNameVideo)));
-        } else if (resultCode == RESULT_CANCELED) {
-            // myUser cancelled Image capture
-            Toast.makeText(getApplicationContext(),
-                    "User cancelled", Toast.LENGTH_SHORT)
-                    .show();
-        } else {
-            // failed to capture image
-            Toast.makeText(getApplicationContext(),
-                    "Sorry! Failed.", Toast.LENGTH_SHORT)
-                    .show();
+                break;
+            case ContantsHomeMMS.LOGIN_REQUEST_CODE:
+                Log.d("result", "LOGIN_REQUEST_CODE");
+                Log.d("result", resultCode + "");
+                if (resultCode == RESULT_OK) {
+                    client.SendLoginInfoOfClient();
+                }
+                break;
+            case ContantsHomeMMS.REGISTER_REQUEST_CODE:
+                Log.d("result", "REGISTER_REQUEST_CODE");
+                if (resultCode == RESULT_OK) {
+                    client.SendMessageInfoOfClient();
+                }
+                break;
+            default:
+                break;
         }
     }
 
-    private void init(){
+    private void init() {
         //connect socket.
-        if (rasp!=null && !PreferencesHelper.getIsFirstRun(this)) {
+        if (rasp != null && !PreferencesHelper.getIsFirstRun(this)) {
             client = new Client(rasp, port, this);
             client.StartSocket();
         }
+    }
+
+    public static void ShowLoginAcitivty() {
+        Intent intent = new Intent(mActivity, LoginActivity.class);
+        mActivity.startActivityForResult(intent, ContantsHomeMMS.LOGIN_REQUEST_CODE);
+    }
+
+    public static void ShowRegisterActivity() {
+        Intent intent = new Intent(mActivity, RegisterActivity.class);
+        mActivity.startActivityForResult(intent, ContantsHomeMMS.REGISTER_REQUEST_CODE);
     }
 
 }

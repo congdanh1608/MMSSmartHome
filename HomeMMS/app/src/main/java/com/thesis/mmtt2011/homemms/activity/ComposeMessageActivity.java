@@ -36,6 +36,7 @@ import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
+import com.thesis.mmtt2011.homemms.persistence.UserTable;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -59,16 +60,12 @@ public class ComposeMessageActivity extends MainActivity {
     private com.thesis.mmtt2011.homemms.Utils utils;
 
     ContactAdapter mAdapter;
-    ArrayList<User> contacts = new ArrayList<>();
+    ArrayList<User> contacts = new ArrayList<User>();
     ArrayList<User> selectedContacts = new ArrayList<>();
 
-    // du lieu list contact example
+    // du lieu list contact
     public void initContacts() {
-        for (int i = 0; i < 10; i++) {
-            User user = new User(String.valueOf(i), "Contact " + i,
-                    String.valueOf(i), "link avatar", "online");
-            contacts.add(user);
-        }
+        contacts.addAll(homeMMSDatabaseHelper.getAllUsers(this));
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

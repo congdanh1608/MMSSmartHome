@@ -1,7 +1,9 @@
 package com.thesis.mmtt2011.homemms.activity;
 
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.wifi.WifiManager;
@@ -157,7 +159,9 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... params) {
             try {
                 //Simulate network access.
-                Thread.sleep(2000);
+                MainActivity.myUser.setId(mMACAddress);
+                MainActivity.myUser.setPassword(mPassword);
+                Thread.sleep(1000);
             } catch (InterruptedException e){
                 return false;
             }
@@ -179,6 +183,9 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
+                Intent resultIntent = new Intent();
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
               finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

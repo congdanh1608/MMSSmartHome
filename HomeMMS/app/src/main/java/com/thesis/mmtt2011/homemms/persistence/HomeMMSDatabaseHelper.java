@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.Telephony;
 
 import com.thesis.mmtt2011.homemms.model.JsonAttributes;
 import com.thesis.mmtt2011.homemms.model.Message;
@@ -380,6 +381,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 User sender = getUser(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_SENDER)));
                 message.setSender(sender);
                 List<User> receivers = getListReceiver(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_RECEIVER)));
+                message.setReceiver(receivers);
                 message.setTitle(data.getString(data.getColumnIndex(MessageTable.COLUMN_TITLE)));
                 message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
@@ -397,10 +399,9 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
     //like receiver
     public static List<Message> getAllMessagesByReceiver(Context context, String value) {
         List<Message> messages = new ArrayList<Message>();
-        String[] selectionArgs = {value};
-        Cursor data = getReadableDatabase(context)
-                .query(MessageTable.NAME, MessageTable.PROJECTION, MessageTable.COLUMN_RECEIVER + " LIKE % ? % ",
-                        selectionArgs, null, null, null);
+
+        String sql = "SELECT * FROM " + MessageTable.NAME + " WHERE " + MessageTable.COLUMN_RECEIVER + " LIKE '%" + value + "%'";
+        Cursor data = getReadableDatabase(context).rawQuery(sql, null);
         if (data.moveToFirst()) {
             do {
                 Message message = new Message();
@@ -408,6 +409,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 User sender = getUser(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_SENDER)));
                 message.setSender(sender);
                 List<User> receivers = getListReceiver(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_RECEIVER)));
+                message.setReceiver(receivers);
                 message.setTitle(data.getString(data.getColumnIndex(MessageTable.COLUMN_TITLE)));
                 message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
@@ -434,6 +436,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 User sender = getUser(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_SENDER)));
                 message.setSender(sender);
                 List<User> receivers = getListReceiver(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_RECEIVER)));
+                message.setReceiver(receivers);
                 message.setTitle(data.getString(data.getColumnIndex(MessageTable.COLUMN_TITLE)));
                 message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
@@ -454,7 +457,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    public String ConvertStringReceiver(List<User> receivers) {
+    private static String ConvertStringReceiver(List<User> receivers) {
         StringBuilder strReceivers = new StringBuilder();
         strReceivers.append(receivers.get(0).getId());
         for (int i = 1; i < receivers.size(); i++) {
