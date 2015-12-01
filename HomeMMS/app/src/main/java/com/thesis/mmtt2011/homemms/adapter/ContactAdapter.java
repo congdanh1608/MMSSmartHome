@@ -22,12 +22,14 @@ public class ContactAdapter extends ArrayAdapter{
 
     Context context;
     List<User> contacts;
+    List<User> selectedContacts;
     LayoutInflater inflater;
 
-    public ContactAdapter(Context _context, ArrayList<User> _contacts) {
+    public ContactAdapter(Context _context, ArrayList<User> _contacts, ArrayList<User> _selectedContacts) {
         super(_context, R.layout.contact_view_item, _contacts);
         context = _context;
         contacts = _contacts;
+        selectedContacts = _selectedContacts;
     }
 
     @Override
@@ -50,6 +52,9 @@ public class ContactAdapter extends ArrayAdapter{
         CheckedTextView tvUserName = (CheckedTextView)convertView.findViewById(R.id.username);
         CircleImageView avatar = (CircleImageView)convertView.findViewById(R.id.avatar_circle);
         tvUserName.setText(contacts.get(position).getNameDisplay());
+        if(selectedContacts.contains(contacts.get(position))) {
+            tvUserName.setChecked(true);
+        }
         return convertView;
     }
 

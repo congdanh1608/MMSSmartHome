@@ -21,6 +21,7 @@ import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
+import com.thesis.mmtt2011.homemms.persistence.MessageTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
     //Khoi tao danh sach cach message mau
     public void initListMessage() {
         sentMessages = new ArrayList<>();
-//        sentMessages = HomeMMSDatabaseHelper.getAllMessagesSent(getActivity(), MainActivity.myUser.getId());
+        sentMessages = HomeMMSDatabaseHelper.getAllMessagesBy(getActivity(), MessageTable.COLUMN_SENDER, MainActivity.myUser.getId());
         List<User> receivers = new ArrayList<>();
         User receiver = new User("00:00:00:00:00:00", "Name Display", "password", "link avatar", "offline");
         receivers.add(receiver);

@@ -36,6 +36,7 @@ import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
+import com.thesis.mmtt2011.homemms.persistence.UserTable;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -59,16 +60,12 @@ public class ComposeMessageActivity extends MainActivity {
     private com.thesis.mmtt2011.homemms.Utils utils;
 
     ContactAdapter mAdapter;
-    ArrayList<User> contacts = new ArrayList<>();
+    ArrayList<User> contacts = new ArrayList<User>();
     ArrayList<User> selectedContacts = new ArrayList<>();
 
-    // du lieu list contact example
+    // du lieu list contact
     public void initContacts() {
-        for (int i = 0; i < 10; i++) {
-            User user = new User(String.valueOf(i), "Contact " + i,
-                    String.valueOf(i), "link avatar", "online");
-            contacts.add(user);
-        }
+        contacts.addAll(homeMMSDatabaseHelper.getAllUsers(this));
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +90,7 @@ public class ComposeMessageActivity extends MainActivity {
         FloatingActionButton fabSendMsg = (FloatingActionButton) findViewById(R.id.fabSendMsg);
 
         initContacts();
-        mAdapter = new ContactAdapter(ComposeMessageActivity.this, contacts);
+        mAdapter = new ContactAdapter(ComposeMessageActivity.this, contacts, selectedContacts);
         add_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,6 +104,15 @@ public class ComposeMessageActivity extends MainActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 //do something with selectedContact
                                 mAdapter.notifyDataSetChanged();
+                                StringBuilder contactList = new StringBuilder();
+                                for (int i = 0; i < selectedContacts.size(); i++) {
+                                    User user = selectedContacts.get(i);
+                                    contactList.append(user.getNameDisplay());
+                                    if(i < selectedContacts.size() - 1) {
+                                        contactList.append(", ");
+                                    }
+                                }
+                                contact_list.setText(contactList.toString());
                             }
                         });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -115,9 +121,11 @@ public class ComposeMessageActivity extends MainActivity {
                         dialog.dismiss();
                     }
                 });
+
                 AlertDialog contactDialog = builder.create();
                 ListView contactList = contactDialog.getListView();
                 contactList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
                 contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -146,14 +154,13 @@ public class ComposeMessageActivity extends MainActivity {
                 onSendMessage();
             }
         });
-
     }
 
     private void onSendMessage() {
-        //Demo info reciever.
-        User receiver = new User(receiverID, "", "", "", "");
-        List<User> receivers = new ArrayList<User>();
-        receivers.add(receiver);
+        //info reciever.
+//        User receiver = new User(receiverID, "", "", "", "");
+        List<User> receivers = selectedContacts;
+//        receivers.add(receiver);
 
         //Get Name file mms.
         if (mFileNameAudio!=null) {

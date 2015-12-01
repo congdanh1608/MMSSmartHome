@@ -48,7 +48,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
     public void initListMessage() {
         //Get messages from database
         messages = new ArrayList<>();
-//        messages = HomeMMSDatabaseHelper.getAllMessagesReceived(getActivity(), MainActivity.myUser.getId());
+        messages = HomeMMSDatabaseHelper.getAllMessagesByReceiver(getActivity(), MainActivity.myUser.getId());
         List<User> receivers = new ArrayList<>();
         User receiver = new User("00:00:00:00:00:00", "Name Display", "password", "link avatar", "offline");
         receivers.add(receiver);
