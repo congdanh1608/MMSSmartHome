@@ -10,7 +10,7 @@
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 -->
-    <item android:id="@+id/action_scan"
+    <!--<item android:id="@+id/action_scan"
         android:title="@string/action_scan_devices"
         android:icon="@android:drawable/stat_notify_sync_noanim"
         android:orderInCategory="200"
@@ -21,7 +21,7 @@
         android:orderInCategory="300"
         android:title="@string/action_install_config"
         android:icon="@android:drawable/stat_sys_upload_done"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />-->
 
     
 </menu>

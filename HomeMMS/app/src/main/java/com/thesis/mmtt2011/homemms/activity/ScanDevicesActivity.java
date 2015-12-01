@@ -70,6 +70,7 @@ public class ScanDevicesActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                initScan();
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -125,11 +126,11 @@ public class ScanDevicesActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.action_install_config) {
+        /*if (id == R.id.action_install_config) {
             //InstallRaspAsyncTask into device was choosen
 
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }

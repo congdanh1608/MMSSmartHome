@@ -2,6 +2,7 @@ package com.thesis.mmtt2011.homemms.fragment;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +18,11 @@ import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
+import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
 import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 import com.thesis.mmtt2011.homemms.persistence.MessageTable;
 
@@ -46,13 +49,13 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
     public void initListMessage() {
         sentMessages = new ArrayList<>();
         sentMessages = HomeMMSDatabaseHelper.getAllMessagesBy(getActivity(), MessageTable.COLUMN_SENDER, MainActivity.myUser.getId());
-        List<User> receivers = new ArrayList<>();
+        /*List<User> receivers = new ArrayList<>();
         User receiver = new User("00:00:00:00:00:00", "Name Display", "password", "link avatar", "offline");
         receivers.add(receiver);
         for (int i = 0; i < 15; i++) {
             User user = new User("00:00:00:00:00:00", "Name Display " + String.valueOf(i), "password", "link avatar", "online");
             sentMessages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, "Content" + i, null, null, null, "Oct 1" + i, "Status " + i));
-        }
+        }*/
     }
 
     public SentFragment() {
@@ -99,7 +102,12 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
 
     @Override
     public void onItemClicked(int position) {
-
+        if (actionMode != null) {
+            toggleSelection(position);
+        } else {
+            Intent intent = MessageContentActivity.getStartIntent(getActivity(), sentMessages.get(position));
+            startActivity(intent);
+        }
     }
 
     @Override

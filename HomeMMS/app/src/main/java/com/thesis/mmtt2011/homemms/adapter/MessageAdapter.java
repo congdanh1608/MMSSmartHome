@@ -15,6 +15,7 @@ import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,7 +31,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
     private static final int TYPE_READ = 1;
 
     //private static final int ITEM_COUNT = 50;
-    private List<Message> messages;
+    private List<Message> messages = new ArrayList<>();
 
     private MessageViewHolder.ClickListener clickListener;
 
@@ -111,12 +112,12 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
 
     @Override
     public int getItemViewType(int position) {
-        final Message message = messages.get(position);
-        boolean b = message.getStatus().equals(ContantsHomeMMS.MessageStatus.read.name());
-        if (b) {
-            return TYPE_READ;
-        } else
-            return TYPE_UNREAD;
+        Message message = messages.get(position);
+        if (message != null) {
+            String status = message.getStatus();
+            return status.equals(ContantsHomeMMS.MessageStatus.read.name()) ? TYPE_READ : TYPE_UNREAD;
+        }
+        return TYPE_READ;
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder
@@ -149,10 +150,12 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
         //bind message properties to interface
         public void bindMessage(Message message) {
             //mMessage = message;
-            tvUsername.setText(message.getSender().getNameDisplay());
-            tvTitle.setText(message.getTitle());
-            tvContent.setText(message.getContentText());
-            tvTimeStamp.setText(message.getTimestamp());
+            if(message!=null) {
+                tvUsername.setText(message.getSender().getNameDisplay());
+                tvTitle.setText(message.getTitle());
+                tvContent.setText(message.getContentText());
+                tvTimeStamp.setText(message.getTimestamp());
+            }
         }
 
         @Override
@@ -175,7 +178,6 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
             if (listener != null) {
                 return listener.onItemLongClicked(getPosition());
             }
-
             return false;
         }
 

@@ -54,17 +54,6 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
         //Get messages from database
         messages = new ArrayList<>();
         messages = HomeMMSDatabaseHelper.getAllMessagesByReceiver(getActivity(), MainActivity.myUser.getId());
-        List<User> receivers = new ArrayList<>();
-        User receiver = new User("00:00:00:00:00:00", "Name Display", "password", "link avatar", "offline");
-        receivers.add(receiver);
-        String content[] = new String[3];
-        content[0] = "Lorem ipsum dolor sit amet, vis invenire interesset ut. Ad duo tale appareat contentiones, id per nisl tantas percipitur. Tollit mediocrem repudiandae ad vim, ad pri habeo dolorem disputando. ";
-        content[1] = "Lorem ipsum dolor sit amet, vis invenire interesset ut. Ad duo tale appareat contentiones, id per nisl tantas percipitur";
-        content[2] = "Lorem ipsum dolor sit amet, vis invenire interesset ut.";
-        for (int i = 0; i < 15; i++) {
-            User user = new User(String.valueOf(i), "Pham Xuan Y", "password", "link avatar", "offline");
-            messages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, content[i % 3], null, null, null, "Status " + i, "Oct 2" + i));
-        }
     }
 
     public InboxFragment() {
@@ -108,8 +97,9 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
             toggleSelection(position);
         } else {
             //Update isRead for Message in message table.
+            messages.get(position).setStatus(ContantsHomeMMS.MessageStatus.read.name());
             Message message = messages.get(position);
-            message.setStatus(ContantsHomeMMS.MessageStatus.read.name());
+            //message.setStatus(ContantsHomeMMS.MessageStatus.read.name());
             HomeMMSDatabaseHelper.updateMessage(getActivity(), message);
 
             Intent intent = MessageContentActivity.getStartIntent(getActivity(), messages.get(position));
