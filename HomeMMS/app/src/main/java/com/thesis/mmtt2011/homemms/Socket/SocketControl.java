@@ -58,13 +58,15 @@ public class SocketControl {
                         case NOTREGISTERED:
                             //If deivce was not registed, will show register acitvity and send info of client to server.
                             //Show register activity.
-                            showDialogRegister(context);
+                            MainActivity.ShowRegisterActivity();
+//                            showDialogRegister(context);
                             //Send info of client to Server.
 //                        client.SendMessageInfoOfClient();
                             break;
                         case REQUESTLOGIN: //Server request client login.
                             //if login, will show Login form.
-                            showDialogLogin(context);
+                            MainActivity.ShowLoginAcitivty();
+//                            showDialogLogin(context);
                             //Send info login to Server.
 //                            client.SendLoginInfoOfClient();
                             break;
@@ -83,7 +85,8 @@ public class SocketControl {
                     } else {                         //Login fail
                         //show notify login fail and request try to login again.
                         Log.d("login", "fail");
-                        showDialogLogin(context);
+                        MainActivity.ShowLoginAcitivty();
+//                        showDialogLogin(context);
                     }
                     break;
 
