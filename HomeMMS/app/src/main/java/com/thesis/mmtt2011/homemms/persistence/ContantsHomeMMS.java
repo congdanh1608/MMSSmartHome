@@ -55,8 +55,8 @@ public class ContantsHomeMMS {
         draft, sent, received, read;
     }
 
-    public static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 1111;
-    public static final int REQUEST_VIDEO_CAPTURE = 2222;
+    public static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 1003;
+    public static final int REQUEST_VIDEO_CAPTURE = 1002;
     public static final int REGISTER_REQUEST_CODE = 1000, LOGIN_REQUEST_CODE = 1001;
 
     //Share Preferences

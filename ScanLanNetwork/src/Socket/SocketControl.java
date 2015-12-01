@@ -24,7 +24,7 @@ public class SocketControl {
 	// public static String IP = "0.0.0.0", Name = "None",
 	// Mac = "00:00:00:00:00:00";
 
-	private User user;
+	public User user;
 	private Message message;
 	private DatabaseHandler handler;
 	private UserModel userModel;
@@ -71,37 +71,7 @@ public class SocketControl {
 
 					// Compare data and send client if have note need send to
 					// client.
-					messagesReceive = checkNewNoteForClient(user.getId());
-					if (messagesReceive.size() > 0) {
-						for (int i = 0; i < messagesReceive.size(); i++) {
-							System.out.println("Message " + i + " sending to" + user.getNameDisplay());
-							server.SendMsg(createRecieverMessage(
-									createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isNewMsg)));
-							// Check if mms has file attach then send it to
-							// client.
-							if (checkHasAttachFile(messagesReceive.get(i))) {
-								String tempA = messagesReceive.get(i).getContentAudio();
-								String tempP = messagesReceive.get(i).getContentImage();
-								String tempV = messagesReceive.get(i).getContentVideo();
-								if (tempA != null && !tempA.equals("") && !tempA.equals("null")) {
-									System.out.println("Sent " + tempA);
-									PushFile.sendFileToClient(tempA);
-								}
-								if (tempP != null && !tempP.equals("") && !tempP.equals("null")) {
-									System.out.println("Sent " + tempP);
-									PushFile.sendFileToClient(tempP);
-								}
-								if (tempV != null && !tempV.equals("") && !tempV.equals("null")) {
-									System.out.println("Sent " + tempV);
-									PushFile.sendFileToClient(tempV);
-								}
-							}
-
-							// Update status of Message was sent.
-							messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(),
-									ContantsHomeMMS.MessageStatus.sent.name());
-						}
-					}
+					checkNewMessageSendToClient();
 				}
 					break;
 
@@ -139,50 +109,7 @@ public class SocketControl {
 					user = userModel.getUser(userID);
 
 					// Send all message relate with user.
-					messagesReceive = getAllNoteForClient(user.getId());
-					if (messagesReceive.size() > 0) {
-						for (int i = 0; i < messagesReceive.size(); i++) {
-							System.out.println("Message " + i + " sending to " + user.getNameDisplay());
-							// Compare status sending or sent to know new msg or old msg.
-							if (messagesReceive.get(i).getStatus().equals(ContantsHomeMMS.MessageStatus.sending)) {
-								server.SendMsg(createRecieverMessage(
-										createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isNewMsg)));
-							} else {
-								server.SendMsg(createRecieverMessage(createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isOldMsg)));
-							}
-							// Check if mms has file attach then send it to
-							// client.
-							if (checkHasAttachFile(messagesReceive.get(i))) {
-								String tempA = messagesReceive.get(i).getContentAudio();
-								String tempP = messagesReceive.get(i).getContentImage();
-								String tempV = messagesReceive.get(i).getContentVideo();
-								if (tempA != null && !tempA.equals("") && !tempA.equals("null")) {
-									System.out.println("Sent " + tempA);
-									PushFile.sendFileToClient(tempA);
-								}
-								if (tempP != null && !tempP.equals("") && !tempP.equals("null")) {
-									System.out.println("Sent " + tempP);
-									PushFile.sendFileToClient(tempP);
-								}
-								if (tempV != null && !tempV.equals("") && !tempV.equals("null")) {
-									System.out.println("Sent " + tempV);
-									PushFile.sendFileToClient(tempV);
-								}
-							}
-
-							// Update status of Message was sent.
-							messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(),
-									ContantsHomeMMS.MessageStatus.sent.name());
-
-							// wait between every send msg
-							try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}
+					checkSendAllMessageToClient();
 				} else { // Password false; --> Response wrong pass.
 					sendAskLoginFail();
 				}
@@ -240,6 +167,108 @@ public class SocketControl {
 
 			default:
 				break;
+			}
+		}
+	}
+
+	public boolean checkUserIsReceive(String userID) {
+		for (User receive : message.getReceiver()){
+			if (userID.equals(receive.getId())){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean checkReceiveEndNote(String msg) {
+		String cmd = getCommandMsg(msg);
+		if (cmd != null) {
+			Command command = Command.valueOf(cmd);
+			if (command.equals(Command.ENDNOTE)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void checkNewMessageSendToClient() {
+		messagesReceive = checkNewNoteForClient(user.getId());
+		if (messagesReceive.size() > 0) {
+			for (int i = 0; i < messagesReceive.size(); i++) {
+				System.out.println("Message " + i + " sending to " + user.getNameDisplay());
+				server.SendMsg(
+						createRecieverMessage(createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isNewMsg)));
+				// Check if mms has file attach then send it to
+				// client.
+				if (checkHasAttachFile(messagesReceive.get(i))) {
+					String tempA = messagesReceive.get(i).getContentAudio();
+					String tempP = messagesReceive.get(i).getContentImage();
+					String tempV = messagesReceive.get(i).getContentVideo();
+					if (tempA != null && !tempA.equals("") && !tempA.equals("null")) {
+						System.out.println("Sent " + tempA);
+						PushFile.sendFileToClient(tempA);
+					}
+					if (tempP != null && !tempP.equals("") && !tempP.equals("null")) {
+						System.out.println("Sent " + tempP);
+						PushFile.sendFileToClient(tempP);
+					}
+					if (tempV != null && !tempV.equals("") && !tempV.equals("null")) {
+						System.out.println("Sent " + tempV);
+						PushFile.sendFileToClient(tempV);
+					}
+				}
+
+				// Update status of Message was sent.
+				messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(),
+						ContantsHomeMMS.MessageStatus.sent.name());
+			}
+		}
+	}
+
+	private void checkSendAllMessageToClient() {
+		messagesReceive = getAllNoteForClient(user.getId());
+		if (messagesReceive.size() > 0) {
+			for (int i = 0; i < messagesReceive.size(); i++) {
+				System.out.println("Message " + i + " sending to " + user.getNameDisplay());
+				// Compare status sending or sent to know new msg or old msg.
+				if (messagesReceive.get(i).getStatus().equals(ContantsHomeMMS.MessageStatus.sending)) {
+					server.SendMsg(
+							createRecieverMessage(createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isNewMsg)));
+				} else {
+					server.SendMsg(
+							createRecieverMessage(createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isOldMsg)));
+				}
+				// Check if mms has file attach then send it to
+				// client.
+				if (checkHasAttachFile(messagesReceive.get(i))) {
+					String tempA = messagesReceive.get(i).getContentAudio();
+					String tempP = messagesReceive.get(i).getContentImage();
+					String tempV = messagesReceive.get(i).getContentVideo();
+					if (tempA != null && !tempA.equals("") && !tempA.equals("null")) {
+						System.out.println("Sent " + tempA);
+						PushFile.sendFileToClient(tempA);
+					}
+					if (tempP != null && !tempP.equals("") && !tempP.equals("null")) {
+						System.out.println("Sent " + tempP);
+						PushFile.sendFileToClient(tempP);
+					}
+					if (tempV != null && !tempV.equals("") && !tempV.equals("null")) {
+						System.out.println("Sent " + tempV);
+						PushFile.sendFileToClient(tempV);
+					}
+				}
+
+				// Update status of Message was sent.
+				messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(),
+						ContantsHomeMMS.MessageStatus.sent.name());
+
+				// wait between every send msg
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -436,7 +465,7 @@ public class SocketControl {
 		return JsonHelper.loadJsonFirstRun(msg);
 	}
 
-	protected ContantsHomeMMS.FirstStatus checkUserHasRegister(String userID, Boolean firstRun) {
+	private ContantsHomeMMS.FirstStatus checkUserHasRegister(String userID, Boolean firstRun) {
 		if (userModel.getUser(userID) != null && !firstRun) { // User was
 																// registered.
 			return FirstStatus.REGISTERED;

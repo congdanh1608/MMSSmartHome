@@ -65,7 +65,7 @@ public class ComposeMessageActivity extends MainActivity {
 
     // du lieu list contact
     public void initContacts() {
-        contacts.addAll(homeMMSDatabaseHelper.getAllUsers(this));
+        contacts.addAll(homeMMSDatabaseHelper.getAllUserExceptMySeft(this, MainActivity.myUser.getId()));
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

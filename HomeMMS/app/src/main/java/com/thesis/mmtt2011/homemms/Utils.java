@@ -178,8 +178,12 @@ public class Utils {
         }
     }
 
-    protected void showMesg(String msg) {
-        Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+    public static void showMessage(final Activity activity, final String msg){
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     protected void showDialogNewRecieve() {

@@ -111,6 +111,25 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public static List<User> getAllUserExceptMySeft(Context context, String userId) {
+        List<User> users = new ArrayList<User>();
+        String[] selectionArgs = {userId};
+        Cursor data = getReadableDatabase(context)
+                .query(UserTable.NAME, UserTable.PROJECTION, UserTable.COLUMN_ID + " <> ?", selectionArgs, null, null, null);
+        if (data.moveToFirst()) {
+            do {
+                User user = new User();
+                user.setId(data.getString(data.getColumnIndex(UserTable.COLUMN_ID)));
+                user.setNameDisplay(data.getString(data.getColumnIndex(UserTable.COLUMN_NAME)));
+                user.setAvatar(data.getString(data.getColumnIndex(UserTable.COLUMN_AVATAR)));
+                user.setStatus(data.getString(data.getColumnIndex(UserTable.COLUMN_STATUS)));
+
+                users.add(user);
+            } while (data.moveToNext());
+        }
+        return users;
+    }
+
     public static List<User> getAllUsers(Context context) {
         List<User> users = new ArrayList<User>();
         Cursor data = getReadableDatabase(context)

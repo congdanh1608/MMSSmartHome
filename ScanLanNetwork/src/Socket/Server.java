@@ -77,12 +77,14 @@ public class Server {
 	}
 
 	protected void SendMsg(String msg) {
-		try {
-			System.out.println("Server send " + msg);
-			printWriter = new PrintWriter(socket.getOutputStream(), true);
-			printWriter.println(msg);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (socket != null) {
+			try {
+				System.out.println("Server send " + msg);
+				printWriter = new PrintWriter(socket.getOutputStream(), true);
+				printWriter.println(msg);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -108,10 +110,22 @@ public class Server {
 					System.out.println("Server receive: " + tempMsg);
 					if (temp != null && !temp.equals("")) {
 						socketControl.getCommand(temp);
+
+						// Check keyword ENDNOTE
+						// Call function Check user online
+						// --> Call function in all Thread client to check New
+						// Message
+						if (socketControl.checkReceiveEndNote(temp)) {
+							Thread.sleep(1000);
+							CheckNewMessageForThreadClient();
+						}
 					}
 				}
-				
+
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -120,11 +134,22 @@ public class Server {
 			try {
 				if (socket != null)
 					socket.close();
-				if (receive !=null){
+				if (receive != null) {
 					receive.close();
 				}
 			} catch (Exception e) {
 			}
 		}
+
+		private void CheckNewMessageForThreadClient() {
+			if (clients != null) {
+				for (ClientThread_ client : clients) {
+					if (socketControl.checkUserIsReceive(client.socketControl.user.getId())){
+						client.socketControl.checkNewMessageSendToClient();	
+					}
+				}
+			}
+		}
+
 	}
 }
