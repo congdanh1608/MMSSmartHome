@@ -29,9 +29,9 @@ public class LoginActivity extends AppCompatActivity {
      * TODO: remove after connecting to a real authentication system.
      */
     public static final int MIN_LENGTH_PASSWORD = 3;
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
+    /*private static final String[] DUMMY_CREDENTIALS = new String[]{
             "C4:42:02:5C:CB:83-hello", "00:00:10:10:10:11-world"
-    };
+    };*/
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.

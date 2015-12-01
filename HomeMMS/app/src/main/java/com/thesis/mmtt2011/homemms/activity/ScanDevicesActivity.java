@@ -71,8 +71,8 @@ public class ScanDevicesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 initScan();
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
             }
         });
     }
@@ -120,11 +120,11 @@ public class ScanDevicesActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_scan) {
+        /*if (id == R.id.action_scan) {
             //Scan devices
             initScan();
             return true;
-        }
+        }*/
 
         /*if (id == R.id.action_install_config) {
             //InstallRaspAsyncTask into device was choosen

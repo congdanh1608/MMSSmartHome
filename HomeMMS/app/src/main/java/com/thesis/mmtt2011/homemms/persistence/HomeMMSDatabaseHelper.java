@@ -417,7 +417,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
                 message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
 
-                messages.add(message);
+                messages.add(0, message);
             } while (data.moveToNext());
         }
         return messages;
