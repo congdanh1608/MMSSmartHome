@@ -26,6 +26,9 @@ public class ContantsHomeMMS {
             mIDKey = "MID", titleKey = "TITLENOTE", contentTextKey = "MSG", contentAudioKey = "ATTACHAKEY",
             contentVideoKey = "ATTACHVKEY", contentImageKey = "ATTACHPKEY";
 
+    //Message is New
+    public static final String isNewMsgKey = "NEWMSGKEY", isNewMsg =  "NEWMSG", isOldMsg = "OLDMSG";
+
     public static final String registerKey="REGISTER" , requestloginKey ="ReqLOGIN", registered ="REGISTERED",
             notRegistered ="NOTREGISTERED", userDatabase="USERDATABASE", firstRun = "FIRSTRUN";
 
@@ -55,4 +58,13 @@ public class ContantsHomeMMS {
     public static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 1111;
     public static final int REQUEST_VIDEO_CAPTURE = 2222;
     public static final int REGISTER_REQUEST_CODE = 1000, LOGIN_REQUEST_CODE = 1001;
+
+    //Share Preferences
+    public static final String PREFERENCE_NAME = AppName + "_PREFERENCES";
+    public static final String FIRST_RUN_PREFRENCES = "isFirstRun";
+    public static final String FIRST_RUN_REQUEST_LOGIN = "isFirstRunReqestLogin";
+    public static final String SERVER_IP = "ServerIP";
+    public static final String SERVER_MAC = "ServerMAC";
+    public static final String SERVER_NAME = "ServerNAME";
+    public static final String USER_AVATAR = "UserAvatar";
 }

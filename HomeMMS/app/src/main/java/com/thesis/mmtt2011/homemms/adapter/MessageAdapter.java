@@ -3,6 +3,7 @@ package com.thesis.mmtt2011.homemms.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,7 +101,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
         holder.bindMessage(message);
 
         //Highlight the item if it's selected
-        holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE: View.INVISIBLE);
+        holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -110,12 +111,16 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
 
     @Override
     public int getItemViewType(int position) {
-        final Message  message = messages.get(position);
-        return message.getStatus() == ContantsHomeMMS.MessageStatus.read.name() ? TYPE_READ : TYPE_UNREAD;
+        final Message message = messages.get(position);
+        boolean b = message.getStatus().equals(ContantsHomeMMS.MessageStatus.read.name());
+        if (b) {
+            return TYPE_READ;
+        } else
+            return TYPE_UNREAD;
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener, View.OnLongClickListener{
+            implements View.OnClickListener, View.OnLongClickListener {
 
         private final TextView tvUsername;
         private final TextView tvContent;
@@ -129,10 +134,10 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
 
         public MessageViewHolder(View messageView, ClickListener _listener) {
             super(messageView);
-            tvUsername = (TextView)messageView.findViewById(R.id.username);
-            tvTitle = (TextView)messageView.findViewById(R.id.title);
-            tvContent = (TextView)messageView.findViewById(R.id.content);
-            tvTimeStamp = (TextView)messageView.findViewById(R.id.timestamp);
+            tvUsername = (TextView) messageView.findViewById(R.id.username);
+            tvTitle = (TextView) messageView.findViewById(R.id.title);
+            tvContent = (TextView) messageView.findViewById(R.id.content);
+            tvTimeStamp = (TextView) messageView.findViewById(R.id.timestamp);
             selectedOverlay = messageView.findViewById(R.id.selected_overlay);
 
             listener = _listener;
@@ -176,6 +181,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
 
         public interface ClickListener {
             public void onItemClicked(int position);
+
             public boolean onItemLongClicked(int position);
         }
     }

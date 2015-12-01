@@ -18,6 +18,7 @@ import com.thesis.mmtt2011.homemms.Network.DiscoveryThread;
 import com.thesis.mmtt2011.homemms.Network.Utils;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 public class ConnectConfiguredServerFragment extends Fragment {
 
@@ -191,6 +192,11 @@ public class ConnectConfiguredServerFragment extends Fragment {
                     MainActivity.rasp.setIPAddress(ipServer);
                     MainActivity.rasp.setMacAddress(Discover.getMacFromArpCache(ipServer));
                     MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utils.getnmbLookupLocation()));
+
+                    //Save to Preferences
+                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getIPAddress(), ContantsHomeMMS.SERVER_IP);
+                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getMacAddress(), ContantsHomeMMS.SERVER_MAC);
+                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getDeviceName(), ContantsHomeMMS.SERVER_NAME);
                 }
             } catch (InterruptedException e) {
                 return false;
@@ -225,13 +231,19 @@ public class ConnectConfiguredServerFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
+                //Simulate network access.
+                Thread.sleep(2000);
+
                 String ipServer = MainActivity.rasp.getIPAddress();
                 if (ipServer != null) {
                     MainActivity.rasp.setMacAddress(Discover.getMacFromArpCache(ipServer));
                     MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utils.getnmbLookupLocation()));
+
+                    //Save to Preferences
+                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getIPAddress(), ContantsHomeMMS.SERVER_IP);
+                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getMacAddress(), ContantsHomeMMS.SERVER_MAC);
+                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getDeviceName(), ContantsHomeMMS.SERVER_NAME);
                 }
-                //Simulate network access.
-                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 return false;
             }

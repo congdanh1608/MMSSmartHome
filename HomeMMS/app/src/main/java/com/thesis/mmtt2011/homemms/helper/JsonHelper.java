@@ -98,7 +98,14 @@ public class JsonHelper {
                 message.setSender(sender);
                 message.setTimestamp(jsonObj.isNull(ContantsHomeMMS.timeKey) ? null
                         : jsonObj.getString(ContantsHomeMMS.timeKey));
-                message.setStatus(ContantsHomeMMS.MessageStatus.received.name());
+                //Set Message status of receive (received or read)
+                String msgStatus = jsonObj.isNull(ContantsHomeMMS.isNewMsgKey) ? ContantsHomeMMS.isNewMsg
+                        : jsonObj.getString(ContantsHomeMMS.isNewMsgKey);
+                if (msgStatus.equals(ContantsHomeMMS.isNewMsg)) {
+                    message.setStatus(ContantsHomeMMS.MessageStatus.received.name());
+                }else if (msgStatus.equals(ContantsHomeMMS.isOldMsg)){
+                    message.setStatus(ContantsHomeMMS.MessageStatus.read.name());
+                }
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

@@ -78,7 +78,7 @@ public class SocketControl {
                 case LOGIN:
                     if (getLoginSuccess(msg)) {      //Login success
                         //Write preference
-                        PreferencesHelper.writeToPreferences_(context, false);
+                        PreferencesHelper.writeToPreferencesReqLogin(context, false, ContantsHomeMMS.FIRST_RUN_REQUEST_LOGIN);
                         //get list user was send by server.
                         getListUserSaveToDatabase(msg);
                         Log.d("login", "succes");
@@ -98,12 +98,17 @@ public class SocketControl {
                     messageReceive = getRecieveInfo(getRecieverNote(msg));
                     //Update to textview
                     if (messageReceive != null) {
-                        //Save message to database.
-                        homeMMSDatabaseHelper.createMessage(context,messageReceive);
                         //Notify fragment myUser received or sent a new message with mID.
                         if (messageReceive.getSender().getId().equals(myUser.getId())) {
+                            //Set message status for message was sent.
+                            messageReceive.setStatus(MessageStatus.sent.name());
                             SentFragment.UpdateNewMessageSent(messageReceive.getId());
-                        }else InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
+                        }else {
+                            InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
+                        }
+
+                        //Save message to database.
+                        homeMMSDatabaseHelper.createMessage(context,messageReceive);
 
                         Log.d("Received", "Updated new message to Inbox");
 
@@ -218,7 +223,7 @@ public class SocketControl {
         try {
             JSONObject jsonObj = new JSONObject();
             jsonObj.put(ContantsHomeMMS.IDUserKey, myUser.getId());
-            jsonObj.put(ContantsHomeMMS.firstRun, PreferencesHelper.getIsFirstRun_(context));
+            jsonObj.put(ContantsHomeMMS.firstRun, PreferencesHelper.getIsPreferenceBoolean(context, ContantsHomeMMS.FIRST_RUN_REQUEST_LOGIN));
             jsonObj.put(ContantsHomeMMS.cmdKey, Command.HASREGISTER);
             return jsonObj.toString();
         } catch (JSONException e) {

@@ -27,7 +27,7 @@ public class MessageModel {
 			String sql = "INSERT INTO " + handler.TABLE_MESSAGE + " (" + handler.MID + ", " + handler.TITLE + ", "
 					+ handler.SENDER + ", " + handler.RECIEVER + ", " + handler.CONTENTTEXT + ", "
 					+ handler.CONTENTIMAGE + ", " + handler.CONTENTAUDIO + ", " + handler.CONTENTVIDEO + ", "
-					+ handler.TIMESTAMP + ", " + "handler.STATUS_MSG" + " VALUES ('" + obj.getmId() + "','"
+					+ handler.TIMESTAMP + ", " + handler.STATUS_MSG + ") VALUES ('" + obj.getmId() + "','"
 					+ obj.getTitle() + "','" + obj.getSender().getId() + "','"
 					+ Utils.convertListUserToIDString(obj.getReceiver()) + "','" + obj.getContentText() + "','"
 					+ obj.getContentImage() + "','" + obj.getContentAudio() + "','" + obj.getContentVideo() + "','"

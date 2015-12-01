@@ -23,7 +23,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.thesis.mmtt2011.homemms.Network.DiscoveryThread;
 import com.thesis.mmtt2011.homemms.Network.Utils;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.SlidingTabLayout;
@@ -74,8 +73,11 @@ public class MainActivity extends AppCompatActivity {
         mActivity = this;
 
         //Info server Pi
-//        rasp = new RaspberryPiClient();
-        rasp = new RaspberryPiClient("Pi", "192.168.1.240", "B8:27:EB:57:07:1C");
+        String ServerIP = PreferencesHelper.getIsPreferenceString(this, ContantsHomeMMS.SERVER_IP);
+        String ServerMAC = PreferencesHelper.getIsPreferenceString(this, ContantsHomeMMS.SERVER_MAC);
+        String ServerNAME = PreferencesHelper.getIsPreferenceString(this, ContantsHomeMMS.SERVER_NAME);
+        rasp = new RaspberryPiClient(ServerNAME, ServerIP, ServerMAC);
+//        rasp = new RaspberryPiClient("Pi", "192.168.1.240", "B8:27:EB:57:07:1C");
 
         //get my User info Vì chưa biết user đã có đăng ký hay chưa?
         //Nếu đã dk rồi thì sẽ có full info myUser.
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             myUser = user;
         } else {
-            myUser = new User(utilsNetwork.getMacAddress(), null, null, null
+               myUser = new User(utilsNetwork.getMacAddress(), null, null, null
                     , ContantsHomeMMS.UserStatus.online.name());
             long longid = HomeMMSDatabaseHelper.createUser(getBaseContext(), myUser);
             Log.i("HomeMMS", String.valueOf(longid));

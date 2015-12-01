@@ -6,6 +6,8 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.thesis.ServerGUI;
+
 import Database.DatabaseHandler;
 import Database.MessageModel;
 import Database.UserModel;
@@ -30,11 +32,11 @@ public class SocketControl {
 	private List<Message> messagesReceive;
 
 	private Server server;
-	// private ServerGUI sGui;
+	private ServerGUI sGui;
 
-	public SocketControl(Server server) {
+	public SocketControl(Server server, ServerGUI sGui) {
 		this.server = server;
-		// this.sGui = sGui;
+		this.sGui = sGui;
 
 		user = new User();
 		message = new Message();
@@ -73,7 +75,8 @@ public class SocketControl {
 					if (messagesReceive.size() > 0) {
 						for (int i = 0; i < messagesReceive.size(); i++) {
 							System.out.println("Message " + i + " sending to" + user.getNameDisplay());
-							server.SendMsg(createRecieverMessage(createMessageJson(messagesReceive.get(i))));
+							server.SendMsg(createRecieverMessage(
+									createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isNewMsg)));
 							// Check if mms has file attach then send it to
 							// client.
 							if (checkHasAttachFile(messagesReceive.get(i))) {
@@ -102,12 +105,14 @@ public class SocketControl {
 				}
 					break;
 
-				case NOTREGISTERED: { // If was not registed, server will ask not registed.
+				case NOTREGISTERED: { // If was not registed, server will ask
+										// not registed.
 					sendAskWasNotRegistered();
 				}
 					break;
 
-				case REQUESTLOGIN:{	//Server will ask login - request client login.
+				case REQUESTLOGIN: { // Server will ask login - request client
+										// login.
 					sendAskRequestLogin();
 				}
 					break;
@@ -116,25 +121,35 @@ public class SocketControl {
 					break;
 				}
 				break;
-				
-			case LOGIN:		//User send info login to Server. Then server will check user, pass?
+
+			case LOGIN: // User send info login to Server. Then server will
+						// check user, pass?
 				userID = loadIDUser(msg);
 				passUser = loadPassUser(msg);
 				User userInDB = userModel.getUser(userID);
-				if (userInDB.getPassword().equals(passUser)){ //Password true -> Response all msg + list user;
+				if (userInDB.getPassword().equals(passUser)) { // Password true
+																// -> Response
+																// all msg +
+																// list user;
 					sendAskLoginSuccess();
-					
+
 					// Update status of user.
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
-										
+
 					user = userModel.getUser(userID);
-					
+
 					// Send all message relate with user.
 					messagesReceive = getAllNoteForClient(user.getId());
 					if (messagesReceive.size() > 0) {
 						for (int i = 0; i < messagesReceive.size(); i++) {
 							System.out.println("Message " + i + " sending to " + user.getNameDisplay());
-							server.SendMsg(createRecieverMessage(createMessageJson(messagesReceive.get(i))));
+							// Compare status sending or sent to know new msg or old msg.
+							if (messagesReceive.get(i).getStatus().equals(ContantsHomeMMS.MessageStatus.sending)) {
+								server.SendMsg(createRecieverMessage(
+										createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isNewMsg)));
+							} else {
+								server.SendMsg(createRecieverMessage(createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isOldMsg)));
+							}
 							// Check if mms has file attach then send it to
 							// client.
 							if (checkHasAttachFile(messagesReceive.get(i))) {
@@ -158,17 +173,17 @@ public class SocketControl {
 							// Update status of Message was sent.
 							messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(),
 									ContantsHomeMMS.MessageStatus.sent.name());
-							
-							//wait between every send msg
+
+							// wait between every send msg
 							try {
-								Thread.sleep(500);
+								Thread.sleep(1000);
 							} catch (InterruptedException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
 					}
-				}else{ //Password false; --> Response wrong pass.
+				} else { // Password false; --> Response wrong pass.
 					sendAskLoginFail();
 				}
 				break;
@@ -184,7 +199,6 @@ public class SocketControl {
 			case RECIEVER:
 				// user1-user2-user3
 				getInfoMessage(msg);
-				// sGui.updateReciever(temp);
 				break;
 
 			case MSGKEY:
@@ -216,6 +230,8 @@ public class SocketControl {
 
 			case ENDNOTE:
 				saveMessage(message);
+				// update Message to GUI
+				sGui.UpdateMessage();
 				break;
 
 			case DISCONNECT:
@@ -351,13 +367,13 @@ public class SocketControl {
 	private List<Message> checkNewNoteForClient(String reciever) {
 		return messageModel.getListNewMessageOfReciever(reciever);
 	}
-	
+
 	private List<Message> getAllNoteForClient(String reciever) {
 		return messageModel.getAllMessageRelateUser(reciever);
 	}
 
 	// create Message Json.
-	private String createMessageJson(Message msg) {
+	private String createMessageJson(Message msg, String newStatus) {
 		try {
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put(ContantsHomeMMS.mIDKey, msg.getmId());
@@ -369,6 +385,7 @@ public class SocketControl {
 			jsonObj.put(ContantsHomeMMS.contentVideoKey, msg.getContentVideo());
 			jsonObj.put(ContantsHomeMMS.contentAudioKey, msg.getContentAudio());
 			jsonObj.put(ContantsHomeMMS.timeKey, msg.getTimestamp());
+			jsonObj.put(ContantsHomeMMS.isNewMsgKey, newStatus);
 			jsonObj.put(ContantsHomeMMS.cmdKey, Command.RECIEVERNOTE);
 			return jsonObj.toString();
 		} catch (JSONException e) {
@@ -418,20 +435,22 @@ public class SocketControl {
 	protected boolean loadFirstRun(String msg) {
 		return JsonHelper.loadJsonFirstRun(msg);
 	}
-	
+
 	protected ContantsHomeMMS.FirstStatus checkUserHasRegister(String userID, Boolean firstRun) {
-		if (userModel.getUser(userID) != null && !firstRun) { // User was registered.
+		if (userModel.getUser(userID) != null && !firstRun) { // User was
+																// registered.
 			return FirstStatus.REGISTERED;
-		} else if (userModel.getUser(userID) != null && firstRun) { // User need to login.
+		} else if (userModel.getUser(userID) != null && firstRun) { // User need
+																	// to login.
 			return FirstStatus.REQUESTLOGIN;
 		} else
 			return FirstStatus.NOTREGISTERED; // User was not registered.s
 	}
-	
+
 	protected void sendAskLoginSuccess() {
 		server.SendMsg(JsonHelper.createJsonLoginSuccess());
 	}
-	
+
 	protected void sendAskLoginFail() {
 		server.SendMsg(JsonHelper.createJsonLoginFail());
 	}
@@ -443,7 +462,7 @@ public class SocketControl {
 	protected void sendAskWasNotRegistered() {
 		server.SendMsg(JsonHelper.createJsonNotRegisted());
 	}
-	
+
 	protected void sendAskRequestLogin() {
 		server.SendMsg(JsonHelper.createJsonRequestLogin());
 	}

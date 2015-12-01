@@ -91,7 +91,7 @@ public class Server {
 		Socket socket;
 		BufferedReader receive;
 		String tempMsg = "";
-		SocketControl socketControl = new SocketControl(Server.this);
+		SocketControl socketControl = new SocketControl(Server.this, sGui);
 
 		ClientThread_(Socket socket) {
 			this.socket = socket;

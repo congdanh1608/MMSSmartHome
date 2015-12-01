@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import Database.DatabaseHandler;
@@ -89,21 +90,23 @@ public class ServerGUI {
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
+		double ratio = screenSize.getWidth()/1366;
+		int widthLeft = (int) (screenSize.width * 0.82);
+		int xright = (int) (screenSize.getWidth() * 0.82);
+		int widthRight = screenSize.width - widthLeft;
+		
 		frame = new JFrame();
 		// frame.setBounds(100, 100, 562, 458);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setUndecorated(true); // Hide bar Window
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		frame.setBounds(0, 0, screenSize.width, (int) (screenSize.height*0.95));
 		frame.setVisible(true);
-
-		int widthLeft = (int) (screenSize.width * 0.82);
-		int xright = (int) (screenSize.getWidth() * 0.82);
-		int widthRight = screenSize.width - widthLeft;
 
 		panelLeft = new JPanel();
 		// panelLeft.setBounds(0, 0, 1110, screenSize.height);
-		panelLeft.setBounds(0, 0, widthLeft, screenSize.height);
+		panelLeft.setBounds(0, 0, widthLeft, (int) (screenSize.height*0.95));
 		frame.getContentPane().add(panelLeft);
 		GridBagLayout gbl_panelLeft = new GridBagLayout();
 		// gbl_panelLeft.columnWidths = new int[] { 0, 0, 0, 0 };
@@ -117,11 +120,11 @@ public class ServerGUI {
 
 		panelRight = new JPanel();
 		// panelRight.setBounds(1120, 0, 246, screenSize.height);
-		panelRight.setBounds(xright, 0, widthRight, screenSize.height);
+		panelRight.setBounds(xright, 0, widthRight, (int) (screenSize.height*0.95));
 		frame.getContentPane().add(panelRight);
 
 		btnStartListening = new JButton("Start Listening");
-		btnStartListening.setBounds(52, 720, 144, 25);
+		btnStartListening.setBounds(52, (int) (screenSize.height*0.9), 144, 25);
 		btnStartListening.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				startSocketListener();
@@ -138,12 +141,12 @@ public class ServerGUI {
 
 		lblCurrenttime = new JLabel("00:00");
 		lblCurrenttime.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCurrenttime.setFont(new Font("Dialog", Font.BOLD, 60));
+		lblCurrenttime.setFont(new Font("Dialog", Font.BOLD, (int)(60 * ratio)));
 		lblCurrenttime.setBounds(22, 39, 212, 73);
 		panelRight.add(lblCurrenttime);
 
 		lblCurrentday = new JLabel("000 00/00/0000");
-		lblCurrentday.setFont(new Font("Dialog", Font.BOLD, 20));
+		lblCurrentday.setFont(new Font("Dialog", Font.BOLD, (int)(20 * ratio)));
 		lblCurrentday.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCurrentday.setBounds(22, 112, 212, 40);
 		panelRight.add(lblCurrentday);
@@ -259,6 +262,15 @@ public class ServerGUI {
 		List<Message> messages = new ArrayList<Message>();
 		messages = messageModel.get12Message();
 		updateMessageForListPanel(jPanels, messages);
+	}
+	
+	public void UpdateMessage(){
+		SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+            	ShowMessage();
+            }
+        });
 	}
 
 	private void UpdateTime() {

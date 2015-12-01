@@ -10,6 +10,9 @@ public class ContantsHomeMMS {
 	public static final String timeKey = "TIMEKEY", senderKey = "SENDERKEY", recieverKey = "RECIEVERKEY",
 			mIDKey = "MID", titleKey = "TITLENOTE", contentTextKey = "MSG", contentAudioKey = "ATTACHAKEY",
 			contentVideoKey = "ATTACHVKEY", contentImageKey = "ATTACHPKEY";
+	
+	//Message is New
+	public static final String isNewMsgKey = "NEWMSGKEY", isNewMsg =  "NEWMSG", isOldMsg = "OLDMSG";
 
 	// right
 	public enum Command {
