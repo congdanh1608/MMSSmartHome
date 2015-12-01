@@ -466,7 +466,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return strReceivers.toString();
     }
 
-    public int updateMessage(Message message) {
+    public static int updateMessage(Context context, Message message) {
         ContentValues values = new ContentValues();
         values.put(MessageTable.COLUMN_TITLE, message.getTitle());
         values.put(MessageTable.COLUMN_SENDER, message.getSender().getId());
@@ -479,7 +479,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         values.put(MessageTable.COLUMN_STATUS, message.getStatus());
 
         String[] selectionArgs = {message.getId()};
-        return getWritableDatabase().update(MessageTable.NAME, values, MessageTable.COLUMN_ID + " = ?",
+        return getWritableDatabase(context).update(MessageTable.NAME, values, MessageTable.COLUMN_ID + " = ?",
                 selectionArgs);
     }
 

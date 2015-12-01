@@ -1,10 +1,13 @@
 package com.thesis.mmtt2011.homemms.adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thesis.mmtt2011.homemms.R;
@@ -53,13 +56,14 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
 
         protected TextView tvIPAddress;
         protected TextView tvMACAddress;
+        protected ImageView imvDevice;
         private  Device mDevice;
 
         public DeviceViewHolder(View deviceView) {
             super(deviceView);
             tvIPAddress = (TextView)deviceView.findViewById(R.id.ipAddress);
             tvMACAddress = (TextView)deviceView.findViewById(R.id.macAddress);
-
+            imvDevice = (ImageView)deviceView.findViewById(R.id.iconDevice);
             deviceView.setOnClickListener(this);
         }
 
@@ -69,6 +73,19 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
             tvIPAddress.setText(mDevice.getIPAddress());
 //            tvMACAddress.setText(mDevice.getMacAddress());
             tvMACAddress.setText(mDevice.getDeviceName());
+            switch (device.getDeviceType()){
+                case 0:
+                    imvDevice.setImageResource(R.drawable.ic_devices_white_48dp);
+                    break;
+                case 1:
+                    imvDevice.setImageResource(R.drawable.ic_developer_board_white_48dp);
+                    break;
+                case 2:
+                    imvDevice.setImageResource(R.drawable.ic_android_white_48dp);
+                    break;
+                default:
+                    break;
+            }
         }
 
         @Override
@@ -76,9 +93,24 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
             if (mDevice != null) {
                 //check and create Pi client if it was Pi.
                 if (Utils.CheckIsRaspPiDefault(mDevice)){
-                    RaspberryPiClient rasp = new RaspberryPiClient(mDevice.getDeviceName(), mDevice.getIPAddress(), mDevice.getMacAddress());
-                    //Install config to Pi with Info of Access Point.
-                    new InstallRaspAsyncTask(activity, rasp, false, "", "").execute();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setTitle(R.string.install_config);
+                    builder.setMessage(R.string.install_alert_message)
+                            .setPositiveButton(R.string.install, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // Create the AlertDialog object and return it
+                                    RaspberryPiClient rasp = new RaspberryPiClient(mDevice.getDeviceName(), mDevice.getIPAddress(), mDevice.getMacAddress());
+                                    //Install config to Pi with Info of Access Point.
+                                    new InstallRaspAsyncTask(activity, rasp, false, "", "").execute();
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                }
+                            });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
                 }
                 else {
                     utils.ShowToast("It's not Rasp Pi");

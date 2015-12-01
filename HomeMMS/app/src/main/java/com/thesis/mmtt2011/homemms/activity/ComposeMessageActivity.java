@@ -200,7 +200,7 @@ public class ComposeMessageActivity extends MainActivity {
             if (client.SendMessageEndNote()) {
                 //update message in database status sent.
                 message.setStatus(ContantsHomeMMS.MessageStatus.sent.name());
-                homeMMSDatabaseHelper.updateMessage(message);
+                homeMMSDatabaseHelper.updateMessage(this, message);
                 //update message in Sent Fragment.
                 SentFragment.UpdateNewMessageSent(message.getId());
             }

@@ -49,7 +49,7 @@ public class ContantsHomeMMS {
     }
 
     public enum MessageStatus{
-        draft, sent, received;
+        draft, sent, received, read;
     }
 
     public static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 1111;

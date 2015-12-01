@@ -2,6 +2,7 @@ package com.thesis.mmtt2011.homemms.fragment;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -17,11 +18,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.thesis.mmtt2011.homemms.Network.Interface;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
+import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
+import com.thesis.mmtt2011.homemms.activity.ScanDevicesActivity;
 import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 
 import java.util.ArrayList;
@@ -103,8 +108,12 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
             toggleSelection(position);
         } else {
             //Update isRead for Message in message table.
+            Message message = messages.get(position);
+            message.setStatus(ContantsHomeMMS.MessageStatus.read.name());
+            HomeMMSDatabaseHelper.updateMessage(getActivity(), message);
 
-            mAdapter.removeMessage(position);
+            Intent intent = MessageContentActivity.getStartIntent(getActivity(), messages.get(position));
+            startActivity(intent);
         }
     }
 
