@@ -51,7 +51,7 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
         receivers.add(receiver);
         for (int i = 0; i < 15; i++) {
             User user = new User("00:00:00:00:00:00", "Name Display " + String.valueOf(i), "password", "link avatar", "online");
-            sentMessages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, "Content" + i, null, null, null, "Oct 1" + i, "Status " + i, (i % 2) == 1));
+            sentMessages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, "Content" + i, null, null, null, "Oct 1" + i, "Status " + i));
         }
     }
 

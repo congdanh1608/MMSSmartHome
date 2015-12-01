@@ -17,7 +17,7 @@ public class Message {
     String contentVideo;
     String timestamp; //(id)
     String status;
-    private boolean read;
+    //private boolean read;
 
     public Message(){
         mId = null;
@@ -29,12 +29,12 @@ public class Message {
         contentAudio = null;
         contentVideo = null;
         timestamp = null;
-        status = null;
+//        status = null;
     }
 
     public Message(String _mId, User _sender, List<User> _receiver, String _title, String _contentText,
                    String _contentImage, String _contentAudio, String _contentVideo, String _status,
-                   String _timestamp, boolean _read) {
+                   String _timestamp) {
 
         mId = _mId;
         sender = _sender;
@@ -46,7 +46,6 @@ public class Message {
         contentVideo = _contentVideo;
         timestamp = _timestamp;
         status = _status;
-        read = _read;
     }
 
     public String getId() {
@@ -89,10 +88,6 @@ public class Message {
         return receiver;
     }
 
-    public boolean isRead() {
-        return read;
-    }
-
     public void setContentAudio(String contentAudio) {
         this.contentAudio = contentAudio;
     }
@@ -131,9 +126,5 @@ public class Message {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public void setRead(boolean read) {
-        this.read = read;
     }
 }

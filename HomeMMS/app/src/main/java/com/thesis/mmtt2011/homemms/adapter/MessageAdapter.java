@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
 import com.thesis.mmtt2011.homemms.model.Message;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -110,7 +111,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
     @Override
     public int getItemViewType(int position) {
         final Message  message = messages.get(position);
-        return message.isRead() ? TYPE_READ : TYPE_UNREAD;
+        return message.getStatus() == ContantsHomeMMS.MessageStatus.read.name() ? TYPE_READ : TYPE_UNREAD;
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder

@@ -63,7 +63,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
         content[2] = "Lorem ipsum dolor sit amet, vis invenire interesset ut.";
         for (int i = 0; i < 15; i++) {
             User user = new User(String.valueOf(i), "Pham Xuan Y", "password", "link avatar", "offline");
-            messages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, content[i % 3], null, null, null, "Status " + i, "Oct 2" + i, (i % 2) == 1));
+            messages.add(new Message("00:00:00:00:00:01", user, receivers, "Title " + i, content[i % 3], null, null, null, "Status " + i, "Oct 2" + i));
         }
     }
 
