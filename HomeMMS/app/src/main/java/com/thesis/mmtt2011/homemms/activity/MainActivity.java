@@ -1,6 +1,8 @@
 package com.thesis.mmtt2011.homemms.activity;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -193,10 +195,14 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        //SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         searchView.setIconifiedByDefault(false);
-        searchView.setOnQueryTextListener(queryTextListener);
+        //searchView.setOnQueryTextListener(queryTextListener);
         return true;
     }
 

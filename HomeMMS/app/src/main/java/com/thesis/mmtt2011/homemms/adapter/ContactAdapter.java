@@ -50,9 +50,11 @@ public class ContactAdapter extends ArrayAdapter{
         }
 
         CheckedTextView tvUserName = (CheckedTextView)convertView.findViewById(R.id.username);
+        tvUserName.setChecked(false);
         CircleImageView avatar = (CircleImageView)convertView.findViewById(R.id.avatar_circle);
-        tvUserName.setText(contacts.get(position).getNameDisplay());
-        if(selectedContacts.contains(contacts.get(position))) {
+        User contact = contacts.get(position);
+        tvUserName.setText(contact.getNameDisplay());
+        if(selectedContacts.contains(contact)) {
             tvUserName.setChecked(true);
         }
         return convertView;

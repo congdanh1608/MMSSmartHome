@@ -134,7 +134,7 @@ public class ComposeMessageActivity extends MainActivity {
                         CheckedTextView checkedTextView = (CheckedTextView) v;
                         checkedTextView.setChecked(!checkedTextView.isChecked());
                         if (checkedTextView.isChecked()) {
-                            selectedContacts.add(contacts.get(position));
+                            selectedContacts.add(0, contacts.get(position));
                         } else {
                             if (selectedContacts.contains(contacts.get(position))) {
                                 selectedContacts.remove(contacts.get(position));
@@ -149,9 +149,14 @@ public class ComposeMessageActivity extends MainActivity {
         fabSendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Sending message...", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                onSendMessage();
+                if (contact_list.getText().toString().isEmpty()) {
+                    Snackbar.make(view, "Sending message...", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    onSendMessage();
+                } else {
+                    Snackbar.make(view, "Select contact to send message.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         });
     }
