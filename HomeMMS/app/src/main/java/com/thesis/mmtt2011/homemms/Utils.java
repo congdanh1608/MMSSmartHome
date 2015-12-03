@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.activity.ComposeMessageActivity;
+import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 import java.io.BufferedReader;
@@ -38,11 +39,24 @@ import java.util.List;
  * Created by CongDanh on 22/10/2015.
  */
 public class Utils {
+    private com.thesis.mmtt2011.homemms.Network.Utils utilsNetwork;
     private Activity activity;
     private MediaRecorder mRecorderAudio = null;
 
     public Utils(Activity activity) {
         this.activity = activity;
+        utilsNetwork = new com.thesis.mmtt2011.homemms.Network.Utils(activity);
+    }
+
+    public boolean checkIsConnectToWifiHome(){
+        if (utilsNetwork.checkIsWifiConnect()){
+            String MACADDRESSOfAP = PreferencesHelper.getIsPreferenceString(activity, ContantsHomeMMS.AP_MACADDRESS);
+            String SSIDOfAP = PreferencesHelper.getIsPreferenceString(activity, ContantsHomeMMS.AP_NAME);
+            if (utilsNetwork.getMacAddressOfAP().equals(MACADDRESSOfAP) && utilsNetwork.getSSIDOfAP().equals(SSIDOfAP)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Boolean CreateFolder(String dir) {

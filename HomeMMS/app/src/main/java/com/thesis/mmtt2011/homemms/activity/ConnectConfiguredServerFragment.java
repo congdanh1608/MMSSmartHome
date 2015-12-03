@@ -193,10 +193,8 @@ public class ConnectConfiguredServerFragment extends Fragment {
                     MainActivity.rasp.setMacAddress(Discover.getMacFromArpCache(ipServer));
                     MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utils.getnmbLookupLocation()));
 
-                    //Save to Preferences
-                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getIPAddress(), ContantsHomeMMS.SERVER_IP);
-                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getMacAddress(), ContantsHomeMMS.SERVER_MAC);
-                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getDeviceName(), ContantsHomeMMS.SERVER_NAME);
+                    //Save to Preferences.
+                    GetAndSaveInfoToPrefer();
                 }
             } catch (InterruptedException e) {
                 return false;
@@ -240,9 +238,7 @@ public class ConnectConfiguredServerFragment extends Fragment {
                     MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utils.getnmbLookupLocation()));
 
                     //Save to Preferences
-                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getIPAddress(), ContantsHomeMMS.SERVER_IP);
-                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getMacAddress(), ContantsHomeMMS.SERVER_MAC);
-                    PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getDeviceName(), ContantsHomeMMS.SERVER_NAME);
+                    GetAndSaveInfoToPrefer();
                 }
             } catch (InterruptedException e) {
                 return false;
@@ -269,6 +265,23 @@ public class ConnectConfiguredServerFragment extends Fragment {
         protected void onCancelled() {
             mManualConnectTask = null;
             showProgress(false);
+        }
+    }
+
+    private void GetAndSaveInfoToPrefer(){
+        //Save info of Server to Preferences
+        PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getIPAddress(), ContantsHomeMMS.SERVER_IP);
+        PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getMacAddress(), ContantsHomeMMS.SERVER_MAC);
+        PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getDeviceName(), ContantsHomeMMS.SERVER_NAME);
+
+        //Get Mac addrees and Name of access point, save in Preferences.
+        String MacAddressOfAP = utils.getMacAddressOfAP();
+        String NameOfAP = utils.getSSIDOfAP();
+        if (MacAddressOfAP != null) {
+            PreferencesHelper.writeToPreferencesString(getActivity(), MacAddressOfAP, ContantsHomeMMS.AP_MACADDRESS);
+        }
+        if (NameOfAP != null) {
+            PreferencesHelper.writeToPreferencesString(getActivity(), NameOfAP, ContantsHomeMMS.AP_NAME);
         }
     }
 }

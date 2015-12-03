@@ -4,6 +4,7 @@
 
     <!-- To auto-complete the email text field in the login form with the myUser's emails -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -48,7 +49,12 @@
         <activity
             android:name=".activity.AppIntroSetup"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".activity.ConnectConfiguredServerActivity"></activity>
+
+        <receiver android:name="com.thesis.mmtt2011.homemms.Network.WifiReceiver" >
+            <intent-filter android:priority="100">
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -33,7 +33,6 @@ public class Client {
     private RaspberryPiClient rasp;
     private Handler handler;
     private Activity activity;
-    public boolean isConnected = false;        //Client is connecting to Server?
 
     public Client(RaspberryPiClient rasp, int port, Activity activity) {
         this.rasp = rasp;
@@ -55,44 +54,45 @@ public class Client {
         public void run() {
             // TODO Auto-generated method stub
             try {
-                socketB = new Socket(rasp.getIPAddress(), port);
-                isConnected = true;
-                Utils.showMessage(activity, "Connect to Server Successfully.");
-                SendFirstInfoOfClient();
+//                socketB = new Socket(rasp.getIPAddress(), port);
+//                MainActivity.isConnected = true;
+//                Utils.showMessage(activity, "Connect to Server Successfully.");
+//                SendFirstInfoOfClient();
 
                 while (true) {
                     //try to connect to Server every 20s.
                     try {
-                        if (!isConnected) {
+                        if (!MainActivity.isConnected) {
                             Utils.showMessage(activity, "Trying connect to Server.");
                             socketB = new Socket(rasp.getIPAddress(), port);
-                            isConnected = true;
+                            MainActivity.isConnected = true;
                             Utils.showMessage(activity, "Connect to Server Successfully.");
+                            SendFirstInfoOfClient();
                         }
                     }catch (IOException ieo){
                         //fail connect, wait 20s to try again.
-                        Thread.sleep(20000);
+                        Thread.sleep(7000);
                     }
 
-                    input = new BufferedReader(new InputStreamReader(socketB.getInputStream()));
-                    final String temp = input.readLine();
-                    handler.post(new Runnable() {
-                        public void run() {
-                            //Server socket closed.
-                            if (temp == null && isConnected){
-                                isConnected = false;
-                                Utils.showMessage(activity, "Was disconnected to Server. May be your network has problem.");
+                    if (socketB!=null) {
+                        input = new BufferedReader(new InputStreamReader(socketB.getInputStream()));
+                        final String temp = input.readLine();
+                        handler.post(new Runnable() {
+                            public void run() {
+                                //Server socket closed.
+                                if (temp == null && MainActivity.isConnected) {
+                                    MainActivity.isConnected = false;
+                                    Utils.showMessage(activity, "Was disconnected to Server. May be your network has problem.");
+                                }
+                                //Receive message from Server.
+                                if (temp != null && !temp.equals("")) {
+                                    Log.d("Recieve", temp);
+                                    socketControl.getCommand(temp);
+                                }
                             }
-                            //Receive message from Server.
-                            if (temp != null && !temp.equals("")) {
-                                Log.d("Recieve", temp);
-                                socketControl.getCommand(temp);
-                            }
-                        }
-                    });
+                        });
+                    }
                 }
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
