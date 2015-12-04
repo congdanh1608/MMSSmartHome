@@ -103,7 +103,7 @@ public class JsonHelper {
                         : jsonObj.getString(ContantsHomeMMS.isNewMsgKey);
                 if (msgStatus.equals(ContantsHomeMMS.isNewMsg)) {
                     message.setStatus(ContantsHomeMMS.MessageStatus.received.name());
-                }else if (msgStatus.equals(ContantsHomeMMS.isOldMsg)){
+                }else if (msgStatus.equals(ContantsHomeMMS.isOldMsg)) {
                     message.setStatus(ContantsHomeMMS.MessageStatus.read.name());
                 }
             } catch (JSONException e) {
