@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             myUser = user;
         } else {
-               myUser = new User(utilsNetwork.getMacAddress(), null, null, null
+            myUser = new User(utilsNetwork.getMacAddress(), null, null, null
                     , ContantsHomeMMS.UserStatus.online.name());
             long longid = HomeMMSDatabaseHelper.createUser(getBaseContext(), myUser);
             Log.i("HomeMMS", String.valueOf(longid));
@@ -180,6 +180,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         if (client == null) {
@@ -195,6 +200,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        if (client != null) {
+//            client.CloseSocket();
+//        }
     }
 
     @Override
@@ -398,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
         if (client != null && isConnected) {
             client.SendInfoMessage(message);
 
-            if (message.getContentAudio()!=null || message.getContentImage()!=null || message.getContentAudio()!=null) {
+            if (message.getContentAudio() != null || message.getContentImage() != null || message.getContentAudio() != null) {
                 //Connect SSH.
                 new ConnectSSHAsyncTask(mActivity, rasp).execute();
                 //Push File by SSH

@@ -33,6 +33,7 @@ public class Client {
     private RaspberryPiClient rasp;
     private Handler handler;
     private Activity activity;
+    private ClientThread clientThread;
 
     public Client(RaspberryPiClient rasp, int port, Activity activity) {
         this.rasp = rasp;
@@ -44,10 +45,17 @@ public class Client {
     }
 
     public void StartSocket() {
-        new Thread(new ClientThread()).start();
+//        new Thread(new ClientThread()).start();
+        clientThread = new ClientThread();
+        clientThread.start();
     }
 
-    public class ClientThread implements Runnable {
+    public void ReconnectSocket(){
+        clientThread.close();
+        clientThread.start();
+    }
+
+    public class ClientThread extends Thread {
         BufferedReader input;
 
         @Override
@@ -65,13 +73,14 @@ public class Client {
                         if (!MainActivity.isConnected) {
                             Utils.showMessage(activity, "Trying connect to Server.");
                             socketB = new Socket(rasp.getIPAddress(), port);
+                            socketB.setKeepAlive(true);
                             MainActivity.isConnected = true;
                             Utils.showMessage(activity, "Connect to Server Successfully.");
                             SendFirstInfoOfClient();
                         }
                     }catch (IOException ieo){
                         //fail connect, wait 20s to try again.
-                        Thread.sleep(7000);
+                        Thread.sleep(10000);
                     }
 
                     if (socketB!=null) {
@@ -99,16 +108,36 @@ public class Client {
                 e.printStackTrace();
             }
         }
+
+        public void close(){
+            if (input!=null){
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (socketB!=null){
+                try {
+                    socketB.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
-    public boolean CloseConnectSocket() {
-        if (socketB != null && socketB.isConnected()) {
+    public boolean CloseSocket() {
+        if (socketB != null) {
             try {
-                SendMessageDisconnnect();
+//                SendMessageDisconnnect();
                 socketB.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        if (clientThread!=null){
+            clientThread.close();
         }
         return true;
     }
