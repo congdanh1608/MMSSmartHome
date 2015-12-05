@@ -178,6 +178,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         if (client == null) {
@@ -198,9 +203,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (client != null) {
-            client.CloseSocket();
-        }
+//        if (client != null) {
+//            client.CloseSocket();
+//        }
     }
 
     @Override

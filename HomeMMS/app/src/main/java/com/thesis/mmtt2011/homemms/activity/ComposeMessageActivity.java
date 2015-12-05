@@ -210,6 +210,9 @@ public class ComposeMessageActivity extends MainActivity {
             //update message in Sent Fragment.
             SentFragment.UpdateNewMessageSent(message.getId());
         }
+
+        //Finish activity
+//        ComposeMessageActivity.this.finish
     }
 
     //Create a message.

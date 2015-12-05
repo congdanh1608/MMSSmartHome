@@ -98,6 +98,32 @@ public class UserModel {
 			}
 		}
 	}
+	
+	public void UpdateStatusAllUser(String status) {
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			conn = MysqlConnect.getConnectMysql();
+			stmt = conn.createStatement();
+			String sql = "UPDATE " + handler.TABLE_USER + " SET " + handler.STATUS_USER + "='" + status + "'";
+			stmt.executeUpdate(sql);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null)
+					conn.close();
+			} catch (SQLException se) {
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+	}
 
 	public void UpdatePasswordUser(String userID, String password) {
 		Connection conn = null;

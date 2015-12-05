@@ -1,5 +1,8 @@
 package Socket;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +11,6 @@ import org.json.JSONObject;
 
 import com.thesis.ServerGUI;
 
-import Database.DatabaseHandler;
 import Database.MessageModel;
 import Database.UserModel;
 import Database.Utils;
@@ -16,6 +18,7 @@ import Helper.JsonHelper;
 import Model.Message;
 import Model.User;
 import SSH.PushFile;
+import Socket.Server.ClientThread_;
 import presistence.ContantsHomeMMS;
 import presistence.ContantsHomeMMS.Command;
 import presistence.ContantsHomeMMS.FirstStatus;
@@ -26,21 +29,23 @@ public class SocketControl {
 
 	public User user;
 	private Message message;
-	private DatabaseHandler handler;
 	private UserModel userModel;
 	private MessageModel messageModel;
 	private List<Message> messagesReceive;
 
-	private Server server;
+	private ClientThread_ ct;
+	private Socket socket;
 	private ServerGUI sGui;
 
-	public SocketControl(Server server, ServerGUI sGui) {
-		this.server = server;
+	private static PrintWriter printWriter;
+
+	public SocketControl(ClientThread_ ct, Socket socket, ServerGUI sGui) {
+		this.ct = ct;
+		this.socket = socket;
 		this.sGui = sGui;
 
 		user = new User();
 		message = new Message();
-		handler = new DatabaseHandler();
 		userModel = new UserModel();
 		messageModel = new MessageModel();
 		messagesReceive = new ArrayList<Message>();
@@ -66,6 +71,7 @@ public class SocketControl {
 				case REGISTERED: {
 					// Update status of user.
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
+					System.out.println(userID + " online.");
 					sendAskWasRegitered();
 					user = userModel.getUser(userID);
 
@@ -105,6 +111,7 @@ public class SocketControl {
 
 					// Update status of user.
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
+					System.out.println(user.getId() + " online.");
 
 					user = userModel.getUser(userID);
 
@@ -163,6 +170,7 @@ public class SocketControl {
 
 			case DISCONNECT:
 				// sGui.updateOnClear();
+				// ct.close();
 				break;
 
 			default:
@@ -171,9 +179,21 @@ public class SocketControl {
 		}
 	}
 
+	protected void SendMsg(Socket sk, String msg) {
+		if (sk != null) {
+			try {
+				System.out.println("Server send " + msg);
+				printWriter = new PrintWriter(sk.getOutputStream(), true);
+				printWriter.println(msg);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public boolean checkUserIsReceive(String userID) {
-		for (User receive : message.getReceiver()){
-			if (userID.equals(receive.getId())){
+		for (User receive : message.getReceiver()) {
+			if (userID.equals(receive.getId())) {
 				return true;
 			}
 		}
@@ -191,12 +211,35 @@ public class SocketControl {
 		return false;
 	}
 
+	public boolean checkNewClientConnect(String msg) {
+		String cmd = getCommandMsg(msg);
+		if (cmd != null) {
+			Command command = Command.valueOf(cmd);
+			if (command.equals(ContantsHomeMMS.FirstStatus.REGISTERED)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Set status for user.
+	public void setStatusForUser(String status) {
+		if (user != null) {
+			userModel.UpdateStatusUser(user.getId(), status);
+		}
+	}
+
+	// Set status for all user.
+	public void setStatusForAllUser(String status) {
+		userModel.UpdateStatusAllUser(status);
+	}
+
 	public void checkNewMessageSendToClient() {
 		messagesReceive = checkNewNoteForClient(user.getId());
 		if (messagesReceive.size() > 0) {
 			for (int i = 0; i < messagesReceive.size(); i++) {
-				System.out.println("Message " + i + " sending to " + user.getNameDisplay());
-				server.SendMsg(
+				System.out.println("Message " + i + " sending to " + user.getNameDisplay() + "at socket:" + socket.getPort());
+				SendMsg(socket,
 						createRecieverMessage(createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isNewMsg)));
 				// Check if mms has file attach then send it to
 				// client.
@@ -232,10 +275,10 @@ public class SocketControl {
 				System.out.println("Message " + i + " sending to " + user.getNameDisplay());
 				// Compare status sending or sent to know new msg or old msg.
 				if (messagesReceive.get(i).getStatus().equals(ContantsHomeMMS.MessageStatus.sending)) {
-					server.SendMsg(
+					SendMsg(socket,
 							createRecieverMessage(createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isNewMsg)));
 				} else {
-					server.SendMsg(
+					SendMsg(socket,
 							createRecieverMessage(createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isOldMsg)));
 				}
 				// Check if mms has file attach then send it to
@@ -258,10 +301,14 @@ public class SocketControl {
 					}
 				}
 
-				// Update status of Message was sent.
-				messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(),
-						ContantsHomeMMS.MessageStatus.sent.name());
-
+				// Update status of Message was sent for message user was
+				// receive;
+				if (messagesReceive.get(i).getSender().getId().equals(user.getId())) {
+					// do not change status
+				} else {
+					messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(),
+							ContantsHomeMMS.MessageStatus.sent.name());
+				}
 				// wait between every send msg
 				try {
 					Thread.sleep(1000);
@@ -477,22 +524,22 @@ public class SocketControl {
 	}
 
 	protected void sendAskLoginSuccess() {
-		server.SendMsg(JsonHelper.createJsonLoginSuccess());
+		SendMsg(socket, JsonHelper.createJsonLoginSuccess());
 	}
 
 	protected void sendAskLoginFail() {
-		server.SendMsg(JsonHelper.createJsonLoginFail());
+		SendMsg(socket, JsonHelper.createJsonLoginFail());
 	}
 
 	protected void sendAskWasRegitered() {
-		server.SendMsg(JsonHelper.createJsonRegisted());
+		SendMsg(socket, JsonHelper.createJsonRegisted());
 	}
 
 	protected void sendAskWasNotRegistered() {
-		server.SendMsg(JsonHelper.createJsonNotRegisted());
+		SendMsg(socket, JsonHelper.createJsonNotRegisted());
 	}
 
 	protected void sendAskRequestLogin() {
-		server.SendMsg(JsonHelper.createJsonRequestLogin());
+		SendMsg(socket, JsonHelper.createJsonRequestLogin());
 	}
 }
