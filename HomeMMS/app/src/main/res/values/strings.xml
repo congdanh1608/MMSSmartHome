@@ -52,4 +52,5 @@
     <string name="install_config">Install configuration?</string>
     <string name="install_alert_message">Configuration will be install on this device.</string>
     <string name="install">Install</string>
+    <string name="search_settings">Search messages</string>
 </resources>

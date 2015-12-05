@@ -2,6 +2,7 @@ package com.thesis.mmtt2011.homemms.activity;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -217,8 +218,9 @@ public class MainActivity extends AppCompatActivity {
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         //SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        ComponentName componentName = new ComponentName(this, SearchResultsActivity.class);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName));
 
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         searchView.setIconifiedByDefault(false);
@@ -255,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+    /*SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
             Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT).show();
@@ -267,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
             //Toast.makeText(getActivity(),"Searching " + , Toast.LENGTH_SHORT).show();
             return false;
         }
-    };
+    };*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

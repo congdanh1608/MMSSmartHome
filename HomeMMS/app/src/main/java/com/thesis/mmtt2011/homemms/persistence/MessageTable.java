@@ -8,7 +8,7 @@ import android.provider.BaseColumns;
 public interface MessageTable {
     String NAME = "message";
 
-    String COLUMN_ID = "id"; //User sender MAC_hhmmss
+    String COLUMN_ID = "_id"; //User sender MAC_hhmmss
     String COLUMN_SENDER = "sender";
     String COLUMN_RECEIVER = "receivers"; //list myUser receiver MACReceiver1_MACReceiver2_MACReceiver3
     String COLUMN_TITLE = "title";

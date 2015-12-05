@@ -1,0 +1,24 @@
+diff a/HomeMMS/app/src/main/AndroidManifest.xml b/HomeMMS/app/src/main/AndroidManifest.xml	(rejected hunks)
+@@ -48,13 +48,22 @@
+              android:theme="@style/AppTheme.NoActionBar" />
+          <activity
+              android:name=".activity.AppIntroSetup"
+++<<<<<<< 689ea60cc4984e309409e8dd7cef27c104ae5d02
+ +            android:theme="@style/AppTheme.NoActionBar"/>
+ +
+ +        <receiver android:name="com.thesis.mmtt2011.homemms.Network.WifiReceiver" >
+ +            <intent-filter android:priority="100">
+ +                <action android:name="android.net.wifi.STATE_CHANGE" />
+ +            </intent-filter>
+ +        </receiver>
+++=======
++             android:theme="@style/AppTheme.NoActionBar" />
++         <activity android:name=".activity.SearchResultsActivity">
++             <intent-filter>
++                 <action android:name="android.intent.action.SEARCH" />
++             </intent-filter>
++         </activity>
+++>>>>>>> Fix bug send without select contact, check first contact in list contact
+      </application>
+  
+  </manifest>

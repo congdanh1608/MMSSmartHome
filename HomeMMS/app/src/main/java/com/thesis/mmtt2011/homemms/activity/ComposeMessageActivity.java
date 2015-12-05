@@ -150,13 +150,17 @@ public class ComposeMessageActivity extends MainActivity {
         fabSendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (contact_list.getText().toString().isEmpty()) {
+                if (mMessageTitleView.getText().toString().isEmpty()) {
+                    Snackbar.make(view, "Title is not empty.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+                else if (contact_list.getText().toString().isEmpty()) {
+                    Snackbar.make(view, "Select contact to send message.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
                     Snackbar.make(view, "Sending message...", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     onSendMessage();
-                } else {
-                    Snackbar.make(view, "Select contact to send message.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
                 }
             }
         });

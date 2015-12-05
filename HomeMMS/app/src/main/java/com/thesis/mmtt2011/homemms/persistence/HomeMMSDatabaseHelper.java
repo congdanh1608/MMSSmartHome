@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.Telephony;
 
+import com.thesis.mmtt2011.homemms.*;
 import com.thesis.mmtt2011.homemms.model.JsonAttributes;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
@@ -103,7 +104,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
             User user = new User();
             user.setId(data.getString(data.getColumnIndex(UserTable.COLUMN_ID)));
             user.setNameDisplay(data.getString(data.getColumnIndex(UserTable.COLUMN_NAME)));
-            user.setNameDisplay(data.getString(data.getColumnIndex(UserTable.COLUMN_AVATAR)));
+            user.setAvatar(data.getString(data.getColumnIndex(UserTable.COLUMN_AVATAR)));
             user.setStatus(data.getString(data.getColumnIndex(UserTable.COLUMN_STATUS)));
             return user;
         } else {
@@ -381,6 +382,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
             message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
             message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
             message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
+
             message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
             message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
             return message;
@@ -433,7 +435,9 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
                 message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
-                message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                String timeStamp = com.thesis.mmtt2011.homemms.Utils.stringToDateCondition(
+                        data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                message.setTimestamp(timeStamp);
                 message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
 
                 messages.add(0, message);

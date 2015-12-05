@@ -39,6 +39,7 @@ import java.util.List;
  * Created by CongDanh on 22/10/2015.
  */
 public class Utils {
+    public static long HOUR24_MILISECOND = 24 * 60 * 60 * 1000;
     private com.thesis.mmtt2011.homemms.Network.Utils utilsNetwork;
     private Activity activity;
     private MediaRecorder mRecorderAudio = null;
@@ -192,7 +193,7 @@ public class Utils {
         }
     }
 
-    public static void showMessage(final Activity activity, final String msg){
+    public static void showMessage(final Activity activity, final String msg) {
         activity.runOnUiThread(new Runnable() {
             public void run() {
                 Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
@@ -223,7 +224,7 @@ public class Utils {
 
     public String getCurrentTimeHms() {
         String time = null;
-        DateFormat dateFormat = new SimpleDateFormat("HHmmss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyymmddHHmmss");
         Date date = new Date();
         time = dateFormat.format(date); // 075959
         return time;
@@ -236,6 +237,24 @@ public class Utils {
         Date date = new Date();
         time = dateFormat.format(date); // 20151030_075959
         return time;
+    }
+
+    public static String stringToDateCondition(String dateString) {
+        Date now = new Date();
+        try {
+            Date date = convertStringToDate(dateString);
+            long differenceTime = now.getTime() - date.getTime();
+            if (differenceTime > HOUR24_MILISECOND) {
+                DateFormat dateFormat = new SimpleDateFormat("MMM d");
+                return dateFormat.format(date);
+            } else {
+                DateFormat dateFormat = new SimpleDateFormat("h:mm a");
+                return dateFormat.format(date);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return dateString;
     }
 
     public static Date convertStringToDate(String dateString) {

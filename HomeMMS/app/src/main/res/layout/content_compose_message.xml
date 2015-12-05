@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_gravity="center_vertical"
-                    android:text="Contact 1"
+                    android:hint="@string/select_contact"
                     />
                 <ImageButton
                     android:id="@+id/add_contact"

@@ -2,9 +2,14 @@ package com.thesis.mmtt2011.homemms.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -12,13 +17,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.Utils;
 import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
+import com.thesis.mmtt2011.homemms.persistence.MessageTable;
 
-public class MessageContentActivity extends AppCompatActivity {
+public class MessageContentActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = "MessageContentActivity";
+
+    private Uri mUri;
 
     private Message mMessage;
 
@@ -38,20 +47,22 @@ public class MessageContentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message_content);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        mTitleView = (TextView) findViewById(R.id.message_title);
+        mContentView = (TextView) findViewById(R.id.message_content);
+        mTimestamp = (TextView) findViewById(R.id.timestamp);
         // Get the message from the intent
         Intent intent = getIntent();
-        String messageId = intent.getStringExtra(TAG);
-        mMessage = HomeMMSDatabaseHelper.getMessage(this, messageId);
-
-        mTitleView = (TextView) findViewById(R.id.message_title);
-        mTitleView.setText(mMessage.getTitle());
-
-        mContentView = (TextView) findViewById(R.id.message_content);
-        mContentView.setText(mMessage.getContentText());
-
-        mTimestamp = (TextView) findViewById(R.id.timestamp);
-        mTimestamp.setText(mMessage.getTimestamp());
+        if(intent.hasExtra(TAG)) {
+            String messageId = intent.getStringExtra(TAG);
+            mMessage = HomeMMSDatabaseHelper.getMessage(this, messageId);
+            mTitleView.setText(mMessage.getTitle());
+            mContentView.setText(mMessage.getContentText());
+            String timeStamp = Utils.stringToDateCondition(mMessage.getTimestamp());
+            mTimestamp.setText(timeStamp);
+        } else {
+            mUri = intent.getData();
+            getSupportLoaderManager().initLoader(0, null, this);
+        }
 
         //get sender to show here
 
@@ -65,5 +76,26 @@ public class MessageContentActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getBaseContext(), mUri, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (cursor.moveToFirst()) {
+            mTitleView.setText(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_TITLE)));
+            mContentView.setText(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
+
+            String timeStamp = Utils.stringToDateCondition(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+            mTimestamp.setText(timeStamp);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
