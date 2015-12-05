@@ -67,6 +67,7 @@ public class ComposeMessageActivity extends MainActivity {
     public void initContacts() {
         contacts.addAll(homeMMSDatabaseHelper.getAllUserExceptMySeft(this, MainActivity.myUser.getId()));
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +109,7 @@ public class ComposeMessageActivity extends MainActivity {
                                 for (int i = 0; i < selectedContacts.size(); i++) {
                                     User user = selectedContacts.get(i);
                                     contactList.append(user.getNameDisplay());
-                                    if(i < selectedContacts.size() - 1) {
+                                    if (i < selectedContacts.size() - 1) {
                                         contactList.append(", ");
                                     }
                                 }
@@ -163,22 +164,20 @@ public class ComposeMessageActivity extends MainActivity {
 
     private void onSendMessage() {
         //info reciever.
-//        User receiver = new User(receiverID, "", "", "", "");
         List<User> receivers = selectedContacts;
-//        receivers.add(receiver);
 
         //Get Name file mms.
-        if (mFileNameAudio!=null) {
+        if (mFileNameAudio != null) {
             String[] separatedA = mFileNameAudio.split("/");
             mFileNameAudio = separatedA[separatedA.length - 1];
         }
         //Get Name file Photo
-        if (mFileNameImage!=null) {
+        if (mFileNameImage != null) {
             String[] separatedP = mFileNameImage.split("/");
             mFileNameImage = separatedP[separatedP.length - 1];
         }
         //Get Name file Video
-        if (mFileNameVideo!=null) {
+        if (mFileNameVideo != null) {
             String[] separatedV = mFileNameVideo.split("/");
             mFileNameVideo = separatedV[separatedV.length - 1];
         }
@@ -187,20 +186,20 @@ public class ComposeMessageActivity extends MainActivity {
         //Save message to database with status draft.
         homeMMSDatabaseHelper.createMessage(getApplicationContext(), message);
 
-        if (client != null) {
+        //Send message to Server.
+        if (client != null && MainActivity.isConnected) {
             client.SendInfoMessage(message);
-        }
-        if (mFileNameAudio!=null || mFileNameImage!=null || mFileNameVideo!=null) {
-            //Connect SSH.
-            new ConnectSSHAsyncTask(this, rasp).execute();
-            //Push File by SSH
-            pushFileAttachToPi(mFileNameAudio);
-            pushFileAttachToPi(mFileNameImage);
-            pushFileAttachToPi(mFileNameVideo);
-        }
 
-        //Notify server myUser finished note.
-        if (client != null) {
+            if (mFileNameAudio != null || mFileNameImage != null || mFileNameVideo != null) {
+                //Connect SSH.
+                new ConnectSSHAsyncTask(this, rasp).execute();
+                //Push File by SSH
+                pushFileAttachToPi(mFileNameAudio);
+                pushFileAttachToPi(mFileNameImage);
+                pushFileAttachToPi(mFileNameVideo);
+            }
+
+            //Notify server myUser finished note.
             //After send message successful,
             if (client.SendMessageEndNote()) {
                 //update message in database status sent.
@@ -209,11 +208,17 @@ public class ComposeMessageActivity extends MainActivity {
                 //update message in Sent Fragment.
                 SentFragment.UpdateNewMessageSent(message.getId());
             }
+        }else{      //Save message with status wait_send
+            message.setStatus(ContantsHomeMMS.MessageStatus.wait_send.name());
+            homeMMSDatabaseHelper.updateMessage(this, message);
+            utils.ShowToast("Message will send to Server when online.");
+            //update message in Sent Fragment.
+            SentFragment.UpdateNewMessageSent(message.getId());
         }
     }
 
     //Create a message.
-    private Message createAMessage(List<User> receivers){
+    private Message createAMessage(List<User> receivers) {
         Message message = new Message();
         message.setMId(utils.createMessageID(myUser.getId()));
         message.setSender(myUser);
@@ -226,16 +231,6 @@ public class ComposeMessageActivity extends MainActivity {
         message.setTimestamp(utils.getCurrentTime());
         message.setStatus(ContantsHomeMMS.MessageStatus.draft.name());
         return message;
-    }
-
-    private void pushFileAttachToPi(String mFileName) {
-        if (mFileName != null) {
-            byte[] bytes = Utils.loadResourceFromPath(mFileName);
-            if (bytes != null) {
-                PushFileAsyncTask async = new PushFileAsyncTask(bytes, mFileName, rasp, this);
-                async.execute();
-            }
-        }
     }
 
     @Override

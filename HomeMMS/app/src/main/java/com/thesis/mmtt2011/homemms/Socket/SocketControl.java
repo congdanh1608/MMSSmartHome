@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.util.Log;
 import android.widget.EditText;
 
+import com.thesis.mmtt2011.homemms.SSH.ConnectSSHAsyncTask;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.fragment.InboxFragment;
 import com.thesis.mmtt2011.homemms.fragment.SentFragment;
@@ -16,11 +17,13 @@ import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS.*;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
+import com.thesis.mmtt2011.homemms.persistence.MessageTable;
 import com.thesis.mmtt2011.homemms.persistence.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -54,6 +57,8 @@ public class SocketControl {
                         case REGISTERED:
                             //if device was registered, server will send list myUser in database.
                             getListUserSaveToDatabase(msg);
+                            //Check message wait send.
+                            CheckMessageWaitSend();
                             break;
                         case NOTREGISTERED:
                             //If deivce was not registed, will show register acitvity and send info of client to server.
@@ -323,46 +328,14 @@ public class SocketControl {
         }
     }
 
-
-    public static void showDialogRegister(Context context) {
-        final EditText name = new EditText(context);
-        final EditText pass = new EditText(context);
-        final EditText avatar = new EditText(context);
-        name.setText("Danh");
-        pass.setText("123");
-        avatar.setText("avatar.png");
-        new AlertDialog.Builder(context)
-                .setView(name)
-                .setView(pass)
-                .setView(avatar)
-                .setTitle("Register form")
-                .setMessage("input your info")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.myUser.setNameDisplay(name.getText().toString());
-                        MainActivity.myUser.setAvatar(avatar.getText().toString());
-                        MainActivity.myUser.setPassword(avatar.getText().toString());
-                        client.SendMessageInfoOfClient();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .show();
-    }
-
-    public static void showDialogLogin(Context context) {
-        final EditText pass = new EditText(context);
-        pass.setText("123456");
-        new AlertDialog.Builder(context)
-                .setView(pass)
-                .setTitle("Login form")
-                .setMessage("input your pass")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.myUser.setPassword(pass.getText().toString());
-                        client.SendLoginInfoOfClient();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .show();
+    public void CheckMessageWaitSend(){
+        List<Message> messages = new ArrayList<Message>();
+        messages = homeMMSDatabaseHelper.getAllMessagesBy(context, MessageTable.COLUMN_STATUS, MessageStatus.wait_send.name());
+        if (messages.size() > 0) {
+            for (Message message : messages) {
+                Log.d("Message wait send", "send message " + message.getId());
+                MainActivity.SendMessageWaitSend(message);
+            }
+        }
     }
 }

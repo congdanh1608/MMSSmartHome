@@ -27,10 +27,13 @@ import android.widget.Toast;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.thesis.mmtt2011.homemms.Network.Utils;
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.SSH.ConnectSSHAsyncTask;
+import com.thesis.mmtt2011.homemms.SSH.PushFileAsyncTask;
 import com.thesis.mmtt2011.homemms.SlidingTabLayout;
 import com.thesis.mmtt2011.homemms.Socket.Client;
 import com.thesis.mmtt2011.homemms.adapter.ViewPagerAdapter;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
+import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
@@ -53,12 +56,15 @@ public class MainActivity extends AppCompatActivity {
     private static final int port = 2222;
     public static User myUser;
     private Utils utilsNetwork;
-    private com.thesis.mmtt2011.homemms.Utils utils;
+    private static com.thesis.mmtt2011.homemms.Utils utils;
     //Demo info
     public static RaspberryPiClient rasp;
     public static String mDir = null, mFileNameAudio = null, mFileNameImage = null, mFileNameVideo = null;
 
     private static Activity mActivity;
+    private static HomeMMSDatabaseHelper homeMMSDatabaseHelper;
+
+    public static boolean isConnected = false;        //Client is connecting to Server?
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         utils = new com.thesis.mmtt2011.homemms.Utils(this);
 
         mActivity = this;
+        homeMMSDatabaseHelper = new HomeMMSDatabaseHelper(this);
 
         //Info server Pi
         String ServerIP = PreferencesHelper.getIsPreferenceString(this, ContantsHomeMMS.SERVER_IP);
@@ -96,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Load before getIsFirstRun()
         //Load connect to Pi and listen receive message from Pi.
-        init();
+        createClient();
 
         if (PreferencesHelper.getIsFirstRun(this)) {
             Intent intent = new Intent(this, AppIntroSetup.class);
@@ -176,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if (client == null) {
-            init();
+            createClient();
         }
     }
 
@@ -366,11 +373,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void init() {
+    public static void createClient() {
         //connect socket.
-        if (rasp != null && !PreferencesHelper.getIsFirstRun(this)) {
-            client = new Client(rasp, port, this);
-            client.StartSocket();
+        if (utils.checkIsConnectToWifiHome()) {
+            if (rasp != null && !PreferencesHelper.getIsFirstRun(mActivity)) {
+                client = new Client(rasp, port, mActivity);
+                client.StartSocket();
+            }
         }
     }
 
@@ -384,4 +393,37 @@ public class MainActivity extends AppCompatActivity {
         mActivity.startActivityForResult(intent, ContantsHomeMMS.REGISTER_REQUEST_CODE);
     }
 
+    //Send message to Server.
+    public static void SendMessageWaitSend(Message message) {
+        if (client != null && isConnected) {
+            client.SendInfoMessage(message);
+
+            if (message.getContentAudio()!=null || message.getContentImage()!=null || message.getContentAudio()!=null) {
+                //Connect SSH.
+                new ConnectSSHAsyncTask(mActivity, rasp).execute();
+                //Push File by SSH
+                pushFileAttachToPi(message.getContentAudio());
+                pushFileAttachToPi(message.getContentImage());
+                pushFileAttachToPi(message.getContentVideo());
+            }
+
+            //Notify server myUser finished note.
+            //After send message successful,
+            if (client.SendMessageEndNote()) {
+                //update message in database status sent.
+                message.setStatus(ContantsHomeMMS.MessageStatus.sent.name());
+                homeMMSDatabaseHelper.updateMessage(mActivity, message);
+            }
+        }
+    }
+
+    public static void pushFileAttachToPi(String mFileName) {
+        if (mFileName != null) {
+            byte[] bytes = com.thesis.mmtt2011.homemms.SSH.Utils.loadResourceFromPath(mFileName);
+            if (bytes != null) {
+                PushFileAsyncTask async = new PushFileAsyncTask(bytes, mFileName, rasp, mActivity);
+                async.execute();
+            }
+        }
+    }
 }

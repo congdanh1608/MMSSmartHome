@@ -52,7 +52,7 @@ public class ContantsHomeMMS {
     }
 
     public enum MessageStatus{
-        draft, sent, received, read;
+        draft, sent, received, read, wait_send;
     }
 
     public static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 1003;
@@ -63,8 +63,7 @@ public class ContantsHomeMMS {
     public static final String PREFERENCE_NAME = AppName + "_PREFERENCES";
     public static final String FIRST_RUN_PREFRENCES = "isFirstRun";
     public static final String FIRST_RUN_REQUEST_LOGIN = "isFirstRunReqestLogin";
-    public static final String SERVER_IP = "ServerIP";
-    public static final String SERVER_MAC = "ServerMAC";
-    public static final String SERVER_NAME = "ServerNAME";
+    public static final String SERVER_IP = "ServerIP", SERVER_MAC = "ServerMAC", SERVER_NAME = "ServerNAME";
+    public static final String AP_MACADDRESS = "AP_BSSID", AP_NAME = "AP_SSID";;
     public static final String USER_AVATAR = "UserAvatar";
 }

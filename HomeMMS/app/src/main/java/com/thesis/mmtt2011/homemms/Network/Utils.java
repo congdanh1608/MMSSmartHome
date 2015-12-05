@@ -2,6 +2,8 @@ package com.thesis.mmtt2011.homemms.Network;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.text.format.Formatter;
@@ -33,6 +35,35 @@ public class Utils {
         return new Device(deviceName, IP, Mac);
     }
 
+    //Check Device is Connect wifi
+    public boolean checkIsWifiConnect(){
+        ConnectivityManager connManager = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (mWifi.isConnected()) return true;
+        return false;
+    }
+
+    //Get Mac Address of Access point
+    public String getMacAddressOfAP() {
+        WifiManager wimanager = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
+        String macAddress = wimanager.getConnectionInfo().getBSSID();
+        if (macAddress == null) {
+            macAddress = null; //"Device don't have mac address or wi-fi is disabled";
+        }
+        return macAddress;
+    }
+
+    //Get SSID of aceess point.
+    public String getSSIDOfAP() {
+        WifiManager wimanager = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
+        String ssid = wimanager.getConnectionInfo().getSSID();
+        if (ssid == null) {
+            ssid = null; //"Device don't have mac address or wi-fi is disabled";
+        }
+        return ssid;
+    }
+
+    //Get MAC Address of Device
     public String getMacAddress() {
         WifiManager wimanager = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
         String macAddress = wimanager.getConnectionInfo().getMacAddress();
