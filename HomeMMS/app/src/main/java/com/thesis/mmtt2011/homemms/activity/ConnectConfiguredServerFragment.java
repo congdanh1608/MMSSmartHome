@@ -125,7 +125,6 @@ public class ConnectConfiguredServerFragment extends Fragment {
             BroadcastFindServer();
             mAutoConnectTask = new ServerAutoConnectTask();
             mAutoConnectTask.execute((Void) null);
-            PreferencesHelper.writeToPreferences(getActivity(), false);
         }
     }
 
@@ -161,7 +160,6 @@ public class ConnectConfiguredServerFragment extends Fragment {
             BroadcastFindServer();
             mManualConnectTask = new ServerManualConnectTask(ipServer);
             mManualConnectTask.execute((Void) null);
-            PreferencesHelper.writeToPreferences(getActivity(), false);
         }
     }
 
@@ -188,13 +186,16 @@ public class ConnectConfiguredServerFragment extends Fragment {
                 //Simulate network access.
                 Thread.sleep(2000);
                 //Test server answer broadcast
-                if (MainActivity.rasp.getIPAddress().equals(ipServer)) {
+                if (MainActivity.rasp.getIPAddress()!=null && MainActivity.rasp.getIPAddress().equals(ipServer)) {
                     MainActivity.rasp.setIPAddress(ipServer);
                     MainActivity.rasp.setMacAddress(Discover.getMacFromArpCache(ipServer));
                     MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utils.getnmbLookupLocation()));
 
                     //Save to Preferences.
                     GetAndSaveInfoToPrefer();
+                }
+                else {
+                    return false;
                 }
             } catch (InterruptedException e) {
                 return false;
@@ -240,6 +241,9 @@ public class ConnectConfiguredServerFragment extends Fragment {
                     //Save to Preferences
                     GetAndSaveInfoToPrefer();
                 }
+                else {
+                    return false;
+                }
             } catch (InterruptedException e) {
                 return false;
             }
@@ -256,7 +260,7 @@ public class ConnectConfiguredServerFragment extends Fragment {
                 //finish activity, go back to MainActivity
                 getActivity().finish();
             } else {
-                etIPServer.setError(getString(R.string.error_incorrect_ip_address));
+                etIPServer.setError(getString(R.string.error_not_found_server));
                 etIPServer.requestFocus();
             }
         }
@@ -283,5 +287,7 @@ public class ConnectConfiguredServerFragment extends Fragment {
         if (NameOfAP != null) {
             PreferencesHelper.writeToPreferencesString(getActivity(), NameOfAP, ContantsHomeMMS.AP_NAME);
         }
+        //Save First run app.
+        PreferencesHelper.writeToPreferences(getActivity(), false);
     }
 }

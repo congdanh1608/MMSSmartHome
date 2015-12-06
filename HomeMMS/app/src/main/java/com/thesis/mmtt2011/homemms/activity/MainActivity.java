@@ -396,6 +396,9 @@ public class MainActivity extends AppCompatActivity {
                 client.StartSocket();
             }
         }
+        else{
+            utils.ShowToast("App is offline");
+        }
     }
 
     public static void ShowLoginAcitivty() {

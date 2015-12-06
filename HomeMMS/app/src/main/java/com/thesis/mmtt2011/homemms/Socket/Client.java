@@ -71,9 +71,9 @@ public class Client {
                     //try to connect to Server every 20s.
                     try {
                         if (!MainActivity.isConnected) {
-                            Utils.showMessage(activity, "Trying connect to Server.");
+//                            Utils.showMessage(activity, "Trying connect to Server.");
                             socketB = new Socket(rasp.getIPAddress(), port);
-                            socketB.setKeepAlive(true);
+//                            socketB.setKeepAlive(true);
                             MainActivity.isConnected = true;
                             Utils.showMessage(activity, "Connect to Server Successfully.");
                             SendFirstInfoOfClient();
@@ -91,7 +91,7 @@ public class Client {
                                 //Server socket closed.
                                 if (temp == null && MainActivity.isConnected) {
                                     MainActivity.isConnected = false;
-                                    Utils.showMessage(activity, "Was disconnected to Server. May be your network has problem.");
+//                                    Utils.showMessage(activity, "Was disconnected to Server. May be your network has problem.");
                                 }
                                 //Receive message from Server.
                                 if (temp != null && !temp.equals("")) {

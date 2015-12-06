@@ -3,6 +3,7 @@ package com.thesis.mmtt2011.homemms.Network;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -22,7 +23,14 @@ public class WifiReceiver extends BroadcastReceiver {
         if(info != null && info.isConnected()) {
             //Wifi change states;
             MainActivity.createClient();
-            Log.d("Reconnect", "Wifi change state.");
+            Log.d("Wifi State", "Wifi change state.");
+        }
+
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        if (wifi.isWifiEnabled() == false) {
+            //notify app is offline
+            MainActivity.createClient();
+            Log.d("Wifi State", "Wifi is off");
         }
     }
 }
