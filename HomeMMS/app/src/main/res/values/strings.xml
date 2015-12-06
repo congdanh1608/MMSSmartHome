@@ -54,4 +54,5 @@
     <string name="install_alert_message">Configuration will be install on this device.</string>
     <string name="install">Install</string>
     <string name="search_settings">Search messages</string>
+    <string name="choose_contact">Receivers</string>
 </resources>

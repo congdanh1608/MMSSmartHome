@@ -23,8 +23,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/avatar_circle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
                 android:src="@drawable/ic_launcher"
                 />
         <LinearLayout
@@ -39,7 +39,7 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/abc_text_size_title_material"
+                android:textSize="@dimen/abc_text_size_subhead_material"
                 android:textStyle="bold"
                 android:textColor="@color/colorAccent"
                 android:text="@string/message_title"/>
@@ -47,9 +47,9 @@
                 android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="@dimen/abc_text_size_medium_material"
-                android:text="@string/username"
-                android:textStyle="bold" />
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/abc_text_size_small_material"
+                android:text="@string/username"/>
 
         </LinearLayout>
 

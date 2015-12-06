@@ -50,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
     ViewPagerAdapter adapter;
     SlidingTabLayout tabs;
     CharSequence Titles[] = {"Message", "Sent"};
+    int[] tabIcons = {
+            R.drawable.ic_inbox_white_48dp,
+            R.drawable.ic_send_white_48dp,
+    };
     final int NumbOfTabs = 2;
     SearchView searchView;
 

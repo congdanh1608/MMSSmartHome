@@ -18,9 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -50,7 +50,7 @@ public class ComposeMessageActivity extends MainActivity {
     private EditText mMessageContentView;
     private View mProgressView;
     private View mComposeMessageFormView;
-    private ImageButton add_contact;
+    private Button add_contact;
     private TextView contact_list;
 
     public static String receiverID;      //ID of receiver.
@@ -82,7 +82,7 @@ public class ComposeMessageActivity extends MainActivity {
 
         mMessageTitleView = (EditText) findViewById(R.id.message_title);
         mMessageContentView = (EditText) findViewById(R.id.message_content);
-        add_contact = (ImageButton) findViewById(R.id.add_contact);
+        add_contact = (Button) findViewById(R.id.add_contact);
         contact_list = (TextView) findViewById(R.id.contact_list);
 
         mProgressView = findViewById(R.id.compose_message_progress);
