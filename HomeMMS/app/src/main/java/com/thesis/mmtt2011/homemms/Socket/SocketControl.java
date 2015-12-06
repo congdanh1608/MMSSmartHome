@@ -107,9 +107,6 @@ public class SocketControl {
                         if (messageReceive.getSender().getId().equals(myUser.getId())) {
                             //Set message status for message was sent.
                             messageReceive.setStatus(MessageStatus.sent.name());
-                            SentFragment.UpdateNewMessageSent(messageReceive.getId());
-                        }else {
-                            InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
                         }
 
                         //Save message to database.
@@ -128,6 +125,13 @@ public class SocketControl {
                         }
                         if (tempV != null && !tempV.equals("")) {
                             RecieveFile.recieveFileFromServer(tempV);
+                        }
+
+                        //Update message to Inbox or SentBox
+                        if (messageReceive.getSender().getId().equals(myUser.getId())) {
+                            SentFragment.UpdateNewMessageSent(messageReceive.getId());
+                        }else {
+                            InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
                         }
                     }
                     break;

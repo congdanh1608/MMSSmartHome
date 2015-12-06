@@ -29,7 +29,8 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
     //public final static String EXTRA_MESSAGE_ID = "com.thesis.mmtt2011.EXTRA_MESSAGE_ID";
     private static final int TYPE_UNREAD = 0;
     private static final int TYPE_READ = 1;
-
+    private static final int MAX_TEXT_LENGTH = 20;
+    private static final int MAX_CONTENT_TEXT_LENGTH = 100;
     //private static final int ITEM_COUNT = 50;
     private List<Message> messages = new ArrayList<>();
 
@@ -152,8 +153,16 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
             //mMessage = message;
             if(message!=null) {
                 tvUsername.setText(message.getSender().getNameDisplay());
-                tvTitle.setText(message.getTitle());
-                tvContent.setText(message.getContentText());
+                String title = message.getTitle();
+                String textContent = message.getContentText();
+                if(title.length() > MAX_TEXT_LENGTH) {
+                    title = message.getTitle().substring(0, MAX_TEXT_LENGTH) + "...";
+                }
+                if(textContent.length() > MAX_CONTENT_TEXT_LENGTH) {
+                    textContent = textContent.substring(0, MAX_CONTENT_TEXT_LENGTH) + "...";
+                }
+                tvTitle.setText(title);
+                tvContent.setText(textContent);
                 tvTimeStamp.setText(message.getTimestamp());
             }
         }

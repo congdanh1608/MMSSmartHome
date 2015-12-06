@@ -39,6 +39,7 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/abc_text_size_title_material"
                 android:textStyle="bold"
                 android:textColor="@color/colorAccent"
                 android:text="@string/message_title"/>
@@ -46,6 +47,7 @@
                 android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:textSize="@dimen/abc_text_size_medium_material"
                 android:text="@string/username"
                 android:textStyle="bold" />
 
@@ -65,6 +67,7 @@
             android:layout_height="wrap_content"
             android:text="@string/message_content"
             android:layout_marginTop="10dp"
+            android:textSize="@dimen/abc_text_size_body_1_material"
             android:textAlignment="gravity"/>
 
     </LinearLayout>

@@ -378,12 +378,15 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
             User sender = getUser(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_SENDER)));
             message.setSender(sender);
             List<User> receivers = getListReceiver(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_RECEIVER)));
+            message.setReceiver(receivers);
             message.setTitle(data.getString(data.getColumnIndex(MessageTable.COLUMN_TITLE)));
             message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
             message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
             message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
 
-            message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+            String timeStamp = com.thesis.mmtt2011.homemms.Utils.stringToDateCondition(
+                    data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+            message.setTimestamp(timeStamp);
             message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
             return message;
         } else {
@@ -407,7 +410,9 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
                 message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
-                message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                String timeStamp = com.thesis.mmtt2011.homemms.Utils.stringToDateCondition(
+                        data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                message.setTimestamp(timeStamp);
                 message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
 
                 messages.add(message);
@@ -464,7 +469,9 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
                 message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
-                message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                String timeStamp = com.thesis.mmtt2011.homemms.Utils.stringToDateCondition(
+                        data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                message.setTimestamp(timeStamp);
                 message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
 
                 messages.add(message);
