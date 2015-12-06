@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Parcelable;
@@ -49,15 +51,18 @@ public class Utils {
         utilsNetwork = new com.thesis.mmtt2011.homemms.Network.Utils(activity);
     }
 
-    public boolean checkIsConnectToWifiHome(){
-        if (utilsNetwork.checkIsWifiConnect()){
+    public int checkIsConnectToWifiHome() {
+        if (utilsNetwork.checkIsWifiConnect()) {
             String MACADDRESSOfAP = PreferencesHelper.getIsPreferenceString(activity, ContantsHomeMMS.AP_MACADDRESS);
             String SSIDOfAP = PreferencesHelper.getIsPreferenceString(activity, ContantsHomeMMS.AP_NAME);
-            if (utilsNetwork.getMacAddressOfAP().equals(MACADDRESSOfAP) && utilsNetwork.getSSIDOfAP().equals(SSIDOfAP)){
-                return true;
+            if (MACADDRESSOfAP==null || SSIDOfAP==null){
+                return 0;   //unknow wifi
+            }
+            if (utilsNetwork.getMacAddressOfAP().equals(MACADDRESSOfAP) && utilsNetwork.getSSIDOfAP().equals(SSIDOfAP)) {
+                return 1;   //true wifi home
             }
         }
-        return false;
+        return -1; //not wifi home.
     }
 
     public static Boolean CreateFolder(String dir) {
@@ -109,6 +114,23 @@ public class Utils {
         int read;
         while ((read = in.read(buffer)) != -1) {
             out.write(buffer, 0, read);
+        }
+    }
+
+    public void resizeImage(String oldPath, String newPath, int weight, int height) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(oldPath, options);
+
+        Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap, weight, height, true);
+        File file = new File(newPath);
+        try {
+            file.createNewFile();
+            FileOutputStream ostream = new FileOutputStream(file);
+            newBitmap.compress(Bitmap.CompressFormat.PNG, 100, ostream);
+            ostream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -319,7 +341,7 @@ public class Utils {
         }
     }
 
-    public void ShowToast(String s){
+    public void ShowToast(String s) {
         Toast.makeText(activity, s, Toast.LENGTH_SHORT).show();
     }
 }

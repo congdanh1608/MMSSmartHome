@@ -3,6 +3,7 @@ package com.thesis.mmtt2011.homemms.activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +35,8 @@ public class ConnectConfiguredServerFragment extends Fragment {
     private ServerAutoConnectTask mAutoConnectTask = null;
     private Utils utils;
 
+    private LinearLayout layout_config_server;
+
     //
     public ConnectConfiguredServerFragment() {
         // Required empty public constructor
@@ -46,7 +50,7 @@ public class ConnectConfiguredServerFragment extends Fragment {
 
         //Create utils
         utils = new Utils(getActivity());
-
+        layout_config_server = (LinearLayout) rootView.findViewById(R.id.layout_config_server);
         etIPServer = (EditText) rootView.findViewById(R.id.ipServer);
         etIPServer.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -213,8 +217,10 @@ public class ConnectConfiguredServerFragment extends Fragment {
                 //finish activity, go back to MainActivity
                 getActivity().finish();
             } else {
-                etIPServer.setError(getString(R.string.error_incorrect_ip_address));
-                etIPServer.requestFocus();
+                Snackbar.make(layout_config_server, getString(R.string.error_incorrect_ip_address), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+//                etIPServer.setError(getString(R.string.error_incorrect_ip_address));
+//                etIPServer.requestFocus();
             }
         }
 
@@ -260,8 +266,10 @@ public class ConnectConfiguredServerFragment extends Fragment {
                 //finish activity, go back to MainActivity
                 getActivity().finish();
             } else {
-                etIPServer.setError(getString(R.string.error_not_found_server));
-                etIPServer.requestFocus();
+                Snackbar.make(layout_config_server, getString(R.string.error_not_found_server), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+//                etIPServer.setError(getString(R.string.error_not_found_server));
+//                etIPServer.requestFocus();
             }
         }
 

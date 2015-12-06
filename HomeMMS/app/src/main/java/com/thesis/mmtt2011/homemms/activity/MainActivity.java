@@ -390,14 +390,18 @@ public class MainActivity extends AppCompatActivity {
 
     public static void createClient() {
         //connect socket.
-        if (utils.checkIsConnectToWifiHome()) {
+        int testWifi = utils.checkIsConnectToWifiHome();
+        if (testWifi == 1) {
             if (rasp != null && !PreferencesHelper.getIsFirstRun(mActivity)) {
                 client = new Client(rasp, port, mActivity);
                 client.StartSocket();
             }
         }
-        else{
+        else if (testWifi == -1){
             utils.ShowToast("App is offline");
+        }
+        else if (testWifi == 0){
+            utils.ShowToast("Dont config Server.");
         }
     }
 
