@@ -68,9 +68,9 @@ public class DatabaseHandler {
 			stmt = conn.createStatement();
 			String CREATE_TABLE_USER = "CREATE TABLE " + TABLE_USER + "("
 					+ "userID VARCHAR(20) NOT NULL PRIMARY KEY,"
-					+ "nameDisplay VARCHAR(25), " 
+					+ "nameDisplay VARCHAR(40), " 
 					+ "password VARCHAR(25), "
-					+ "avatar VARCHAR(25), " 
+					+ "avatar VARCHAR(40), " 
 					+ "status VARCHAR(10) " 
 					+ ")";
 			stmt.executeUpdate(CREATE_TABLE_USER);
@@ -104,12 +104,12 @@ public class DatabaseHandler {
 					+ "mID VARCHAR(20) NOT NULL PRIMARY KEY,"
 					+ "title VARCHAR(50), " 
 					+ "sender VARCHAR(20) NOT NULL, "
-					+ "reciever VARCHAR(100) NOT NULL, " 
-					+ "contentText VARCHAR(2000), " 
-					+ "contentImage VARCHAR(25), "
-					+ "contentAudio VARCHAR(25), "
-					+ "contentVideo VARCHAR(25), "
-					+ "timestamp VARCHAR(30), "
+					+ "reciever VARCHAR(200) NOT NULL, " 
+					+ "contentText VARCHAR(10000), " 
+					+ "contentImage VARCHAR(50), "
+					+ "contentAudio VARCHAR(50), "
+					+ "contentVideo VARCHAR(50), "
+					+ "timestamp VARCHAR(40), "
 					+ "status VARCHAR(20) "
 					+ ")";
 			stmt.executeUpdate(CREATE_TABLE_MESSAGE);

@@ -66,7 +66,7 @@ public class Client {
 //                MainActivity.isConnected = true;
 //                Utils.showMessage(activity, "Connect to Server Successfully.");
 //                SendFirstInfoOfClient();
-
+                boolean firstshow = true;
                 while (true) {
                     //try to connect to Server every 20s.
                     try {
@@ -79,6 +79,10 @@ public class Client {
                             SendFirstInfoOfClient();
                         }
                     }catch (IOException ieo){
+                        if (firstshow) {
+                            Utils.showMessage(activity, "Cannot connect to Server. May be your Server has problem.");
+                            firstshow = false;
+                        }
                         //fail connect, wait 20s to try again.
                         Thread.sleep(10000);
                     }
@@ -91,7 +95,7 @@ public class Client {
                                 //Server socket closed.
                                 if (temp == null && MainActivity.isConnected) {
                                     MainActivity.isConnected = false;
-//                                    Utils.showMessage(activity, "Was disconnected to Server. May be your network has problem.");
+                                    Utils.showMessage(activity, "Was disconnected to Server. May be your network or Server has problem.");
                                 }
                                 //Receive message from Server.
                                 if (temp != null && !temp.equals("")) {
@@ -246,6 +250,20 @@ public class Client {
             try {
                 printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
                 printWriter.println(socketControl.createNoticeDisconnect());
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else return false;
+        return false;
+    }
+
+    //Send mesage request Server send file attach of Message.
+    public boolean SendRequestFileAttach(Message message) {
+        if (socketB.isConnected()) {
+            try {
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
+                printWriter.println(socketControl.createRequestFileAttach(message.getId()));
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();

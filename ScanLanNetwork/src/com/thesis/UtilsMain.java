@@ -10,12 +10,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Utils {
+public class UtilsMain {
 	static byte[] appClientData;
 
 	public static void copyFile(InputStream in, OutputStream out)
@@ -25,31 +26,6 @@ public class Utils {
 		while ((read = in.read(buffer)) != -1) {
 			out.write(buffer, 0, read);
 		}
-	}
-
-	public static ArrayList<String> addCommandsReboot() {
-		ArrayList<String> listOfCommands = new ArrayList<String>();
-		listOfCommands.add("sudo reboot\n");
-		return listOfCommands;
-	}
-
-	public static int CheckIsRaspConfigured(String IPAddress, String username,
-			String password) {
-		// Connection connection = new Connection(IPAddress);
-		// try {
-		// connection.connect(null, 3000, 3000);
-		// if (connection.authenticateWithPassword(username, password)) {
-		// String s = "ls /home/" + username;
-		// String result = excCommandStringWithResult(connection, s);
-		// if (result != null && result.contains("configrasppi")) {
-		// return 1; // It is Rasp was configure.
-		// }
-		// return 2; // It is Rasp was not configure.
-		// }
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		return 0; // is not Rasp
 	}
 
 	public static void createFile(String path, String content) {
@@ -71,6 +47,28 @@ public class Utils {
 			e.printStackTrace();
 		}
 	}
+	
+	 public static Boolean createFolder(String dir) {
+	        File folder = new File(dir);
+	        if (folder.exists()){
+	            return true;
+	        }
+	        else {
+	            try {
+	                folder.mkdirs();
+	                return true;
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	                return false;
+	            }
+	        }
+	    }
+
+	    public static boolean checkFilsIsExits(String filePath){
+	        File file = new File(filePath);
+	        if (file.exists()) return true;
+	        else return false;
+	    }
 
 	public static String readFile(String path) {
 		String s = "";
@@ -104,5 +102,12 @@ public class Utils {
 		Date date = new Date();
 		time = dateFormat.format(date); // 20151030_075959
 		return time;
+	}
+	
+	public static String getIPAddressFromSocket(Socket socket){
+		String ip = null;
+		String ip_temp = socket.getRemoteSocketAddress().toString();
+		ip = ip_temp.substring(1, ip_temp.lastIndexOf(":"));
+		return ip;
 	}
 }

@@ -26,6 +26,8 @@ import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,7 +97,7 @@ public class Utils {
             boolean created = file.createNewFile();
             System.out.println("created file = " + created);
             out = new FileOutputStream(toPath);
-            CopyFile(in, out);
+            copyFile(in, out);
             in.close();
             in = null;
             out.flush();
@@ -109,7 +111,7 @@ public class Utils {
         }
     }
 
-    public static void CopyFile(InputStream in, OutputStream out) throws IOException {
+    public static void copyFile(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
         int read;
         while ((read = in.read(buffer)) != -1) {
@@ -117,7 +119,26 @@ public class Utils {
         }
     }
 
-    public void resizeImage(String oldPath, String newPath, int weight, int height) {
+    public void copyFile(File src, File dst) {
+        try {
+            InputStream in = new FileInputStream(src);
+            OutputStream out = new FileOutputStream(dst);
+
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void resizeImage(String oldPath, String newPath, int weight, int height) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeFile(oldPath, options);
@@ -155,11 +176,21 @@ public class Utils {
         }
     }
 
-    public void startRecordingV(String mFileNameVideo) {
-        Uri outputFileUriVideo = Uri.fromFile(new File(mFileNameVideo));
+    public void startRecordingAudio(String mFilePathAudio){
+        Uri outputFileUriAudio = Uri.fromFile(new File(mFilePathAudio));
+        Intent tankAudioIntent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+        tankAudioIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 300);     //Limit 300s
+        tankAudioIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUriAudio);
+        if (tankAudioIntent.resolveActivity(activity.getPackageManager())!=null) {
+            activity.startActivityForResult(tankAudioIntent, ContantsHomeMMS.REQUEST_AUDIO_CAPTURE);
+        }
+    }
+
+    public void startRecordingV(String mFilePathVideo) {
+        Uri outputFileUriVideo = Uri.fromFile(new File(mFilePathVideo));
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        takeVideoIntent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, 10983040L);
-        takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30);
+        takeVideoIntent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, 10983040L);       //Limit 10Mb    or
+        takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30);          //Limit 30s
         takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUriVideo);
         takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
         if (takeVideoIntent.resolveActivity(activity.getPackageManager()) != null) {
@@ -167,11 +198,11 @@ public class Utils {
         }
     }
 
-    public void openImageIntent(String mFileNameImage) {
+    public void openImageIntent(String mFilePathImage) {
 //        final String fnameP = "img_" + System.currentTimeMillis() + ".jpg";
 //        final File sdImageMainDirectory = new File(mDir, fnameP);
 //        outputFileUri = Uri.fromFile(sdImageMainDirectory);
-        Uri outputFileUri = Uri.fromFile(new File(mFileNameImage));
+        Uri outputFileUri = Uri.fromFile(new File(mFilePathImage));
 
         // Camera.
         final List<Intent> cameraIntents = new ArrayList<Intent>();
@@ -200,7 +231,7 @@ public class Utils {
 
     }
 
-    public String getRealPathFromURI(Context context, Uri contentUri) {
+    public static String getRealPathFromURI(Context context, Uri contentUri) {
         Cursor cursor = null;
         try {
             String[] proj = {MediaStore.Images.Media.DATA};
@@ -236,6 +267,31 @@ public class Utils {
                 .show();
     }
 
+    public static String createNameForFile(ContantsHomeMMS.TypeFile type){
+        switch (type){
+            case Audio:
+                return getCurrentTimeHms() + ContantsHomeMMS.exAudio;
+
+            case Video:
+                return getCurrentTimeHms() + ContantsHomeMMS.exVideo;
+
+            case Photo:
+                return getCurrentTimeHms() + ContantsHomeMMS.exImage;
+
+            default:
+                break;
+        }
+        return "default";
+    }
+
+    public static String createNameForAvatar(String mac) {
+        String name = null;
+        if (mac != null && !mac.equals("")) {
+            name = mac.substring(9, 10) + mac.substring(12, 13) + mac.substring(15, 16) + getCurrentTimeHms() +".png";
+        }
+        return name;
+    }
+
     public String createMessageID(String mac) {
         String mID = null;
         if (mac != null && !mac.equals("")) {
@@ -244,7 +300,7 @@ public class Utils {
         return mID;
     }
 
-    public String getCurrentTimeHms() {
+    public static String getCurrentTimeHms() {
         String time = null;
         DateFormat dateFormat = new SimpleDateFormat("yyyymmddHHmmss");
         Date date = new Date();
@@ -343,5 +399,12 @@ public class Utils {
 
     public void ShowToast(String s) {
         Toast.makeText(activity, s, Toast.LENGTH_SHORT).show();
+    }
+
+    public static boolean checkFileIsExits(String pathFile){
+        if (pathFile==null) return false;
+        File file = new File(pathFile);
+        if (file.exists()) return true;
+        else return false;
     }
 }

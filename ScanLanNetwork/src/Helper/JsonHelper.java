@@ -87,6 +87,20 @@ public class JsonHelper {
 		return user;
 	}
 	
+	public static String loadJsonIDMessageAttach(String msg){
+		String mID = null;
+		try {
+			JSONObject jsonObj = new JSONObject(msg);
+			if (jsonObj != null) {
+				mID = jsonObj.isNull(ContantsHomeMMS.mIDKey) ? null
+						: jsonObj.getString(ContantsHomeMMS.mIDKey);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return mID;
+	}
+	
 	public static String createJsonLoginSuccess(){
 		List<User> users = new ArrayList<User>();
 		users = userModel.getAllUser();
@@ -175,6 +189,17 @@ public class JsonHelper {
 			jsonObj.put(ContantsHomeMMS.registerKey, ContantsHomeMMS.requestLoginKey);
 			
 			jsonObj.put(ContantsHomeMMS.cmdKey, Command.HASREGISTER);
+			return jsonObj.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String createJsonAskAcceptSendFileAttach(){
+		try {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put(ContantsHomeMMS.cmdKey, Command.RECIEVEFILEATTACH);
 			return jsonObj.toString();
 		} catch (JSONException e) {
 			e.printStackTrace();

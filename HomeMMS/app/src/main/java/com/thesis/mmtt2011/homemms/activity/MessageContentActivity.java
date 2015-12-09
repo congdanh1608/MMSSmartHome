@@ -5,25 +5,21 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.Utils;
-import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 import com.thesis.mmtt2011.homemms.persistence.MessageTable;
 
-public class MessageContentActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MessageContentActivity extends MainActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = "MessageContentActivity";
 
@@ -34,6 +30,7 @@ public class MessageContentActivity extends AppCompatActivity implements LoaderM
     private TextView mTitleView;
     private TextView mContentView;
     private TextView mTimestamp;
+    private ImageView mImageView;
 
     public static Intent getStartIntent(Context context, Message message) {
         Intent starter = new Intent(context, MessageContentActivity.class);
@@ -50,9 +47,10 @@ public class MessageContentActivity extends AppCompatActivity implements LoaderM
         mTitleView = (TextView) findViewById(R.id.message_title);
         mContentView = (TextView) findViewById(R.id.message_content);
         mTimestamp = (TextView) findViewById(R.id.timestamp);
+        mImageView = (ImageView) findViewById(R.id.contact_avatar);
         // Get the message from the intent
         Intent intent = getIntent();
-        if(intent.hasExtra(TAG)) {
+        if (intent.hasExtra(TAG)) {
             String messageId = intent.getStringExtra(TAG);
             mMessage = HomeMMSDatabaseHelper.getMessage(this, messageId);
             mTitleView.setText(mMessage.getTitle());
@@ -63,6 +61,16 @@ public class MessageContentActivity extends AppCompatActivity implements LoaderM
             mUri = intent.getData();
             getSupportLoaderManager().initLoader(0, null, this);
         }
+
+        mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //get download file attach from Server.
+                if (MainActivity.isConnected) {
+                    client.SendRequestFileAttach(mMessage);
+                } else Utils.showMessage(MessageContentActivity.this, "Server is offline");
+            }
+        });
 
         //get sender to show here
 
@@ -76,6 +84,8 @@ public class MessageContentActivity extends AppCompatActivity implements LoaderM
                         .setAction("Action", null).show();
             }
         });*/
+
+
     }
 
     @Override

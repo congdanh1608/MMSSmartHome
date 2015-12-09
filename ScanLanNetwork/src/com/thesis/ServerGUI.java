@@ -32,10 +32,12 @@ import javax.swing.Timer;
 
 import Database.DatabaseHandler;
 import Database.MessageModel;
+import Database.UserModel;
 import Database.Utils;
 import Model.Message;
 import Network.DiscoveryThread;
 import Socket.Server;
+import presistence.ContantsHomeMMS;
 
 public class ServerGUI {
 
@@ -51,6 +53,7 @@ public class ServerGUI {
 
 	private static Server server = null;
 	private static int port = 2222;
+	private UserModel userModel;
 	private MessageModel messageModel;
 	private DatabaseHandler databaseHandler;
 
@@ -75,9 +78,16 @@ public class ServerGUI {
 	 */
 	public ServerGUI() {
 		initialize();
+		//Update time in GUI of Server.
 		UpdateTime();
+		//Check database and create new if not exits.
 		FirstCheckDatabase();
+		//Check folder of app and create new if not exits.
+		createFolderApp();
+		//Show message into GUI of Server.
 		ShowMessage();
+		//Check reset all status client to offline.
+		ResetStatusForAllUser();
 	}
 
 	/**
@@ -86,27 +96,28 @@ public class ServerGUI {
 	private void initialize() {
 		jPanels = new ArrayList<JPanel>();
 		databaseHandler = new DatabaseHandler();
+		userModel = new UserModel();
 		messageModel = new MessageModel();
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-		double ratio = screenSize.getWidth()/1366;
+		double ratio = screenSize.getWidth() / 1366;
 		int widthLeft = (int) (screenSize.width * 0.82);
 		int xright = (int) (screenSize.getWidth() * 0.82);
 		int widthRight = screenSize.width - widthLeft;
-		
+
 		frame = new JFrame();
 		// frame.setBounds(100, 100, 562, 458);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setUndecorated(true); // Hide bar Window
-//		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		frame.setBounds(0, 0, screenSize.width, (int) (screenSize.height*0.95));
+		// frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		frame.setBounds(0, 0, screenSize.width, (int) (screenSize.height * 0.95));
 		frame.setVisible(true);
 
 		panelLeft = new JPanel();
 		// panelLeft.setBounds(0, 0, 1110, screenSize.height);
-		panelLeft.setBounds(0, 0, widthLeft, (int) (screenSize.height*0.95));
+		panelLeft.setBounds(0, 0, widthLeft, (int) (screenSize.height * 0.95));
 		frame.getContentPane().add(panelLeft);
 		GridBagLayout gbl_panelLeft = new GridBagLayout();
 		// gbl_panelLeft.columnWidths = new int[] { 0, 0, 0, 0 };
@@ -120,11 +131,11 @@ public class ServerGUI {
 
 		panelRight = new JPanel();
 		// panelRight.setBounds(1120, 0, 246, screenSize.height);
-		panelRight.setBounds(xright, 0, widthRight, (int) (screenSize.height*0.95));
+		panelRight.setBounds(xright, 0, widthRight, (int) (screenSize.height * 0.95));
 		frame.getContentPane().add(panelRight);
 
 		btnStartListening = new JButton("Start Listening");
-		btnStartListening.setBounds(52, (int) (screenSize.height*0.9), 144, 25);
+		btnStartListening.setBounds(52, (int) (screenSize.height * 0.9), 144, 25);
 		btnStartListening.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				startSocketListener();
@@ -141,12 +152,12 @@ public class ServerGUI {
 
 		lblCurrenttime = new JLabel("00:00");
 		lblCurrenttime.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCurrenttime.setFont(new Font("Dialog", Font.BOLD, (int)(60 * ratio)));
+		lblCurrenttime.setFont(new Font("Dialog", Font.BOLD, (int) (60 * ratio)));
 		lblCurrenttime.setBounds(22, 39, 212, 73);
 		panelRight.add(lblCurrenttime);
 
 		lblCurrentday = new JLabel("000 00/00/0000");
-		lblCurrentday.setFont(new Font("Dialog", Font.BOLD, (int)(20 * ratio)));
+		lblCurrentday.setFont(new Font("Dialog", Font.BOLD, (int) (20 * ratio)));
 		lblCurrentday.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCurrentday.setBounds(22, 112, 212, 40);
 		panelRight.add(lblCurrentday);
@@ -263,14 +274,14 @@ public class ServerGUI {
 		messages = messageModel.get12Message();
 		updateMessageForListPanel(jPanels, messages);
 	}
-	
-	public void UpdateMessage(){
+
+	public void UpdateMessage() {
 		SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-            	ShowMessage();
-            }
-        });
+			@Override
+			public void run() {
+				ShowMessage();
+			}
+		});
 	}
 
 	private void UpdateTime() {
@@ -299,6 +310,11 @@ public class ServerGUI {
 		lblServerStatus.setText("Server is listening");
 	}
 
+	// Reset status for all user - Set status for all user.
+	public void ResetStatusForAllUser() {
+		userModel.UpdateStatusAllUser(ContantsHomeMMS.UserStatus.offline.name());
+	}
+
 	// check if not exit tables then create it.
 	private void FirstCheckDatabase() {
 		if (!databaseHandler.checkTableExits(databaseHandler.TABLE_MESSAGE)) {
@@ -318,5 +334,10 @@ public class ServerGUI {
 	private void startListenBroadcase() {
 		Thread discoveryThread = new Thread(DiscoveryThread.getInstance());
 		discoveryThread.start();
+	}
+	
+	private void createFolderApp(){
+		UtilsMain.createFolder(ContantsHomeMMS.AppFolder);
+		UtilsMain.createFolder(ContantsHomeMMS.AppCacheFolder);
 	}
 }

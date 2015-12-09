@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.SSH.ConnectSSHAsyncTask;
+import com.thesis.mmtt2011.homemms.SSH.DisConnectSSHAsyncTask;
 import com.thesis.mmtt2011.homemms.SSH.PushFileAsyncTask;
 import com.thesis.mmtt2011.homemms.SSH.Utils;
 import com.thesis.mmtt2011.homemms.adapter.ContactAdapter;
@@ -38,6 +39,7 @@ import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 import com.thesis.mmtt2011.homemms.persistence.UserTable;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,6 +60,8 @@ public class ComposeMessageActivity extends MainActivity {
     private HomeMMSDatabaseHelper homeMMSDatabaseHelper;
 
     private com.thesis.mmtt2011.homemms.Utils utils;
+
+    private String mFileNameAudio = null, mFileNameImage = null, mFileNameVideo = null;
 
     ContactAdapter mAdapter;
     ArrayList<User> contacts = new ArrayList<User>();
@@ -171,18 +175,18 @@ public class ComposeMessageActivity extends MainActivity {
         List<User> receivers = selectedContacts;
 
         //Get Name file mms.
-        if (mFileNameAudio != null) {
-            String[] separatedA = mFileNameAudio.split("/");
+        if (mFilePathAudio != null) {
+            String[] separatedA = mFilePathAudio.split("/");
             mFileNameAudio = separatedA[separatedA.length - 1];
         }
         //Get Name file Photo
-        if (mFileNameImage != null) {
-            String[] separatedP = mFileNameImage.split("/");
+        if (mFilePathImage != null) {
+            String[] separatedP = mFilePathImage.split("/");
             mFileNameImage = separatedP[separatedP.length - 1];
         }
         //Get Name file Video
-        if (mFileNameVideo != null) {
-            String[] separatedV = mFileNameVideo.split("/");
+        if (mFilePathVideo != null) {
+            String[] separatedV = mFilePathVideo.split("/");
             mFileNameVideo = separatedV[separatedV.length - 1];
         }
 
@@ -194,14 +198,18 @@ public class ComposeMessageActivity extends MainActivity {
         if (client != null && MainActivity.isConnected) {
             client.SendInfoMessage(message);
 
-            if (mFileNameAudio != null || mFileNameImage != null || mFileNameVideo != null) {
+            if (utils.checkFileIsExits(mFilePathAudio)) pushFileAttachToPi(mFileNameAudio);
+            if (utils.checkFileIsExits(mFilePathImage)) pushFileAttachToPi(mFileNameImage);
+            if (utils.checkFileIsExits(mFilePathVideo)) pushFileAttachToPi(mFileNameVideo);
+
                 //Connect SSH.
-                new ConnectSSHAsyncTask(this, rasp).execute();
+//                new ConnectSSHAsyncTask(this, rasp).execute();
                 //Push File by SSH
-                pushFileAttachToPi(mFileNameAudio);
-                pushFileAttachToPi(mFileNameImage);
-                pushFileAttachToPi(mFileNameVideo);
-            }
+//                pushFileAttachToPi(mFileNameAudio);
+//                pushFileAttachToPi(mFileNameImage);
+//                pushFileAttachToPi(mFileNameVideo);
+                //close SSH.
+//                new DisConnectSSHAsyncTask(this, rasp).execute();
 
             //Notify server myUser finished note.
             //After send message successful,
@@ -242,86 +250,121 @@ public class ComposeMessageActivity extends MainActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ContantsHomeMMS.CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
-            final boolean isCamera;
-            if (data == null) {
-                isCamera = true;
-            } else {
-                final String action = data.getAction();
-                if (action == null) {
-                    isCamera = false;
-                } else {
-                    isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
-                }
-            }
-
-            Uri selectedImageUri = null;
-            if (isCamera) {
-//                selectedImageUri = outputFileUri;
-                //Bitmap factory
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                // downsizing image as it throws OutOfMemory Exception for larger
-                // images
-                options.inSampleSize = 8;
-//                final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
-                Bitmap bitmap = BitmapFactory.decodeFile(mFileNameImage, options);
-                //rotete image.
-                try {
-                    ExifInterface ei = new ExifInterface(mFileNameImage);
-                    int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                    Matrix matrix;
-                    switch (orientation) {
-                        case ExifInterface.ORIENTATION_ROTATE_90:
-                            matrix = new Matrix();
-                            matrix.postRotate(90);
-                            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                            break;
-                        case ExifInterface.ORIENTATION_ROTATE_180:
-                            matrix = new Matrix();
-                            matrix.postRotate(180);
-                            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                            break;
-                        default:
-                            break;
+        switch (requestCode) {
+            case ContantsHomeMMS.CAMERA_CAPTURE_IMAGE_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    final boolean isCamera;
+                    if (data == null) {
+                        isCamera = true;
+                    } else {
+                        final String action = data.getAction();
+                        if (action == null) {
+                            isCamera = false;
+                        } else {
+                            isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+                        }
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+                    Uri selectedImageUri = null;
+                    if (isCamera) {
+//                        selectedImageUri = outputFileUri;
+                        //Bitmap factory
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        // downsizing image as it throws OutOfMemory Exception for larger
+                        // images
+                        options.inSampleSize = 8;
+//                        final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
+                        Bitmap bitmap = BitmapFactory.decodeFile(mFilePathImage, options);
+                        //rotete image.
+                        try {
+                            ExifInterface ei = new ExifInterface(mFilePathImage);
+                            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                            Matrix matrix;
+                            switch (orientation) {
+                                case ExifInterface.ORIENTATION_ROTATE_90:
+                                    matrix = new Matrix();
+                                    matrix.postRotate(90);
+                                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                    break;
+                                case ExifInterface.ORIENTATION_ROTATE_180:
+                                    matrix = new Matrix();
+                                    matrix.postRotate(180);
+                                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        //set image to viewimage
+//                        imgPhoto.setImageBitmap(bitmap);
+                    } else {
+                        selectedImageUri = data == null ? null : data.getData();
+                        // /Bitmap factory
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        // downsizing image as it throws OutOfMemory Exception for larger
+                        // images
+                        options.inSampleSize = 8;
+                        try {//Using Input Stream to get uri did the trick
+                            InputStream input = getContentResolver().openInputStream(selectedImageUri);
+                            final Bitmap bitmap = BitmapFactory.decodeStream(input);
+                            //set image to viewimage
+//                            imgPhoto.setImageBitmap(bitmap);
+                            String tempPath = utils.getRealPathFromURI(this, selectedImageUri);
+                            utils.copyFile(new File(tempPath), new File(mFilePathImage));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                } else if (resultCode == RESULT_CANCELED) {
+                    // myUser cancelled Image capture
+                    Toast.makeText(getApplicationContext(),
+                            "User cancelled", Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    // failed to capture image
+                    Toast.makeText(getApplicationContext(),
+                            "Sorry! Failed.", Toast.LENGTH_SHORT)
+                            .show();
                 }
-                //set image to viewimage
-//                imgPhoto.setImageBitmap(bitmap);
-            } else {
-                selectedImageUri = data == null ? null : data.getData();
-                // /Bitmap factory
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                // downsizing image as it throws OutOfMemory Exception for larger
-                // images
-                options.inSampleSize = 8;
-                try {//Using Input Stream to get uri did the trick
-                    InputStream input = getContentResolver().openInputStream(selectedImageUri);
-                    final Bitmap bitmap = BitmapFactory.decodeStream(input);
-                    //set image to viewimage
-//                    imgPhoto.setImageBitmap(bitmap);
-                    mFileNameImage = utils.getRealPathFromURI(this, selectedImageUri);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                break;
+            case ContantsHomeMMS.REQUEST_VIDEO_CAPTURE:
+                if (resultCode == RESULT_OK) {
+//                    Uri videoUri = data.getData();
+//                    vViewV.setVideoURI(videoUri);
+                    //set video to viewimage
+//                    vViewV.setVideoURI(Uri.fromFile(new File(mFileNameVideo)));
+                } else if (resultCode == RESULT_CANCELED) {
+                    // myUser cancelled Image capture
+                    Toast.makeText(getApplicationContext(),
+                            "User cancelled", Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    // failed to capture image
+                    Toast.makeText(getApplicationContext(),
+                            "Sorry! Failed.", Toast.LENGTH_SHORT)
+                            .show();
                 }
-            }
-        } else if (requestCode == ContantsHomeMMS.REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
-//            Uri videoUri = data.getData();
-//            vViewV.setVideoURI(videoUri);
-            //set video to viewimage
-//            vViewV.setVideoURI(Uri.fromFile(new File(mFileNameVideo)));
-        } else if (resultCode == RESULT_CANCELED) {
-            // myUser cancelled Image capture
-            Toast.makeText(getApplicationContext(),
-                    "User cancelled", Toast.LENGTH_SHORT)
-                    .show();
-        } else {
-            // failed to capture image
-            Toast.makeText(getApplicationContext(),
-                    "Sorry! Failed.", Toast.LENGTH_SHORT)
-                    .show();
+                break;
+
+            case ContantsHomeMMS.REQUEST_AUDIO_CAPTURE:
+                if (resultCode == RESULT_OK) {
+                    String tempPath = utils.getRealPathFromURI(this, data.getData());
+                    utils.copyFile(new File(tempPath), new File(mFilePathAudio));
+                } else if (resultCode == RESULT_CANCELED) {
+                    // myUser cancelled Image capture
+                    Toast.makeText(getApplicationContext(),
+                            "User cancelled", Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    // failed to capture image
+                    Toast.makeText(getApplicationContext(),
+                            "Sorry! Failed.", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
         }
     }
 

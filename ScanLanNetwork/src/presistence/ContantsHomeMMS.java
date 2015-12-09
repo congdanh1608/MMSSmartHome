@@ -1,6 +1,9 @@
 package presistence;
 
 public class ContantsHomeMMS {
+	public static final String NameApp = "HOMEMMS", NameCacheApp = "Cache";
+	public static final String AppFolder = "/home/pi/" + NameApp; 
+	public static final String AppCacheFolder = AppFolder + "/" + NameCacheApp;
 
 	// left
 	public static final String cmdKey = "cmdKey", IDUserKey = "IDUSERKEY", NameKey = "NAMEKEY", PassKey = "PASSWORDKEY",
@@ -16,7 +19,7 @@ public class ContantsHomeMMS {
 
 	// right
 	public enum Command {
-		LOGIN, HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE;
+		LOGIN, HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE, RECIEVEFILEATTACH;
 	}
 
 	// Status of first load app

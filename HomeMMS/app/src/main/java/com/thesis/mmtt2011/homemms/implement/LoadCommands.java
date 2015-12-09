@@ -19,6 +19,7 @@ public class LoadCommands {
 
     public static ArrayList<String> addCommandsConfig(RaspberryPiClient raspberryPiClient, Boolean isPublicWifi, String WifiSSID, String WifiPassword) {
         ArrayList<String> listOfCommands = new ArrayList<String>();
+/*
         //Config screen of Rasp Pi.
         listOfCommands.add("sudo cp inittab /etc/inittab && sudo cp xinitrc /boot/xinitrc && sudo cp rc.local /etc/rc.local && echo EndCommands");
 
@@ -43,6 +44,10 @@ public class LoadCommands {
         }
         //Remove hostap
         listOfCommands.add("sudo rm /usr/sbin/hostapd & sudo apt-get -y purge isc-dhcp-server && echo EndCommands");
+*/
+
+        //Config mysql
+        listOfCommands.add("sudo chmod 755 mysql.sh && ./mysql.sh homemmsdb homemms 123456");
         return listOfCommands;
     }
 
@@ -50,5 +55,10 @@ public class LoadCommands {
         ArrayList<String> listOfCommands = new ArrayList<String>();
         listOfCommands.add("sudo reboot\n");
         return listOfCommands;
+    }
+
+    public static String loadCommandsCreateFolder(String filePath, RaspberryPiClient raspberryPiClient) {
+        String path = "/home/" + raspberryPiClient.getUsername() + filePath;
+        return "sudo mkdir " + path + " && sudo chmod 777 " + path + " && echo EndCommands";
     }
 }

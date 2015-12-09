@@ -60,12 +60,12 @@ public class Utils {
         return byteFileSource;
     }
 
-    public static int pushFile(byte[] byteFile, String fName, RaspberryPiClient raspberryPiClient) {
+    public static int pushFile(byte[] byteFile, String fName, String pathTo, RaspberryPiClient raspberryPiClient) {
         if (byteFile != null) {
             if (raspberryPiClient.getConnection() != null) {
                 try {
                     SCPClient scpc = raspberryPiClient.getConnection().createSCPClient();
-                    scpc.put(byteFile, fName, "/home/" + raspberryPiClient.getUsername() + "/");
+                    scpc.put(byteFile, fName, "/home/" + raspberryPiClient.getUsername() + pathTo);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return -1;  //Error not know

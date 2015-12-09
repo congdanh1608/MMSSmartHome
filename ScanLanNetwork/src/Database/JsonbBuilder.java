@@ -7,7 +7,7 @@ import Model.Message;
 import Model.RecieverNote;
 import presistence.ContantsHomeMMS;
 
-import com.thesis.Utils;
+import com.thesis.UtilsMain;
 
 public class JsonbBuilder {
 
@@ -24,7 +24,7 @@ public class JsonbBuilder {
 					note.getContentVideo() != null ? note.getContentVideo() : "");
 			jsonObj.put(ContantsHomeMMS.contentImageKey,
 					note.getContentImage() != null ? note.getContentImage() : "");
-			jsonObj.put(ContantsHomeMMS.timeKey, Utils.getCurrentTime());
+			jsonObj.put(ContantsHomeMMS.timeKey, UtilsMain.getCurrentTime());
 			jsonObj.put(ContantsHomeMMS.senderKey,
 					note.getSender() != null ? note.getSender() : "");
 			jsonObj.put(ContantsHomeMMS.recieverKey,
@@ -36,7 +36,7 @@ public class JsonbBuilder {
 
 		if (jsonObj != null) {
 			System.out.println(jsonObj.toString());
-			Utils.createFile("data.json", jsonObj.toString());
+			UtilsMain.createFile("data.json", jsonObj.toString());
 			return true;
 		}
 
@@ -45,7 +45,7 @@ public class JsonbBuilder {
 
 	public static Message loadNote() {
 		Message note = new Message();
-		String msg = Utils.readFile("data.json");
+		String msg = UtilsMain.readFile("data.json");
 		if (msg != null) {
 			try {
 				JSONObject jsonObj = new JSONObject(msg);
@@ -75,7 +75,7 @@ public class JsonbBuilder {
 
 	public static RecieverNote loadRecieverNote() {
 		RecieverNote rNote = new RecieverNote();
-		String msg = Utils.readFile("data.json");
+		String msg = UtilsMain.readFile("data.json");
 		if (msg != null) {
 			try {
 				JSONObject jsonObj = new JSONObject(msg);

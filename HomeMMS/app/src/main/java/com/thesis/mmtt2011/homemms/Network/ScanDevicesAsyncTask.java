@@ -144,15 +144,15 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
         //Show ProgressDialog
         pd.setTitle("Scan device");
         pd.setMessage("Scanning. Please Wait...");
-        pd.setProgressStyle(pd.STYLE_HORIZONTAL);
-        pd.setProgress(0);
+        pd.setProgressStyle(pd.STYLE_SPINNER);
+//        pd.setProgress(0);
         pd.show();
         pd.setCancelable(false);
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        publishProgress(1, 10);
+//        publishProgress(1, 10);
         if (listOfIpAddressWithSubnet != null) {
             FindRangeOfIPSubner();
         }
@@ -170,13 +170,13 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
             threads.add(thread);
             thread.start();
             d += 2;
-            publishProgress(1 + i, 10);
+//            publishProgress(1 + i, 10);
         }
         try {
             System.out.println("Waiting for threads to finish.");
             for (int i = 0; i < 4; i++) {
                 threads.get(i).join();
-                publishProgress(5 + i, 10);
+//                publishProgress(5 + i, 10);
             }
         } catch (InterruptedException e) {
             System.out.println("Main thread Interrupted");
@@ -188,8 +188,8 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
-        pd.setMax(values[1]);
-        pd.setProgress(values[0]);
+//        pd.setMax(values[1]);
+//        pd.setProgress(values[0]);
     }
 
     @Override

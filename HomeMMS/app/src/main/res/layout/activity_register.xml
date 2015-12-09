@@ -59,6 +59,7 @@
                     android:padding="16dp"
                     android:orientation="vertical">
                     <ImageView
+                        android:id="@+id/set_avatar"
                         android:layout_width="128dp"
                         android:layout_height="128dp"
                         android:src="@drawable/ic_launcher"/>

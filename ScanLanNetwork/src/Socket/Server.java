@@ -37,7 +37,7 @@ public class Server {
 			serverSocketA = new ServerSocket(port);
 			while (keepGoing) {
 				socket = serverSocketA.accept();
-				socket.setKeepAlive(true);
+//				socket.setKeepAlive(true);
 				System.out.println("Accepted connection : " + socket);
 				if (!keepGoing)
 					break;

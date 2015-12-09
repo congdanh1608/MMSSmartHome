@@ -55,6 +55,8 @@ public class SocketControl {
                 case HASREGISTER:
                     switch (getHasRegister(msg)) {
                         case REGISTERED:
+                            //Write preference
+                            PreferencesHelper.writeToPreferencesReqLogin(context, false, ContantsHomeMMS.FIRST_RUN_REQUEST_LOGIN);
                             //if device was registered, server will send list myUser in database.
                             getListUserSaveToDatabase(msg);
                             //Check message wait send.
@@ -114,18 +116,19 @@ public class SocketControl {
 
                         Log.d("Received", "Updated new message to Inbox");
 
-                        String tempA = messageReceive.getContentAudio();
-                        String tempP = messageReceive.getContentImage();
-                        String tempV = messageReceive.getContentVideo();
-                        if (tempA != null && !tempA.equals("")) {
-                            RecieveFile.recieveFileFromServer(tempA);
-                        }
-                        if (tempP != null && !tempP.equals("")) {
-                            RecieveFile.recieveFileFromServer(tempP);
-                        }
-                        if (tempV != null && !tempV.equals("")) {
-                            RecieveFile.recieveFileFromServer(tempV);
-                        }
+                        //Receive file attach
+//                        String tempA = messageReceive.getContentAudio();
+//                        String tempP = messageReceive.getContentImage();
+//                        String tempV = messageReceive.getContentVideo();
+//                        if (tempA != null && !tempA.equals("")) {
+//                            RecieveFile.recieveFileFromServer(tempA);
+//                        }
+//                        if (tempP != null && !tempP.equals("")) {
+//                            RecieveFile.recieveFileFromServer(tempP);
+//                        }
+//                        if (tempV != null && !tempV.equals("")) {
+//                            RecieveFile.recieveFileFromServer(tempV);
+//                        }
 
                         //Update message to Inbox or SentBox
                         if (messageReceive.getSender().getId().equals(myUser.getId())) {
@@ -134,6 +137,10 @@ public class SocketControl {
                             InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
                         }
                     }
+                    break;
+
+                case RECIEVEFILEATTACH:
+                    RecieveFile.recieveFileFromServer();
                     break;
 
                 default:
@@ -309,6 +316,10 @@ public class SocketControl {
         return null;
     }
 
+    protected String createRequestFileAttach(String mID){
+        return JsonHelper.createJsonRequestFileAttach(mID);
+    }
+
     private Message getRecieveInfo(String msg) {
         return JsonHelper.loadNote(msg, context);
     }
@@ -330,6 +341,10 @@ public class SocketControl {
                 homeMMSDatabaseHelper.createUser(context, u);
             }
         }
+        //Check Open socket to receive list avatar.
+        if (checkHasListAvatar(userList)) {
+            RecieveFile.recieveFileFromServer();
+        }
     }
 
     public void CheckMessageWaitSend(){
@@ -341,5 +356,13 @@ public class SocketControl {
                 MainActivity.SendMessageWaitSend(message);
             }
         }
+    }
+
+    private boolean checkHasListAvatar(List<User> userList){
+        for (User u : userList){
+            if (u.getAvatar()!=null)
+                return true;
+        }
+        return false;
     }
 }

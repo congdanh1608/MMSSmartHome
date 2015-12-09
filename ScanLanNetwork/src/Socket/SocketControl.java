@@ -1,5 +1,8 @@
 package Socket;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -10,6 +13,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.thesis.ServerGUI;
+import com.thesis.UtilsMain;
+import com.thesis.mmtt2011.homemms.model.ObjectFile;
 
 import Database.MessageModel;
 import Database.UserModel;
@@ -24,14 +29,11 @@ import presistence.ContantsHomeMMS.Command;
 import presistence.ContantsHomeMMS.FirstStatus;
 
 public class SocketControl {
-	// public static String IP = "0.0.0.0", Name = "None",
-	// Mac = "00:00:00:00:00:00";
-
 	public User user;
 	private Message message;
 	private UserModel userModel;
 	private MessageModel messageModel;
-	private List<Message> messagesReceive;
+	private List<Message> messagesNeedSend;
 
 	private ClientThread_ ct;
 	private Socket socket;
@@ -48,7 +50,7 @@ public class SocketControl {
 		message = new Message();
 		userModel = new UserModel();
 		messageModel = new MessageModel();
-		messagesReceive = new ArrayList<Message>();
+		messagesNeedSend = new ArrayList<Message>();
 	}
 
 	protected void getCommand(String msg) {
@@ -73,6 +75,7 @@ public class SocketControl {
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
 					System.out.println(userID + " online.");
 					sendAskWasRegitered();
+					
 					user = userModel.getUser(userID);
 
 					// Compare data and send client if have note need send to
@@ -92,7 +95,7 @@ public class SocketControl {
 					sendAskRequestLogin();
 				}
 					break;
-
+					
 				default:
 					break;
 				}
@@ -103,10 +106,8 @@ public class SocketControl {
 				userID = loadIDUser(msg);
 				passUser = loadPassUser(msg);
 				User userInDB = userModel.getUser(userID);
-				if (userInDB.getPassword().equals(passUser)) { // Password true
-																// -> Response
-																// all msg +
-																// list user;
+				if (userInDB.getPassword().equals(passUser)) { // Password true -> Response
+																// all msg + list user;
 					sendAskLoginSuccess();
 
 					// Update status of user.
@@ -125,6 +126,8 @@ public class SocketControl {
 			case INFOREGISTER:
 				// Get user info register and save in database.
 				user = getInfoClient(msg);
+				//create folder profile for new user.
+				UtilsMain.createFolder(ContantsHomeMMS.AppFolder + "/" + user.getId());
 				// After register successfull, send List user in database.
 				sendAskWasRegitered();
 				System.out.println(user.getNameDisplay() + " login");
@@ -171,6 +174,31 @@ public class SocketControl {
 			case DISCONNECT:
 				// sGui.updateOnClear();
 				// ct.close();
+				break;
+				
+			case RECIEVEFILEATTACH:
+				//Load content ID of message, which client want get.
+				String mID = loadIDMessageAttach(msg);
+				if (mID!=null){
+					Message m = messageModel.getMessage(mID);
+					if (m != null){
+						//Check file attach
+						ArrayList<String> nameFiles = new ArrayList<String>();
+						String tempA = m.getContentAudio();
+						String tempV = m.getContentVideo();
+						String tempP = m.getContentImage();
+						if (tempA!=null && !tempA.equals("null")) nameFiles.add(tempA);
+						if (tempV!=null && !tempV.equals("null")) nameFiles.add(tempV);
+						if (tempP!=null && !tempP.equals("null")) nameFiles.add(tempP);
+						
+						//push file attach to Client
+						if (nameFiles.size() > 0){
+							pushListFileAttachToClient(nameFiles, m.getSender());
+						}
+						//notice Server are sending to client.
+						sendAskAcceptSendFileAttach();
+					}
+				}
 				break;
 
 			default:
@@ -235,78 +263,89 @@ public class SocketControl {
 	}
 
 	public void checkNewMessageSendToClient() {
-		messagesReceive = checkNewNoteForClient(user.getId());
-		if (messagesReceive.size() > 0) {
-			for (int i = 0; i < messagesReceive.size(); i++) {
-				System.out.println("Message " + i + " sending to " + user.getNameDisplay() + "at socket:" + socket.getPort());
+		messagesNeedSend = checkNewNoteForClient(user.getId());
+		if (messagesNeedSend.size() > 0) {
+			for (int i = 0; i < messagesNeedSend.size(); i++) {
+				System.out.println(
+						"Message " + i + " sending to " + user.getNameDisplay() + "at socket:" + socket.getPort());
 				SendMsg(socket,
-						createRecieverMessage(createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isNewMsg)));
+						createRecieverMessage(createMessageJson(messagesNeedSend.get(i), ContantsHomeMMS.isNewMsg)));
 				// Check if mms has file attach then send it to
 				// client.
-				if (checkHasAttachFile(messagesReceive.get(i))) {
-					String tempA = messagesReceive.get(i).getContentAudio();
-					String tempP = messagesReceive.get(i).getContentImage();
-					String tempV = messagesReceive.get(i).getContentVideo();
+				if (checkHasAttachFile(messagesNeedSend.get(i))) {
+//					ArrayList<String> nameFiles = new ArrayList<String>();
+					String tempA = messagesNeedSend.get(i).getContentAudio();
+					String tempP = messagesNeedSend.get(i).getContentImage();
+					String tempV = messagesNeedSend.get(i).getContentVideo();
 					if (tempA != null && !tempA.equals("") && !tempA.equals("null")) {
 						System.out.println("Sent " + tempA);
-						PushFile.sendFileToClient(tempA);
+//						nameFiles.add(tempA);
+						// PushFile.sendFileToClient(tempA);
 					}
 					if (tempP != null && !tempP.equals("") && !tempP.equals("null")) {
 						System.out.println("Sent " + tempP);
-						PushFile.sendFileToClient(tempP);
+//						nameFiles.add(tempP);
+						// PushFile.sendFileToClient(tempP);
 					}
 					if (tempV != null && !tempV.equals("") && !tempV.equals("null")) {
 						System.out.println("Sent " + tempV);
-						PushFile.sendFileToClient(tempV);
+//						nameFiles.add(tempV);
+						// PushFile.sendFileToClient(tempV);
 					}
+//					pushListFileAttachToClient(nameFiles, messagesNeedSend.get(i).getSender());
 				}
 
 				// Update status of Message was sent.
-				messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(),
+				messageModel.UpdateStatusMessage(messagesNeedSend.get(i).getmId(),
 						ContantsHomeMMS.MessageStatus.sent.name());
 			}
 		}
 	}
 
 	private void checkSendAllMessageToClient() {
-		messagesReceive = getAllNoteForClient(user.getId());
-		if (messagesReceive.size() > 0) {
-			for (int i = 0; i < messagesReceive.size(); i++) {
+		messagesNeedSend = getAllNoteForClient(user.getId());
+		if (messagesNeedSend.size() > 0) {
+			for (int i = 0; i < messagesNeedSend.size(); i++) {
 				System.out.println("Message " + i + " sending to " + user.getNameDisplay());
 				// Compare status sending or sent to know new msg or old msg.
-				if (messagesReceive.get(i).getStatus().equals(ContantsHomeMMS.MessageStatus.sending)) {
+				if (messagesNeedSend.get(i).getStatus().equals(ContantsHomeMMS.MessageStatus.sending)) {
 					SendMsg(socket,
-							createRecieverMessage(createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isNewMsg)));
+							createRecieverMessage(createMessageJson(messagesNeedSend.get(i), ContantsHomeMMS.isNewMsg)));
 				} else {
 					SendMsg(socket,
-							createRecieverMessage(createMessageJson(messagesReceive.get(i), ContantsHomeMMS.isOldMsg)));
+							createRecieverMessage(createMessageJson(messagesNeedSend.get(i), ContantsHomeMMS.isOldMsg)));
 				}
 				// Check if mms has file attach then send it to
 				// client.
-				if (checkHasAttachFile(messagesReceive.get(i))) {
-					String tempA = messagesReceive.get(i).getContentAudio();
-					String tempP = messagesReceive.get(i).getContentImage();
-					String tempV = messagesReceive.get(i).getContentVideo();
+				if (checkHasAttachFile(messagesNeedSend.get(i))) {
+//					ArrayList<String> nameFiles = new ArrayList<String>();
+					String tempA = messagesNeedSend.get(i).getContentAudio();
+					String tempP = messagesNeedSend.get(i).getContentImage();
+					String tempV = messagesNeedSend.get(i).getContentVideo();
 					if (tempA != null && !tempA.equals("") && !tempA.equals("null")) {
 						System.out.println("Sent " + tempA);
-						PushFile.sendFileToClient(tempA);
+//						nameFiles.add(tempA);
+						// PushFile.sendFileToClient(tempA);
 					}
 					if (tempP != null && !tempP.equals("") && !tempP.equals("null")) {
 						System.out.println("Sent " + tempP);
-						PushFile.sendFileToClient(tempP);
+//						nameFiles.add(tempP);
+						// PushFile.sendFileToClient(tempP);
 					}
 					if (tempV != null && !tempV.equals("") && !tempV.equals("null")) {
 						System.out.println("Sent " + tempV);
-						PushFile.sendFileToClient(tempV);
+//						nameFiles.add(tempV);
+						// PushFile.sendFileToClient(tempV);
 					}
+//					pushListFileAttachToClient(nameFiles, messagesNeedSend.get(i).getSender());
 				}
 
 				// Update status of Message was sent for message user was
 				// receive;
-				if (messagesReceive.get(i).getSender().getId().equals(user.getId())) {
+				if (messagesNeedSend.get(i).getSender().getId().equals(user.getId())) {
 					// do not change status
 				} else {
-					messageModel.UpdateStatusMessage(messagesReceive.get(i).getmId(),
+					messageModel.UpdateStatusMessage(messagesNeedSend.get(i).getmId(),
 							ContantsHomeMMS.MessageStatus.sent.name());
 				}
 				// wait between every send msg
@@ -499,6 +538,10 @@ public class SocketControl {
 		messageModel.AddMessage(msg);
 		System.out.println("saved message in database.");
 	}
+	
+	private String loadIDMessageAttach(String msg){
+		return JsonHelper.loadJsonIDMessageAttach(msg);
+	}
 
 	protected String loadIDUser(String msg) {
 		return JsonHelper.loadJsonIDClient(msg);
@@ -525,6 +568,8 @@ public class SocketControl {
 
 	protected void sendAskLoginSuccess() {
 		SendMsg(socket, JsonHelper.createJsonLoginSuccess());
+		//Sent file avatar to Client.
+		getAllAvatarSendToClient();
 	}
 
 	protected void sendAskLoginFail() {
@@ -533,6 +578,9 @@ public class SocketControl {
 
 	protected void sendAskWasRegitered() {
 		SendMsg(socket, JsonHelper.createJsonRegisted());
+		
+		//Sent file avatar to Client.
+		getAllAvatarSendToClient();
 	}
 
 	protected void sendAskWasNotRegistered() {
@@ -541,5 +589,68 @@ public class SocketControl {
 
 	protected void sendAskRequestLogin() {
 		SendMsg(socket, JsonHelper.createJsonRequestLogin());
+	}
+	
+	protected void sendAskAcceptSendFileAttach() {
+		SendMsg(socket, JsonHelper.createJsonAskAcceptSendFileAttach());
+	}
+	
+	private void getAllAvatarSendToClient(){
+		ArrayList<User> usersHasAvatar = new ArrayList<User>();
+		ArrayList<String> avatars = new ArrayList<String>();
+		List<User> users = userModel.getAllUser();
+		for (User user : users){
+			if (user.getAvatar()!=null && !user.getAvatar().equals("null")){
+				usersHasAvatar.add(user);
+				avatars.add(user.getAvatar());
+			}
+		}
+		pushListFileToClient(avatars, usersHasAvatar);
+	}
+
+	private void pushListFileToClient(ArrayList<String> avatars, ArrayList<User> users) {
+		ArrayList<ObjectFile> objectFiles = new ArrayList<ObjectFile>();
+		try {
+			for (int i = 0; i < avatars.size(); i++) {
+				String pathAvatar = ContantsHomeMMS.AppFolder + "/" + users.get(i).getId() + "/" + users.get(i).getAvatar();
+				File myFile = new File(pathAvatar);
+				byte[] mybytearray = new byte[(int) myFile.length()];
+				FileInputStream fis = new FileInputStream(myFile);
+				BufferedInputStream bis = new BufferedInputStream(fis);
+				bis.read(mybytearray, 0, mybytearray.length);
+				ObjectFile obFile = new ObjectFile(users.get(i).getId(), avatars.get(i), mybytearray);
+				objectFiles.add(obFile);
+				fis.close();
+				bis.close();
+			}
+
+			Thread pushFile = new PushFile(com.thesis.UtilsMain.getIPAddressFromSocket(socket), objectFiles);
+			pushFile.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void pushListFileAttachToClient(ArrayList<String> nameFiles, User user) {
+		ArrayList<ObjectFile> objectFiles = new ArrayList<ObjectFile>();
+		try {
+			for (int i = 0; i < nameFiles.size(); i++) {
+				String pathFile = ContantsHomeMMS.AppFolder + "/" + user.getId() + "/" + nameFiles.get(i);
+				File myFile = new File(pathFile);
+				byte[] mybytearray = new byte[(int) myFile.length()];
+				FileInputStream fis = new FileInputStream(myFile);
+				BufferedInputStream bis = new BufferedInputStream(fis);
+				bis.read(mybytearray, 0, mybytearray.length);
+				ObjectFile obFile = new ObjectFile(user.getId(), nameFiles.get(i), mybytearray);
+				objectFiles.add(obFile);
+				fis.close();
+				bis.close();
+			}
+
+			Thread pushFile = new PushFile(com.thesis.UtilsMain.getIPAddressFromSocket(socket), objectFiles);
+			pushFile.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

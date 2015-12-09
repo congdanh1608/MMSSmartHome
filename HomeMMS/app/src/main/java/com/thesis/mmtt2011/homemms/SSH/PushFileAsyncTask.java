@@ -5,7 +5,10 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.thesis.mmtt2011.homemms.activity.MainActivity;
+import com.thesis.mmtt2011.homemms.implement.LoadCommands;
 import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 /**
  * Created by CongDanh on 21/10/2015.
@@ -38,7 +41,11 @@ public class PushFileAsyncTask extends AsyncTask<Void, Void, Integer> {
 
     @Override
     protected Integer doInBackground(Void... params) {
-        return Utils.pushFile(bytes, fName, rasp);
+        if (rasp.getConnection() == null){
+            Utils.connectSSH(rasp);
+        }
+        String pathFile = "/" + ContantsHomeMMS.AppName+ "/" + MainActivity.myUser.getId() + "/";
+        return Utils.pushFile(bytes, fName, pathFile, rasp);
     }
 
     @Override

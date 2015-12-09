@@ -71,7 +71,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
                 }
 
                 //Config
-                /*listOfCommands = LoadCommands.addCommandsConfig(rasp, isPublicWifi, WifiSSID, WifiPassword);
+                listOfCommands = LoadCommands.addCommandsConfig(rasp, isPublicWifi, WifiSSID, WifiPassword);
                 while (listOfCommands.size() > 0) {
                     String command = listOfCommands.remove(0);
                     command += "\n";
@@ -87,7 +87,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
                     session.close();
                     //Set Pi was configured
                     rasp.setIsConfigured(true);
-                }*/
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

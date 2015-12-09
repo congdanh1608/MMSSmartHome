@@ -2,6 +2,8 @@ package com.thesis.mmtt2011.homemms.persistence;
 
 import android.os.Environment;
 
+import com.thesis.mmtt2011.homemms.activity.MainActivity;
+
 import java.io.File;
 
 /**
@@ -11,8 +13,15 @@ public class ContantsHomeMMS {
 
     public static final File SD_Scard = Environment.getExternalStorageDirectory();
     public static final String AppName = "HOMEMMS";
+    public static final String CacheName = "Cache";
     public static final String AppFolder = SD_Scard + "/" + AppName;
+    public static final String AppCacheFolder = AppFolder + "/" + CacheName;
+//    public static String myUserFolder = AppFolder + "/" + MainActivity.myUser.getId();
+    public static String myUserFolder = AppFolder + "/";
     public static final String nmblookupName = "nmblookup";
+
+    //extension File
+    public static final String exAudio = ".mp3", exVideo = ".mp4", exImage = ".jpg";
 
     //User - Pass default of Rasp Pi.
     public static final String userRaspPi = "pi";
@@ -35,7 +44,7 @@ public class ContantsHomeMMS {
     public static final String loginKey = "LOGIN", loginSuccess = "LOGINSUCCESS", loginFail = "LOGINFAIL";
 
     public enum Command {
-        LOGIN, HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE;
+        LOGIN, HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE, RECIEVEFILEATTACH;
     }
 
     //Status of first load app
@@ -57,6 +66,7 @@ public class ContantsHomeMMS {
 
     public static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 1003;
     public static final int REQUEST_VIDEO_CAPTURE = 1002;
+    public static final int REQUEST_AUDIO_CAPTURE = 1004;
     public static final int REGISTER_REQUEST_CODE = 1000, LOGIN_REQUEST_CODE = 1001;
 
     //Share Preferences

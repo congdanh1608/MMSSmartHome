@@ -179,4 +179,17 @@ public class JsonHelper {
         }
         return userList;
     }
+
+    //create String (Json) message request file attach of the message.
+    public static String createJsonRequestFileAttach(String mID) {
+        try {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put(ContantsHomeMMS.mIDKey, mID);
+            jsonObj.put(ContantsHomeMMS.cmdKey, ContantsHomeMMS.Command.RECIEVEFILEATTACH);
+            return jsonObj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
