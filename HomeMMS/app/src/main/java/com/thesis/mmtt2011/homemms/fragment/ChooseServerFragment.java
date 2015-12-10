@@ -19,7 +19,8 @@ import com.thesis.mmtt2011.homemms.activity.ScanDevicesActivity;
  */
 public class ChooseServerFragment extends Fragment {
 
-    private static final String FRAGMENT_TAG = "ConnectConfiguredServer";
+    private static final String CONNECT_CONFIG_SERVER_FRAGMENT_TAG = "ConnectConfiguredServer";
+    private static final String CONFIG_NETWORK_FRAGMENT_TAG = "ConfigNetwork";
     private Button btConfiguredServer;
     private Button btNewServer;
 
@@ -36,9 +37,15 @@ public class ChooseServerFragment extends Fragment {
         btNewServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //call ScanDevicesAsyncTask activity
+                //call ConnectConfiguredServer
+                ConfigNetworkFragment configNetworkFragment = new ConfigNetworkFragment();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction()
+                        .replace(R.id.choose_server_fragment, configNetworkFragment, CONFIG_NETWORK_FRAGMENT_TAG);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+                /*//call ScanDevicesAsyncTask activity
                 Intent intent = new Intent(getActivity(), ScanDevicesActivity.class);
-                startActivity(intent);
+                startActivity(intent);*/
             }
         });
 
@@ -49,7 +56,7 @@ public class ChooseServerFragment extends Fragment {
                 //call ConnectConfiguredServer
                 ConnectConfiguredServerFragment connectConfiguredServerFragment = new ConnectConfiguredServerFragment();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction()
-                        .replace(R.id.choose_server_fragment, connectConfiguredServerFragment, FRAGMENT_TAG);
+                        .replace(R.id.choose_server_fragment, connectConfiguredServerFragment, CONNECT_CONFIG_SERVER_FRAGMENT_TAG);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 /*Intent intent = new Intent(getActivity(), ConnectConfiguredServerActivity.class);

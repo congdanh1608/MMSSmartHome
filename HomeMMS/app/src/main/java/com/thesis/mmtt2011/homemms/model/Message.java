@@ -7,6 +7,9 @@ import java.util.UUID;
  * Created by Xpie on 10/20/2015.
  */
 public class Message {
+    private static final int MAX_TEXT_LENGTH = 16;
+    private static final int MAX_CONTENT_TEXT_LENGTH = 100;
+
     String mId;
     String title;
     User sender;
@@ -48,6 +51,20 @@ public class Message {
         status = _status;
     }
 
+    public String getTitleTrim() {
+        if(title.length() > MAX_TEXT_LENGTH) {
+            return title.substring(0, MAX_TEXT_LENGTH) + "...";
+        }else{
+            return title;
+        }
+    }
+    public String getContentTextTrim() {
+        if(contentText.length() > MAX_CONTENT_TEXT_LENGTH) {
+            return contentText.substring(0, MAX_CONTENT_TEXT_LENGTH) + "...";
+        }else{
+            return contentText;
+        }
+    }
     public String getId() {
         return mId;
     }

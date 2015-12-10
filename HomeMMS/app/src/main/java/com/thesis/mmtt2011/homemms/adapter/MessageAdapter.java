@@ -2,11 +2,13 @@ package com.thesis.mmtt2011.homemms.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,8 +31,6 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
     //public final static String EXTRA_MESSAGE_ID = "com.thesis.mmtt2011.EXTRA_MESSAGE_ID";
     private static final int TYPE_UNREAD = 0;
     private static final int TYPE_READ = 1;
-    private static final int MAX_TEXT_LENGTH = 18;
-    private static final int MAX_CONTENT_TEXT_LENGTH = 100;
     //private static final int ITEM_COUNT = 50;
     private List<Message> messages = new ArrayList<>();
 
@@ -128,6 +128,9 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
         private final TextView tvContent;
         private final TextView tvTitle;
         private final TextView tvTimeStamp;
+        private final ImageView ivImage;
+        private final ImageView ivAudio;
+        private final ImageView ivVideo;
         private View selectedOverlay;
 
         //private Message mMessage;
@@ -142,6 +145,10 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
             tvTimeStamp = (TextView) messageView.findViewById(R.id.timestamp);
             selectedOverlay = messageView.findViewById(R.id.selected_overlay);
 
+            ivImage =(ImageView)messageView.findViewById(R.id.image_attach);
+            ivAudio =(ImageView)messageView.findViewById(R.id.audio_attach);
+            ivVideo =(ImageView)messageView.findViewById(R.id.video_attach);
+
             listener = _listener;
             //Select message when click on message card view
             messageView.setOnClickListener(this);
@@ -153,17 +160,20 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
             //mMessage = message;
             if(message!=null) {
                 tvUsername.setText(message.getSender().getNameDisplay());
-                String title = message.getTitle();
-                String textContent = message.getContentText();
-                if(title.length() > MAX_TEXT_LENGTH) {
-                    title = message.getTitle().substring(0, MAX_TEXT_LENGTH) + "...";
-                }
-                if(textContent.length() > MAX_CONTENT_TEXT_LENGTH) {
-                    textContent = textContent.substring(0, MAX_CONTENT_TEXT_LENGTH) + "...";
-                }
-                tvTitle.setText(title);
-                tvContent.setText(textContent);
+
+                tvTitle.setText(message.getTitleTrim());
+                tvContent.setText(message.getContentTextTrim());
                 tvTimeStamp.setText(message.getTimestamp());
+
+                if(!message.getContentImage().isEmpty()) {
+                    ivImage.setVisibility(View.VISIBLE);
+                }
+                if(!message.getContentAudio().isEmpty()) {
+                    ivAudio.setVisibility(View.VISIBLE);
+                }
+                if (!message.getContentVideo().isEmpty()) {
+                    ivVideo.setVisibility(View.VISIBLE);
+                }
             }
         }
 

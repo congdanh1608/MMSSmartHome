@@ -55,4 +55,6 @@
     <string name="install">Install</string>
     <string name="search_settings">Search messages</string>
     <string name="choose_contact">Receivers</string>
+    <string name="config_network">Setting your network</string>
+    <string name="ssid_wifi">SSID</string>
 </resources>

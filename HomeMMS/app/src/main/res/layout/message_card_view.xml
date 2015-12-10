@@ -23,8 +23,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/avatar_circle"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_launcher"
                 />
         <LinearLayout
@@ -39,7 +39,7 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/abc_text_size_subhead_material"
+                android:textSize="@dimen/abc_text_size_small_material"
                 android:textStyle="bold"
                 android:textColor="@color/colorAccent"
                 android:text="@string/message_title"/>
@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/abc_text_size_small_material"
+                android:textSize="@dimen/abc_text_size_caption_material"
                 android:text="@string/username"/>
 
         </LinearLayout>
@@ -57,6 +57,7 @@
                 android:id="@+id/timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/abc_text_size_caption_material"
                 android:gravity="right"
                 android:text="@string/message_timestamp"/>
         </LinearLayout>
@@ -70,6 +71,36 @@
             android:textSize="@dimen/abc_text_size_body_1_material"
             android:textAlignment="gravity"/>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="right">
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:id="@+id/image_attach"
+                android:src="@drawable/ic_photo_white_48dp"
+                android:tint="@color/colorAccent"
+                android:layout_marginRight="4dp"
+                android:visibility="gone"/>
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:id="@+id/audio_attach"
+                android:src="@drawable/ic_volume_up_white_48dp"
+                android:tint="@color/colorAccent"
+                android:layout_marginRight="4dp"
+                android:visibility="gone"/>
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:id="@+id/video_attach"
+                android:src="@drawable/ic_movie_white_48dp"
+                android:tint="@color/colorAccent"
+                android:layout_marginRight="4dp"
+                android:visibility="gone"/>
+        </LinearLayout>
     </LinearLayout>
 
     <View

@@ -1,11 +1,14 @@
 package com.thesis.mmtt2011.homemms.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
+import android.widget.ImageView;
 
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.model.User;
@@ -50,9 +53,14 @@ public class ContactAdapter extends ArrayAdapter{
         }
 
         CheckedTextView tvUserName = (CheckedTextView)convertView.findViewById(R.id.username);
+        ImageView imStatus = (ImageView)convertView.findViewById(R.id.iv_status);
+
         tvUserName.setChecked(false);
         CircleImageView avatar = (CircleImageView)convertView.findViewById(R.id.avatar_circle);
         User contact = contacts.get(position);
+        if(contact.getStatus()=="online") {
+            imStatus.setColorFilter(R.color.colorAccent);
+        }
         tvUserName.setText(contact.getNameDisplay());
         if(selectedContacts.contains(contact)) {
             tvUserName.setChecked(true);
