@@ -19,9 +19,9 @@ public class LoadCommands {
 
     public static ArrayList<String> addCommandsConfig(RaspberryPiClient raspberryPiClient, Boolean isPublicWifi, String WifiSSID, String WifiPassword) {
         ArrayList<String> listOfCommands = new ArrayList<String>();
-/*
-        //Config screen of Rasp Pi.
-        listOfCommands.add("sudo cp inittab /etc/inittab && sudo cp xinitrc /boot/xinitrc && sudo cp rc.local /etc/rc.local && echo EndCommands");
+
+        //Config screen of Rasp Pi not sleep & run Server.jar
+        listOfCommands.add("sudo sed -i.bak \"s|exec /usr/bin/X -nolisten tcp \"$@\"|exec /usr/bin/X -s 0 dpms -nolisten tcp \"$@\"|\" /etc/X11/xinit/xserverrc && sudo echo -e \"#~\"" + raspberryPiClient.getUsername() + "\"/.xinitrc\\n java -jar /home/" + raspberryPiClient.getUsername() + "/Server.jar " + raspberryPiClient.getUsername() + "\" > /home/" + raspberryPiClient.getUsername() + "/.xinitrc && echo EndCommands");
 
         //Config wifi for Rasp Pi.
         listOfCommands.add("sudo cp wifi_config/interfaces /etc/network/ && sudo cp wifi_config/wpa_supplicant.conf /etc/wpa_supplicant/ && echo EndCommands");
@@ -42,14 +42,10 @@ public class LoadCommands {
                     "}' | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf && echo EndCommands", WifiSSID, WifiPassword);
             listOfCommands.add(networkWPA);
         }
-        //Remove hostap
-        listOfCommands.add("sudo rm /usr/sbin/hostapd & sudo apt-get -y purge isc-dhcp-server && echo EndCommands");
-*/
         //Install mysql
-        listOfCommands.add("echo \"mysql-server-5.5 mysql-server/root_password password 123456\" | debconf-set-selections\n" +
-                "echo \"mysql-server-5.5 mysql-server/root_password_again password 123456\" | debconf-set-selections\n");
-        //Config mysql
-        listOfCommands.add("sudo chmod 644 mysql.sh && ./mysql.sh homemmsdb homemms 123456");
+        listOfCommands.add("sudo dpkg -i deb/dep_mysql/*.deb && sudo dpkg -i deb/\"mysql-client-5.5_5.5.46-0+deb8u1_armhf.deb\" && sudo echo \"mysql-server-5.5 mysql-server/root_password password 123456\" | sudo debconf-set-selections && sudo echo \"mysql-server-5.5 mysql-server/root_password_again password 123456\" | sudo debconf-set-selections && sudo dpkg -i deb/mysql-server-5.5_5.5.46-0+deb8u1_armhf.deb && echo EndCommands\n");
+        //Config mysql & Remove hostap
+        listOfCommands.add("sudo chmod 644 mysql.sh && ./mysql.sh homemmsdb homemms 123456 && sudo rm /usr/sbin/hostapd & sudo apt-get -y purge isc-dhcp-server && echo EndCommands");
         return listOfCommands;
     }
 
@@ -67,8 +63,8 @@ public class LoadCommands {
     public static ArrayList<String> addCommandsRemoveInstall(RaspberryPiClient raspberryPiClient) {
         ArrayList<String> listOfCommands = new ArrayList<String>();
         //Restore file backup + remove file.
-        listOfCommands.add("sudo rm -rf /etc/inittab && sudo rm -rf /boot/xinitrc && sudo cp bak/etc/rc.local /etc/rc.local && sudo cp bak/etc/network/interfaces /etc/network/ && sudo cp bak/etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/");
-        listOfCommands.add("sudo rm -rf bak deb wifi_config inittab mysql.sh rc.local xinitrc");
+        listOfCommands.add("sudo cp bak/interfaces /etc/network/ && sudo cp bak/wpa_supplicant.conf /etc/wpa_supplicant/");
+        listOfCommands.add("sudo rm -rf bak deb wifi_config mysql.sh configrasppi.zip");
 //        listOfCommands.add("sudo chkconfig off Server && sudo");
         return listOfCommands;
     }

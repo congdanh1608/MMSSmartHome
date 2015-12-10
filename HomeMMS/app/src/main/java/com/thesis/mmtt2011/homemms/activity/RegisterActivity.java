@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.thesis.mmtt2011.homemms.Encrypt;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.Utils;
 import com.thesis.mmtt2011.homemms.model.User;
@@ -204,7 +205,7 @@ public class RegisterActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the myUser login attempt.
             showProgress(true);
-            mAuthTask = new UserRegisterTask(macAddress, nameDisplay, password);
+            mAuthTask = new UserRegisterTask(macAddress, nameDisplay, Encrypt.md5(password));
             mAuthTask.execute((Void) null);
         }
     }

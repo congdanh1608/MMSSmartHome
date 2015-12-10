@@ -77,7 +77,7 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
         mActivity = getActivity();
 
         initListMessage();
-        mAdapter = new MessageAdapter(sentMessages, this);
+        mAdapter = new MessageAdapter(getActivity(), sentMessages, this);
         mRecyclerView.setAdapter(mAdapter);
 
         // use this setting to improve performance if you know that changes
@@ -160,8 +160,6 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.menu_remove:
-//                    MainActivity.client.SendRequestDeleteMessage(HomeMMSDatabaseHelper.getMessage(getActivity(), ));
-//                    HomeMMSDatabaseHelper.deleteMessage(getActivity(), );
                     mAdapter.removeMessages(mAdapter.getSelectedItems());
                     mode.finish();
                     return true;

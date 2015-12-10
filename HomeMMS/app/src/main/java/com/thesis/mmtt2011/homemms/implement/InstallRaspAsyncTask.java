@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
@@ -63,6 +64,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
                     Session session = rasp.getConnection().openSession();
                     session.execCommand(command);
                     while (!Utils.getResponse(session).contains("EndCommands")) {
+                        Log.d("respone", Utils.getResponse(session) +" ");
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
@@ -80,6 +82,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
                     Session session = rasp.getConnection().openSession();
                     session.execCommand(command);
                     while (!Utils.getResponse(session).contains("EndCommands")) {
+                        Log.d("respone", Utils.getResponse(session) +" ");
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {

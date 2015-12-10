@@ -20,6 +20,9 @@ public class ContantsHomeMMS {
     public static String myUserFolder = AppFolder + "/";
     public static final String nmblookupName = "nmblookup";
 
+    //info wifi
+    public static String SSIDOfAP = "PC-Connectify", PassOfAP = "Freew1fi";
+
     //extension File
     public static final String exAudio = ".mp3", exVideo = ".mp4", exImage = ".jpg";
     public static final String ImagePref = "IMAGECAPTURE";
