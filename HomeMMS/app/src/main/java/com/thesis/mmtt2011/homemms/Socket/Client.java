@@ -272,6 +272,20 @@ public class Client {
         return false;
     }
 
+    //Send mesage request Server delete the message.
+    public boolean SendRequestDeleteMessage(Message message) {
+        if (socketB.isConnected()) {
+            try {
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
+                printWriter.println(socketControl.createRequestDeleteMessage(message.getId()));
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else return false;
+        return false;
+    }
+
     public String getMsg() {
         return msgRecieve;
     }

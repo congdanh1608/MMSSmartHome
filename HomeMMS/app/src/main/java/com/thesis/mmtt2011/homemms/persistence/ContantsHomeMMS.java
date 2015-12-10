@@ -22,6 +22,7 @@ public class ContantsHomeMMS {
 
     //extension File
     public static final String exAudio = ".mp3", exVideo = ".mp4", exImage = ".jpg";
+    public static final String ImagePref = "IMAGECAPTURE";
 
     //User - Pass default of Rasp Pi.
     public static final String userRaspPi = "pi";
@@ -44,7 +45,7 @@ public class ContantsHomeMMS {
     public static final String loginKey = "LOGIN", loginSuccess = "LOGINSUCCESS", loginFail = "LOGINFAIL";
 
     public enum Command {
-        LOGIN, HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE, RECIEVEFILEATTACH;
+        LOGIN, HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE, RECIEVEFILEATTACH, DELETEMSG;
     }
 
     //Status of first load app

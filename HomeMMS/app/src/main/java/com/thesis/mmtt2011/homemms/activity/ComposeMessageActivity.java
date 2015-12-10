@@ -1,6 +1,7 @@
 package com.thesis.mmtt2011.homemms.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,12 +12,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.SyncStateContract;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckedTextView;
@@ -33,6 +37,7 @@ import com.thesis.mmtt2011.homemms.SSH.PushFileAsyncTask;
 import com.thesis.mmtt2011.homemms.SSH.Utils;
 import com.thesis.mmtt2011.homemms.adapter.ContactAdapter;
 import com.thesis.mmtt2011.homemms.fragment.SentFragment;
+import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
@@ -54,6 +59,7 @@ public class ComposeMessageActivity extends MainActivity {
     private View mComposeMessageFormView;
     private Button add_contact;
     private TextView contact_list;
+    private CoordinatorLayout coordinatorlayout;
 
     public static String receiverID;      //ID of receiver.
 
@@ -84,6 +90,7 @@ public class ComposeMessageActivity extends MainActivity {
         //create Utils.
         utils = new com.thesis.mmtt2011.homemms.Utils(this);
 
+        coordinatorlayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
         mMessageTitleView = (EditText) findViewById(R.id.message_title);
         mMessageContentView = (EditText) findViewById(R.id.message_content);
         add_contact = (Button) findViewById(R.id.add_contact);
@@ -197,7 +204,6 @@ public class ComposeMessageActivity extends MainActivity {
         //Send message to Server.
         if (client != null && MainActivity.isConnected) {
             client.SendInfoMessage(message);
-
             if (utils.checkFileIsExits(mFilePathAudio)) pushFileAttachToPi(mFileNameAudio);
             if (utils.checkFileIsExits(mFilePathImage)) pushFileAttachToPi(mFileNameImage);
             if (utils.checkFileIsExits(mFilePathVideo)) pushFileAttachToPi(mFileNameVideo);
@@ -228,8 +234,15 @@ public class ComposeMessageActivity extends MainActivity {
             SentFragment.UpdateNewMessageSent(message.getId());
         }
 
+        Snackbar.make(coordinatorlayout, "Send successful", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null);
         //Finish activity
-//        ComposeMessageActivity.this.finish
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        finish();
     }
 
     //Create a message.
@@ -274,28 +287,33 @@ public class ComposeMessageActivity extends MainActivity {
                         // images
                         options.inSampleSize = 8;
 //                        final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
+                        if (mFilePathImage == null) {
+                            mFilePathImage = PreferencesHelper.getIsPreferenceString(this, ContantsHomeMMS.ImagePref);
+                        }
                         Bitmap bitmap = BitmapFactory.decodeFile(mFilePathImage, options);
                         //rotete image.
-                        try {
-                            ExifInterface ei = new ExifInterface(mFilePathImage);
-                            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                            Matrix matrix;
-                            switch (orientation) {
-                                case ExifInterface.ORIENTATION_ROTATE_90:
-                                    matrix = new Matrix();
-                                    matrix.postRotate(90);
-                                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                                    break;
-                                case ExifInterface.ORIENTATION_ROTATE_180:
-                                    matrix = new Matrix();
-                                    matrix.postRotate(180);
-                                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                                    break;
-                                default:
-                                    break;
+                        if (mFilePathImage!=null) {
+                            try {
+                                ExifInterface ei = new ExifInterface(mFilePathImage);
+                                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                                Matrix matrix;
+                                switch (orientation) {
+                                    case ExifInterface.ORIENTATION_ROTATE_90:
+                                        matrix = new Matrix();
+                                        matrix.postRotate(90);
+                                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                        break;
+                                    case ExifInterface.ORIENTATION_ROTATE_180:
+                                        matrix = new Matrix();
+                                        matrix.postRotate(180);
+                                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
                         //set image to viewimage
 //                        imgPhoto.setImageBitmap(bitmap);
@@ -379,18 +397,24 @@ public class ComposeMessageActivity extends MainActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_camera) {
-            /*Intent intent = new Intent(this, ScanDevicesActivity.class);
-            startActivity(intent);*/
+            mFilePathImage = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
+                    + utils.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
+            PreferencesHelper.writeToPreferencesString(getBaseContext(), mFilePathImage, ContantsHomeMMS.ImagePref);
+            utils.openImageIntent(mFilePathImage);
             return true;
         }
 
         if (id == R.id.action_video) {
-            //
+            mFilePathVideo = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
+                    + utils.createNameForFile(ContantsHomeMMS.TypeFile.Video);
+            utils.startRecordingV(mFilePathVideo);
             return true;
         }
 
         if (id == R.id.action_record) {
-            //
+            mFilePathAudio = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
+                    + utils.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
+            utils.startRecordingAudio(mFilePathAudio);
             return true;
         }
 

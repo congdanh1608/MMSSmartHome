@@ -66,7 +66,7 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             @Override
             public void onClick(View v) {
                 //get download file attach from Server.
-                if (MainActivity.isConnected) {
+                if (MainActivity.isConnected && checkMessageHasAttach(mMessage)) {
                     client.SendRequestFileAttach(mMessage);
                 } else Utils.showMessage(MessageContentActivity.this, "Server is offline");
             }
@@ -107,5 +107,12 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    private boolean checkMessageHasAttach(Message message){
+        if (message.getContentAudio()!=null || message.getContentVideo()!=null || message.getContentImage()!=null){
+            return true;
+        }
+        return false;
     }
 }

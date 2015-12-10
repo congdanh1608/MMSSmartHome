@@ -160,6 +160,8 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.menu_remove:
+//                    MainActivity.client.SendRequestDeleteMessage(HomeMMSDatabaseHelper.getMessage(getActivity(), ));
+//                    HomeMMSDatabaseHelper.deleteMessage(getActivity(), );
                     mAdapter.removeMessages(mAdapter.getSelectedItems());
                     mode.finish();
                     return true;

@@ -45,9 +45,11 @@ public class LoadCommands {
         //Remove hostap
         listOfCommands.add("sudo rm /usr/sbin/hostapd & sudo apt-get -y purge isc-dhcp-server && echo EndCommands");
 */
-
+        //Install mysql
+        listOfCommands.add("echo \"mysql-server-5.5 mysql-server/root_password password 123456\" | debconf-set-selections\n" +
+                "echo \"mysql-server-5.5 mysql-server/root_password_again password 123456\" | debconf-set-selections\n");
         //Config mysql
-        listOfCommands.add("sudo chmod 755 mysql.sh && ./mysql.sh homemmsdb homemms 123456");
+        listOfCommands.add("sudo chmod 644 mysql.sh && ./mysql.sh homemmsdb homemms 123456");
         return listOfCommands;
     }
 
@@ -60,5 +62,14 @@ public class LoadCommands {
     public static String loadCommandsCreateFolder(String filePath, RaspberryPiClient raspberryPiClient) {
         String path = "/home/" + raspberryPiClient.getUsername() + filePath;
         return "sudo mkdir " + path + " && sudo chmod 777 " + path + " && echo EndCommands";
+    }
+
+    public static ArrayList<String> addCommandsRemoveInstall(RaspberryPiClient raspberryPiClient) {
+        ArrayList<String> listOfCommands = new ArrayList<String>();
+        //Restore file backup + remove file.
+        listOfCommands.add("sudo rm -rf /etc/inittab && sudo rm -rf /boot/xinitrc && sudo cp bak/etc/rc.local /etc/rc.local && sudo cp bak/etc/network/interfaces /etc/network/ && sudo cp bak/etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/");
+        listOfCommands.add("sudo rm -rf bak deb wifi_config inittab mysql.sh rc.local xinitrc");
+//        listOfCommands.add("sudo chkconfig off Server && sudo");
+        return listOfCommands;
     }
 }

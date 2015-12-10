@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     //Demo info
     public static RaspberryPiClient rasp;
 
-    public static String  mFilePathAudio = null, mFilePathImage = null, mFilePathVideo = null;
+    public static String mFilePathAudio = null, mFilePathImage = null, mFilePathVideo = null;
 
     private static Activity mActivity;
     private static HomeMMSDatabaseHelper homeMMSDatabaseHelper;
@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 /*Implement compose photo message;*/
                 mFilePathImage = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
                         + utils.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
+                PreferencesHelper.writeToPreferencesString(getBaseContext(), mFilePathImage, ContantsHomeMMS.ImagePref);
                 utils.openImageIntent(mFilePathImage);
             }
         });
@@ -289,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("result", "onResult");
         switch (requestCode) {
             case ContantsHomeMMS.CAMERA_CAPTURE_IMAGE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
@@ -313,28 +315,33 @@ public class MainActivity extends AppCompatActivity {
                         // images
                         options.inSampleSize = 8;
 //                        final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
+                        if (mFilePathImage == null) {
+                            mFilePathImage = PreferencesHelper.getIsPreferenceString(this, ContantsHomeMMS.ImagePref);
+                        }
                         Bitmap bitmap = BitmapFactory.decodeFile(mFilePathImage, options);
                         //rotete image.
-                        try {
-                            ExifInterface ei = new ExifInterface(mFilePathImage);
-                            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                            Matrix matrix;
-                            switch (orientation) {
-                                case ExifInterface.ORIENTATION_ROTATE_90:
-                                    matrix = new Matrix();
-                                    matrix.postRotate(90);
-                                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                                    break;
-                                case ExifInterface.ORIENTATION_ROTATE_180:
-                                    matrix = new Matrix();
-                                    matrix.postRotate(180);
-                                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                                    break;
-                                default:
-                                    break;
+                        if (mFilePathImage != null) {
+                            try {
+                                ExifInterface ei = new ExifInterface(mFilePathImage);
+                                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                                Matrix matrix;
+                                switch (orientation) {
+                                    case ExifInterface.ORIENTATION_ROTATE_90:
+                                        matrix = new Matrix();
+                                        matrix.postRotate(90);
+                                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                        break;
+                                    case ExifInterface.ORIENTATION_ROTATE_180:
+                                        matrix = new Matrix();
+                                        matrix.postRotate(180);
+                                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
                         //set image to viewimage
 //                        imgPhoto.setImageBitmap(bitmap);
@@ -421,13 +428,14 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     client.SendMessageInfoOfClient();
                     String avatarFile = ContantsHomeMMS.myUserFolder + myUser.getId() + "/" + myUser.getAvatar();
-                    if (utils.checkFileIsExits(avatarFile)){
+                    if (utils.checkFileIsExits(avatarFile)) {
                         //Push File by SSH
                         pushFileAttachToPi(myUser.getAvatar());
                     }
                 }
                 break;
             default:
+                Log.d("result", "default");
                 break;
         }
     }
@@ -440,11 +448,9 @@ public class MainActivity extends AppCompatActivity {
                 client = new Client(rasp, port, mActivity);
                 client.StartSocket();
             }
-        }
-        else if (testWifi == -1){
+        } else if (testWifi == -1) {
             utils.ShowToast("App is offline");
-        }
-        else if (testWifi == 0){
+        } else if (testWifi == 0) {
             utils.ShowToast("Dont config Server.");
         }
     }
@@ -466,7 +472,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (message.getContentAudio() != null) pushFileAttachToPi(message.getContentAudio());
             if (message.getContentImage() != null) pushFileAttachToPi(message.getContentImage());
-            if (message.getContentVideo() !=null ) pushFileAttachToPi(message.getContentVideo());
+            if (message.getContentVideo() != null) pushFileAttachToPi(message.getContentVideo());
 
 //            if (message.getContentAudio() != null || message.getContentImage() != null || message.getContentAudio() != null) {
 //                //Connect SSH.
@@ -500,16 +506,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void createFolderApp(){
-        if (utils.CreateFolder(ContantsHomeMMS.AppFolder)){
-            if (utils.CreateFolder(ContantsHomeMMS.AppCacheFolder)){
+    private void createFolderApp() {
+        if (utils.CreateFolder(ContantsHomeMMS.AppFolder)) {
+            if (utils.CreateFolder(ContantsHomeMMS.AppCacheFolder)) {
                 utils.CreateFolder(ContantsHomeMMS.myUserFolder + myUser.getId());
             }
         }
 
     }
 
-    private void gotoComposeMessageActivity(){
+    private void gotoComposeMessageActivity() {
         Intent intent = new Intent(MainActivity.this, ComposeMessageActivity.class);
         startActivity(intent);
     }

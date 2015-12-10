@@ -513,9 +513,9 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 selectionArgs);
     }
 
-    public void deleteMessage(String messageId) {
+    public static void deleteMessage(Context context, String messageId) {
         String[] selectionArgs = {messageId};
-        getWritableDatabase().delete(MessageTable.NAME, MessageTable.COLUMN_ID + " = ?",
+        getWritableDatabase(context).delete(MessageTable.NAME, MessageTable.COLUMN_ID + " = ?",
                 selectionArgs);
     }
 
