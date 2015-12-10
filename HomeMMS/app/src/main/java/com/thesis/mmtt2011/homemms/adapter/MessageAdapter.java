@@ -13,9 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
+import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,15 +37,19 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
     private List<Message> messages = new ArrayList<>();
 
     private MessageViewHolder.ClickListener clickListener;
+    private Context context;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MessageAdapter(List<Message> _messages, MessageViewHolder.ClickListener _clickListener) {
+    public MessageAdapter(Context context, List<Message> _messages, MessageViewHolder.ClickListener _clickListener) {
         super();
         messages = _messages;
         clickListener = _clickListener;
+        this.context = context;
     }
 
     public void removeMessage(int position) {
+        MainActivity.client.SendRequestDeleteMessage(HomeMMSDatabaseHelper.getMessage(context, messages.get(position).getId()));
+        HomeMMSDatabaseHelper.deleteMessage(context, messages.get(position).getId());
         messages.remove(position);
         notifyItemRemoved(position);
     }

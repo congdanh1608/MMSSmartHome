@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.thesis.mmtt2011.homemms.Encrypt;
 import com.thesis.mmtt2011.homemms.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -126,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the myUser login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(macAddress, password);
+            mAuthTask = new UserLoginTask(macAddress, Encrypt.md5(password));
             mAuthTask.execute((Void) null);
         }
     }

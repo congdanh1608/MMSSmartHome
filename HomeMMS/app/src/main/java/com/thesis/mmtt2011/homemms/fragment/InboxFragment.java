@@ -5,9 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -16,16 +14,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
-import com.thesis.mmtt2011.homemms.Network.Interface;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
-import com.thesis.mmtt2011.homemms.activity.ScanDevicesActivity;
 import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
-import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 
@@ -69,7 +63,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
 
         mActivity = getActivity();
         initListMessage();
-        mAdapter = new MessageAdapter(messages, this);
+        mAdapter = new MessageAdapter(getActivity(), messages, this);
         mRecyclerView.setAdapter(mAdapter);
 
         // use this setting to improve performance if you know that changes
@@ -160,8 +154,6 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.menu_remove:
-//                    MainActivity.client.SendRequestDeleteMessage(HomeMMSDatabaseHelper.getMessage(getActivity(), ));
-//                    HomeMMSDatabaseHelper.deleteMessage(getActivity(), );
                     mAdapter.removeMessages(mAdapter.getSelectedItems());
                     mode.finish();
                     return true;
