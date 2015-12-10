@@ -22,7 +22,6 @@ import Database.Utils;
 import Helper.JsonHelper;
 import Model.Message;
 import Model.User;
-import SSH.PushFile;
 import Socket.Server.ClientThread_;
 import presistence.ContantsHomeMMS;
 import presistence.ContantsHomeMMS.Command;
@@ -75,7 +74,7 @@ public class SocketControl {
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
 					System.out.println(userID + " online.");
 					sendAskWasRegitered();
-					
+
 					user = userModel.getUser(userID);
 
 					// Compare data and send client if have note need send to
@@ -95,7 +94,7 @@ public class SocketControl {
 					sendAskRequestLogin();
 				}
 					break;
-					
+
 				default:
 					break;
 				}
@@ -106,8 +105,10 @@ public class SocketControl {
 				userID = loadIDUser(msg);
 				passUser = loadPassUser(msg);
 				User userInDB = userModel.getUser(userID);
-				if (userInDB.getPassword().equals(passUser)) { // Password true -> Response
-																// all msg + list user;
+				if (userInDB.getPassword().equals(passUser)) { // Password true
+																// -> Response
+																// all msg +
+																// list user;
 					sendAskLoginSuccess();
 
 					// Update status of user.
@@ -126,7 +127,7 @@ public class SocketControl {
 			case INFOREGISTER:
 				// Get user info register and save in database.
 				user = getInfoClient(msg);
-				//create folder profile for new user.
+				// create folder profile for new user.
 				UtilsMain.createFolder(ContantsHomeMMS.AppFolder + "/" + user.getId());
 				// After register successfull, send List user in database.
 				sendAskWasRegitered();
@@ -175,28 +176,64 @@ public class SocketControl {
 				// sGui.updateOnClear();
 				// ct.close();
 				break;
-				
+
 			case RECIEVEFILEATTACH:
-				//Load content ID of message, which client want get.
-				String mID = loadIDMessageAttach(msg);
-				if (mID!=null){
-					Message m = messageModel.getMessage(mID);
-					if (m != null){
-						//Check file attach
+				// Load content ID of message, which client want get.
+				String mIDAttach = loadIDMessage(msg);
+				if (mIDAttach != null) {
+					Message m = messageModel.getMessage(mIDAttach);
+					if (m != null) {
+						// Check file attach
 						ArrayList<String> nameFiles = new ArrayList<String>();
 						String tempA = m.getContentAudio();
 						String tempV = m.getContentVideo();
 						String tempP = m.getContentImage();
-						if (tempA!=null && !tempA.equals("null")) nameFiles.add(tempA);
-						if (tempV!=null && !tempV.equals("null")) nameFiles.add(tempV);
-						if (tempP!=null && !tempP.equals("null")) nameFiles.add(tempP);
-						
-						//push file attach to Client
-						if (nameFiles.size() > 0){
+						if (tempA != null && !tempA.equals("null"))
+							nameFiles.add(tempA);
+						if (tempV != null && !tempV.equals("null"))
+							nameFiles.add(tempV);
+						if (tempP != null && !tempP.equals("null"))
+							nameFiles.add(tempP);
+
+						// push file attach to Client
+						if (nameFiles.size() > 0) {
 							pushListFileAttachToClient(nameFiles, m.getSender());
 						}
-						//notice Server are sending to client.
+						// notice Server are sending to client.
 						sendAskAcceptSendFileAttach();
+					}
+				}
+				break;
+
+			case DELETEMSG:
+				// Load content ID of message, which client want delete.
+				String mIDDelete = loadIDMessage(msg);
+				if (mIDDelete != null) {
+					Message m = messageModel.getMessage(mIDDelete);
+					if (m != null) {
+						// Check and remove user from list receiver.
+						// If no one in receiver -> delete this message.
+						List<User> receivers = m.getReceiver();
+						if (receivers==null || receivers.size() == 1)
+							messageModel.DeleteMessage(mIDDelete);
+						else {
+							for (int i = 0; i < receivers.size(); i++) {
+								if (receivers.get(i).getId().equals(user.getId())) {
+									receivers.remove(i);
+								}
+							}
+						}
+						
+						//Delete file attach.
+						String tempA = m.getContentAudio();
+						String tempV = m.getContentVideo();
+						String tempP = m.getContentImage();
+						if (tempA != null && !tempA.equals("null"))
+							deleteFileOfUser(tempA);
+						if (tempV != null && !tempV.equals("null"))
+							deleteFileOfUser(tempV);
+						if (tempP != null && !tempP.equals("null"))
+							deleteFileOfUser(tempP);
 					}
 				}
 				break;
@@ -273,26 +310,27 @@ public class SocketControl {
 				// Check if mms has file attach then send it to
 				// client.
 				if (checkHasAttachFile(messagesNeedSend.get(i))) {
-//					ArrayList<String> nameFiles = new ArrayList<String>();
+					// ArrayList<String> nameFiles = new ArrayList<String>();
 					String tempA = messagesNeedSend.get(i).getContentAudio();
 					String tempP = messagesNeedSend.get(i).getContentImage();
 					String tempV = messagesNeedSend.get(i).getContentVideo();
 					if (tempA != null && !tempA.equals("") && !tempA.equals("null")) {
 						System.out.println("Sent " + tempA);
-//						nameFiles.add(tempA);
+						// nameFiles.add(tempA);
 						// PushFile.sendFileToClient(tempA);
 					}
 					if (tempP != null && !tempP.equals("") && !tempP.equals("null")) {
 						System.out.println("Sent " + tempP);
-//						nameFiles.add(tempP);
+						// nameFiles.add(tempP);
 						// PushFile.sendFileToClient(tempP);
 					}
 					if (tempV != null && !tempV.equals("") && !tempV.equals("null")) {
 						System.out.println("Sent " + tempV);
-//						nameFiles.add(tempV);
+						// nameFiles.add(tempV);
 						// PushFile.sendFileToClient(tempV);
 					}
-//					pushListFileAttachToClient(nameFiles, messagesNeedSend.get(i).getSender());
+					// pushListFileAttachToClient(nameFiles,
+					// messagesNeedSend.get(i).getSender());
 				}
 
 				// Update status of Message was sent.
@@ -309,35 +347,36 @@ public class SocketControl {
 				System.out.println("Message " + i + " sending to " + user.getNameDisplay());
 				// Compare status sending or sent to know new msg or old msg.
 				if (messagesNeedSend.get(i).getStatus().equals(ContantsHomeMMS.MessageStatus.sending)) {
-					SendMsg(socket,
-							createRecieverMessage(createMessageJson(messagesNeedSend.get(i), ContantsHomeMMS.isNewMsg)));
+					SendMsg(socket, createRecieverMessage(
+							createMessageJson(messagesNeedSend.get(i), ContantsHomeMMS.isNewMsg)));
 				} else {
-					SendMsg(socket,
-							createRecieverMessage(createMessageJson(messagesNeedSend.get(i), ContantsHomeMMS.isOldMsg)));
+					SendMsg(socket, createRecieverMessage(
+							createMessageJson(messagesNeedSend.get(i), ContantsHomeMMS.isOldMsg)));
 				}
 				// Check if mms has file attach then send it to
 				// client.
 				if (checkHasAttachFile(messagesNeedSend.get(i))) {
-//					ArrayList<String> nameFiles = new ArrayList<String>();
+					// ArrayList<String> nameFiles = new ArrayList<String>();
 					String tempA = messagesNeedSend.get(i).getContentAudio();
 					String tempP = messagesNeedSend.get(i).getContentImage();
 					String tempV = messagesNeedSend.get(i).getContentVideo();
 					if (tempA != null && !tempA.equals("") && !tempA.equals("null")) {
 						System.out.println("Sent " + tempA);
-//						nameFiles.add(tempA);
+						// nameFiles.add(tempA);
 						// PushFile.sendFileToClient(tempA);
 					}
 					if (tempP != null && !tempP.equals("") && !tempP.equals("null")) {
 						System.out.println("Sent " + tempP);
-//						nameFiles.add(tempP);
+						// nameFiles.add(tempP);
 						// PushFile.sendFileToClient(tempP);
 					}
 					if (tempV != null && !tempV.equals("") && !tempV.equals("null")) {
 						System.out.println("Sent " + tempV);
-//						nameFiles.add(tempV);
+						// nameFiles.add(tempV);
 						// PushFile.sendFileToClient(tempV);
 					}
-//					pushListFileAttachToClient(nameFiles, messagesNeedSend.get(i).getSender());
+					// pushListFileAttachToClient(nameFiles,
+					// messagesNeedSend.get(i).getSender());
 				}
 
 				// Update status of Message was sent for message user was
@@ -538,8 +577,8 @@ public class SocketControl {
 		messageModel.AddMessage(msg);
 		System.out.println("saved message in database.");
 	}
-	
-	private String loadIDMessageAttach(String msg){
+
+	private String loadIDMessage(String msg) {
 		return JsonHelper.loadJsonIDMessageAttach(msg);
 	}
 
@@ -568,7 +607,7 @@ public class SocketControl {
 
 	protected void sendAskLoginSuccess() {
 		SendMsg(socket, JsonHelper.createJsonLoginSuccess());
-		//Sent file avatar to Client.
+		// Sent file avatar to Client.
 		getAllAvatarSendToClient();
 	}
 
@@ -578,8 +617,8 @@ public class SocketControl {
 
 	protected void sendAskWasRegitered() {
 		SendMsg(socket, JsonHelper.createJsonRegisted());
-		
-		//Sent file avatar to Client.
+
+		// Sent file avatar to Client.
 		getAllAvatarSendToClient();
 	}
 
@@ -590,17 +629,17 @@ public class SocketControl {
 	protected void sendAskRequestLogin() {
 		SendMsg(socket, JsonHelper.createJsonRequestLogin());
 	}
-	
+
 	protected void sendAskAcceptSendFileAttach() {
 		SendMsg(socket, JsonHelper.createJsonAskAcceptSendFileAttach());
 	}
-	
-	private void getAllAvatarSendToClient(){
+
+	private void getAllAvatarSendToClient() {
 		ArrayList<User> usersHasAvatar = new ArrayList<User>();
 		ArrayList<String> avatars = new ArrayList<String>();
 		List<User> users = userModel.getAllUser();
-		for (User user : users){
-			if (user.getAvatar()!=null && !user.getAvatar().equals("null")){
+		for (User user : users) {
+			if (user.getAvatar() != null && !user.getAvatar().equals("null")) {
 				usersHasAvatar.add(user);
 				avatars.add(user.getAvatar());
 			}
@@ -612,7 +651,8 @@ public class SocketControl {
 		ArrayList<ObjectFile> objectFiles = new ArrayList<ObjectFile>();
 		try {
 			for (int i = 0; i < avatars.size(); i++) {
-				String pathAvatar = ContantsHomeMMS.AppFolder + "/" + users.get(i).getId() + "/" + users.get(i).getAvatar();
+				String pathAvatar = ContantsHomeMMS.AppFolder + "/" + users.get(i).getId() + "/"
+						+ users.get(i).getAvatar();
 				File myFile = new File(pathAvatar);
 				byte[] mybytearray = new byte[(int) myFile.length()];
 				FileInputStream fis = new FileInputStream(myFile);
@@ -630,7 +670,7 @@ public class SocketControl {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void pushListFileAttachToClient(ArrayList<String> nameFiles, User user) {
 		ArrayList<ObjectFile> objectFiles = new ArrayList<ObjectFile>();
 		try {
@@ -651,6 +691,13 @@ public class SocketControl {
 			pushFile.start();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void deleteFileOfUser(String fileName) {
+		File file = new File(ContantsHomeMMS.AppFolder + "/" + user.getId() + "/" + fileName);
+		if (file.isFile() && file.exists()){
+			file.delete();
 		}
 	}
 }

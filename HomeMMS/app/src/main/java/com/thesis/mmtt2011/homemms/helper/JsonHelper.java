@@ -192,4 +192,17 @@ public class JsonHelper {
         }
         return null;
     }
+
+    //create String (Json) message request server delete the message.
+    public static String createJsonRequestDeleteMessage(String mID) {
+        try {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put(ContantsHomeMMS.mIDKey, mID);
+            jsonObj.put(ContantsHomeMMS.cmdKey, ContantsHomeMMS.Command.DELETEMSG);
+            return jsonObj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -320,6 +320,10 @@ public class SocketControl {
         return JsonHelper.createJsonRequestFileAttach(mID);
     }
 
+    protected String createRequestDeleteMessage(String mID){
+        return JsonHelper.createJsonRequestDeleteMessage(mID);
+    }
+
     private Message getRecieveInfo(String msg) {
         return JsonHelper.loadNote(msg, context);
     }

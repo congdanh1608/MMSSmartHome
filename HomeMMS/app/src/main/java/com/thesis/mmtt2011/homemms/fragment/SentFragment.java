@@ -39,7 +39,6 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
     private RecyclerView.LayoutManager mLayoutManager;
     private static Activity mActivity;
 
-
     static List<Message> sentMessages;
 
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
@@ -161,6 +160,8 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.menu_remove:
+//                    MainActivity.client.SendRequestDeleteMessage(HomeMMSDatabaseHelper.getMessage(getActivity(), ));
+//                    HomeMMSDatabaseHelper.deleteMessage(getActivity(), );
                     mAdapter.removeMessages(mAdapter.getSelectedItems());
                     mode.finish();
                     return true;
