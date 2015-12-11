@@ -7,9 +7,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 
 import java.util.ArrayList;
 
@@ -21,11 +20,11 @@ import ch.ethz.ssh2.Session;
 public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
     ProgressDialog pd;
     Activity activity;
-    RaspberryPiClient rasp;
+    RaspberryPi rasp;
     boolean isPublicWifi = false;
     String WifiSSID, WifiPassword;
 
-    public InstallRaspAsyncTask(Activity activity, RaspberryPiClient rasp, Boolean isPublicWifi, String WifiSSID, String WifiPassword) {
+    public InstallRaspAsyncTask(Activity activity, RaspberryPi rasp, Boolean isPublicWifi, String WifiSSID, String WifiPassword) {
         this.activity = activity;
         this.rasp = rasp;
         this.isPublicWifi = isPublicWifi;

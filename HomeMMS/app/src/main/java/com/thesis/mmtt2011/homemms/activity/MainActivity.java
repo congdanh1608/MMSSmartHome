@@ -34,7 +34,7 @@ import com.thesis.mmtt2011.homemms.Socket.Client;
 import com.thesis.mmtt2011.homemms.adapter.ViewPagerAdapter;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 import com.thesis.mmtt2011.homemms.model.Message;
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private Utils utilsNetwork;
     private static com.thesis.mmtt2011.homemms.Utils utils;
     //Demo info
-    public static RaspberryPiClient rasp;
+    public static RaspberryPi rasp;
 
     public static String mFilePathAudio = null, mFilePathImage = null, mFilePathVideo = null;
 
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         String ServerIP = PreferencesHelper.getIsPreferenceString(this, ContantsHomeMMS.SERVER_IP);
         String ServerMAC = PreferencesHelper.getIsPreferenceString(this, ContantsHomeMMS.SERVER_MAC);
         String ServerNAME = PreferencesHelper.getIsPreferenceString(this, ContantsHomeMMS.SERVER_NAME);
-        rasp = new RaspberryPiClient(ServerNAME, ServerIP, ServerMAC);
+        rasp = new RaspberryPi(ServerNAME, ServerIP, ServerMAC);
 //        rasp = new RaspberryPiClient("Pi", "192.168.1.240", "B8:27:EB:57:07:1C");
 
         //Create folder app if not exits. Run after myUser has UserID.

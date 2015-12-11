@@ -4,15 +4,15 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 
 
 public class DisConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
     Activity activity;
-    RaspberryPiClient rasp;
+    RaspberryPi rasp;
     ProgressDialog pd;
 
-    public DisConnectSSHAsyncTask(Activity activity, RaspberryPiClient rasp) {
+    public DisConnectSSHAsyncTask(Activity activity, RaspberryPi rasp) {
         this.activity = activity;
         this.rasp = rasp;
         pd = new ProgressDialog(activity);

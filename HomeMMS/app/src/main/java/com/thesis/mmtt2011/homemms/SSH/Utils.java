@@ -1,9 +1,7 @@
 package com.thesis.mmtt2011.homemms.SSH;
 
-import android.app.Activity;
-
 import com.thesis.mmtt2011.homemms.model.Device;
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 import java.io.ByteArrayOutputStream;
@@ -19,12 +17,12 @@ import ch.ethz.ssh2.Session;
  * Created by CongDanh on 20/10/2015.
  */
 public class Utils {
-    public static boolean connectSSH(RaspberryPiClient raspberryPiClient) {
-        Connection connection = new Connection(raspberryPiClient.getIPAddress());
+    public static boolean connectSSH(RaspberryPi raspberryPi) {
+        Connection connection = new Connection(raspberryPi.getIPAddress());
         try {
             connection.connect(null, 3000, 3000);
-            if (connection.authenticateWithPassword(raspberryPiClient.getUsername(), raspberryPiClient.getPassword())) {
-                raspberryPiClient.setConnection(connection);
+            if (connection.authenticateWithPassword(raspberryPi.getUsername(), raspberryPi.getPassword())) {
+                raspberryPi.setConnection(connection);
                 return true;
             }
         } catch (IOException e) {
@@ -33,8 +31,8 @@ public class Utils {
         return false;
     }
 
-    public static boolean disconnectSSH(RaspberryPiClient raspberryPiClient) {
-        Connection connection = raspberryPiClient.getConnection();
+    public static boolean disconnectSSH(RaspberryPi raspberryPi) {
+        Connection connection = raspberryPi.getConnection();
         if (connection != null) {
             connection.close();
         }
@@ -60,12 +58,12 @@ public class Utils {
         return byteFileSource;
     }
 
-    public static int pushFile(byte[] byteFile, String fName, String pathTo, RaspberryPiClient raspberryPiClient) {
+    public static int pushFile(byte[] byteFile, String fName, String pathTo, RaspberryPi raspberryPi) {
         if (byteFile != null) {
-            if (raspberryPiClient.getConnection() != null) {
+            if (raspberryPi.getConnection() != null) {
                 try {
-                    SCPClient scpc = raspberryPiClient.getConnection().createSCPClient();
-                    scpc.put(byteFile, fName, "/home/" + raspberryPiClient.getUsername() + pathTo);
+                    SCPClient scpc = raspberryPi.getConnection().createSCPClient();
+                    scpc.put(byteFile, fName, "/home/" + raspberryPi.getUsername() + pathTo);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return -1;  //Error not know
@@ -88,7 +86,7 @@ public class Utils {
         return false;
     }
 
-    public static int CheckIsRaspPiConfigured(RaspberryPiClient rasp) {
+    public static int CheckIsRaspPiConfigured(RaspberryPi rasp) {
         Connection connection = new Connection(rasp.getIPAddress());
         try {
             connection.connect(null, 3000, 3000);

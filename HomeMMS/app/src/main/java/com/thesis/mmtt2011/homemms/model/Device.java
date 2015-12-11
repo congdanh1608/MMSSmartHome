@@ -1,14 +1,9 @@
 package com.thesis.mmtt2011.homemms.model;
-
-import android.graphics.drawable.Drawable;
-
 /**
  * Created by Y Pham on 4/20/2015.
  */
 public class Device {
     private String deviceName;
-    //private int iconIndex; //0 is rpi myDevice, 1 PC myDevice, 2 other
-    private Drawable deviceIcon;
     private String IPAddress;
     private String MacAddress;
     protected String username;
@@ -16,11 +11,6 @@ public class Device {
     protected int deviceType;   //0-Unknown 1-Rash Pi 2-PC 3-Smart.
 
     public Device(){
-        this.deviceName = null;
-        this.IPAddress = null;
-        this.MacAddress = null;
-        username = null;
-        password = null;
         deviceType = 0;
     }
 
@@ -42,29 +32,8 @@ public class Device {
         this.deviceType = deviceType;
     }
 
-    public Device(String deviceName, Drawable deviceIcon, String IPAddress){
+    public Device(String deviceName, String IPAddress, String MacAddress, String username, String password, int deviceType){
         this.deviceName = deviceName;
-        this.deviceIcon = deviceIcon;
-        this.IPAddress = IPAddress;
-        MacAddress = null;
-        username = null;
-        password = null;
-        deviceType = 0;
-    }
-
-    public Device(String deviceName, Drawable deviceIcon, String IPAddress, String MacAddress){
-        this.deviceName = deviceName;
-        this.deviceIcon = deviceIcon;
-        this.IPAddress = IPAddress;
-        this.MacAddress = MacAddress;
-        username = null;
-        password = null;
-        deviceType = 0;
-    }
-
-    public Device(String deviceName, Drawable deviceIcon, String IPAddress, String MacAddress, String username, String password, int deviceType){
-        this.deviceName = deviceName;
-        this.deviceIcon = deviceIcon;
         this.IPAddress = IPAddress;
         this.MacAddress = MacAddress;
         this.username = username;
@@ -100,14 +69,6 @@ public class Device {
 
     public void setIPAddress(String IPAddress) {
         this.IPAddress = IPAddress;
-    }
-
-    public Drawable getDeviceIcon() {
-        return deviceIcon;
-    }
-
-    public void setDeviceIcon(Drawable deviceIcon) {
-        this.deviceIcon = deviceIcon;
     }
 
     public String getMacAddress() {

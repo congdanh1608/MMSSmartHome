@@ -49,45 +49,40 @@
         android:gravity="center"
         android:paddingLeft="64dp"
         android:paddingRight="64dp">
-        <LinearLayout
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:id="@+id/wifi_access_form">
-            <android.support.design.widget.TextInputLayout
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/wifi_ssid"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/wifi_ssid"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/ssid_wifi"
-                    android:maxLines="1"
-                    android:singleLine="true"/>
-            </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:hint="@string/ssid_wifi"
+                android:maxLines="1"
+                android:singleLine="true"/>
+        </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/wifi_password"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/wifi_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
-                    android:maxLines="1"
-                    android:inputType="textVisiblePassword"
-                    android:singleLine="true"/>
-            </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_password"
+                android:maxLines="1"
+                android:inputType="textVisiblePassword"
+                android:singleLine="true"/>
+        </android.support.design.widget.TextInputLayout>
 
-        </LinearLayout>
 
-        <ProgressBar
+        <!--<ProgressBar
             android:id="@+id/auth_progress"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:visibility="gone" />
+            android:visibility="gone" />-->
         </LinearLayout>
 
         <com.getbase.floatingactionbutton.FloatingActionButton

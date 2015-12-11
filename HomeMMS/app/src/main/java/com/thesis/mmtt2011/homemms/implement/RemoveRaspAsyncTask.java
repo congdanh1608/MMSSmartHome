@@ -7,7 +7,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 
 import java.util.ArrayList;
 
@@ -19,9 +19,9 @@ import ch.ethz.ssh2.Session;
 public class RemoveRaspAsyncTask extends AsyncTask<Void, Void, Void>{
     ProgressDialog pd;
     Activity activity;
-    RaspberryPiClient rasp;
+    RaspberryPi rasp;
 
-    public RemoveRaspAsyncTask(Activity activity, RaspberryPiClient rasp) {
+    public RemoveRaspAsyncTask(Activity activity, RaspberryPi rasp) {
         this.activity = activity;
         this.rasp = rasp;
         pd = new ProgressDialog(activity);

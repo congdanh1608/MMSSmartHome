@@ -9,11 +9,11 @@ public class User {
     String status; //online | offline
 
     public User(){
-        id = null;
+        /*id = null;
         nameDisplay = null;
         password = null;
         avatar = null;
-        status = null;
+        status = null;*/
     }
 
     public User(String _id, String _nameDisplay,  String _password, String _avatar, String _status) {

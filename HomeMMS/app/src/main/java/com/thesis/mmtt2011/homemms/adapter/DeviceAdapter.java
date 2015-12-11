@@ -14,7 +14,7 @@ import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.SSH.Utils;
 import com.thesis.mmtt2011.homemms.implement.InstallRaspAsyncTask;
 import com.thesis.mmtt2011.homemms.model.Device;
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 import java.util.List;
@@ -100,7 +100,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
                             .setPositiveButton(R.string.install, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     // Create the AlertDialog object and return it
-                                    RaspberryPiClient rasp = new RaspberryPiClient(mDevice.getDeviceName(), mDevice.getIPAddress(), mDevice.getMacAddress());
+                                    RaspberryPi rasp = new RaspberryPi(mDevice.getDeviceName(), mDevice.getIPAddress(), mDevice.getMacAddress());
                                     //Install config to Pi with Info of Access Point.
                                     new InstallRaspAsyncTask(activity, rasp, false, ContantsHomeMMS.SSIDOfAP, ContantsHomeMMS.PassOfAP).execute();
                                 }

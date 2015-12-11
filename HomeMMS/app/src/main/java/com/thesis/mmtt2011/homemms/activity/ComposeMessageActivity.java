@@ -234,6 +234,8 @@ public class ComposeMessageActivity extends MainActivity {
             SentFragment.UpdateNewMessageSent(message.getId());
         }
 
+
+
         Snackbar.make(coordinatorlayout, "Send successful", Snackbar.LENGTH_LONG)
                         .setAction("Action", null);
         //Finish activity

@@ -9,7 +9,7 @@ import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.activity.ScanDevicesActivity;
 import com.thesis.mmtt2011.homemms.adapter.DeviceAdapter;
 import com.thesis.mmtt2011.homemms.model.Device;
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -23,7 +23,7 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
     private Activity activity;
     ProgressDialog pd;
     private ArrayList<IpAddressWithSubnet> listOfIpAddressWithSubnet;
-    private ArrayList<RaspberryPiClient> listRaspberryPiClient;
+    private ArrayList<RaspberryPi> listRaspberryPi;
     private String startIP = null, endIP = null;
     private String nmbLookupLocation;
     private Utils utilsNetwork;
@@ -35,7 +35,7 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
         utilsNetwork = new Utils(activity);
         nmbLookupLocation = utilsNetwork.getnmbLookupLocation();
         listOfIpAddressWithSubnet = Interface.GetInterfaceAddresses();
-        listRaspberryPiClient = new ArrayList<RaspberryPiClient>();
+        listRaspberryPi = new ArrayList<RaspberryPi>();
     }
 
     public void FindRangeOfIPSubner() {
@@ -112,7 +112,7 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
                             String MacAddress = Discover.getMacFromArpCache(currentIpAddress);
                             if (HostName.contains("Unknown") && !MacAddress.contains("Unknown") && Utils.CheckMacPi(MacAddress)) {
                                 HostName = "Raspberry Pi";
-                                listRaspberryPiClient.add(new RaspberryPiClient(HostName, currentIpAddress, MacAddress));
+                                listRaspberryPi.add(new RaspberryPi(HostName, currentIpAddress, MacAddress));
                             }
                             Device device;
                             if (HostName.contains("Unknown")) {

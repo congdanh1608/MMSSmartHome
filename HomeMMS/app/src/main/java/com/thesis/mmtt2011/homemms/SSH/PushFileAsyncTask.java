@@ -6,8 +6,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
-import com.thesis.mmtt2011.homemms.implement.LoadCommands;
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 /**
@@ -17,10 +16,10 @@ public class PushFileAsyncTask extends AsyncTask<Void, Void, Integer> {
     ProgressDialog pd;
     byte[] bytes;
     String fName;
-    RaspberryPiClient rasp;
+    RaspberryPi rasp;
     Activity activity;
 
-    public PushFileAsyncTask(byte[] bytes, String fName, RaspberryPiClient rasp, Activity activity){
+    public PushFileAsyncTask(byte[] bytes, String fName, RaspberryPi rasp, Activity activity){
         this.bytes = bytes;
         this.fName = fName;
         this.rasp = rasp;

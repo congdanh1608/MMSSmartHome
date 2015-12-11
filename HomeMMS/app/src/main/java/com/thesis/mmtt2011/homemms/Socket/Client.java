@@ -1,14 +1,13 @@
 package com.thesis.mmtt2011.homemms.Socket;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
 import com.thesis.mmtt2011.homemms.Utils;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.model.Message;
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS.*;
 
@@ -19,7 +18,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 /**
  * Created by CongDanh on 22/10/2015.
@@ -30,12 +28,12 @@ public class Client {
     private static String msgRecieve = "";
     private int port;
     private SocketControl socketControl;
-    private RaspberryPiClient rasp;
+    private RaspberryPi rasp;
     private Handler handler;
     private Activity activity;
     private ClientThread clientThread;
 
-    public Client(RaspberryPiClient rasp, int port, Activity activity) {
+    public Client(RaspberryPi rasp, int port, Activity activity) {
         this.rasp = rasp;
         this.port = port;
         this.activity = activity;

@@ -1,4 +1,4 @@
-package com.thesis.mmtt2011.homemms.activity;
+package com.thesis.mmtt2011.homemms.fragment;
 
 import android.app.Fragment;
 import android.os.AsyncTask;
@@ -19,6 +19,7 @@ import com.thesis.mmtt2011.homemms.Network.Discover;
 import com.thesis.mmtt2011.homemms.Network.DiscoveryThread;
 import com.thesis.mmtt2011.homemms.Network.Utils;
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
@@ -46,7 +47,7 @@ public class ConnectConfiguredServerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.activity_connect_configured_server, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_connect_configured_server, container, false);
 
         //Create utils
         utils = new Utils(getActivity());

@@ -2,7 +2,7 @@ package com.thesis.mmtt2011.homemms.implement;
 
 import android.app.Activity;
 
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -46,7 +46,7 @@ public class Utils {
         return appClientData;
     }
 
-    public static boolean pushFileConfigToPi(byte[] bytes, RaspberryPiClient rasp) {
+    public static boolean pushFileConfigToPi(byte[] bytes, RaspberryPi rasp) {
         if (bytes == null) return false;
         try {
             SCPClient scpc = rasp.getConnection().createSCPClient();
@@ -75,8 +75,8 @@ public class Utils {
         return sb.toString();
     }
 
-    public static void excCommand(RaspberryPiClient raspberryPiClient, ArrayList<String> listOfCommands) {
-        Connection connection = raspberryPiClient.getConnection();
+    public static void excCommand(RaspberryPi raspberryPi, ArrayList<String> listOfCommands) {
+        Connection connection = raspberryPi.getConnection();
         try {
             while (listOfCommands.size() > 0) {
                 String command = listOfCommands.remove(0);

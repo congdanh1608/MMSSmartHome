@@ -2,7 +2,6 @@ package com.thesis.mmtt2011.homemms.fragment;
 
 
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.thesis.mmtt2011.homemms.R;
-import com.thesis.mmtt2011.homemms.activity.ConnectConfiguredServerFragment;
-import com.thesis.mmtt2011.homemms.activity.ScanDevicesActivity;
 
 /**
  * A simple {@link Fragment} subclass.

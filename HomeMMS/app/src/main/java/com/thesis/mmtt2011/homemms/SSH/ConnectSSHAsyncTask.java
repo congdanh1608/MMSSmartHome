@@ -4,17 +4,17 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 
 /**
  * Created by CongDanh on 21/10/2015.
  */
 public class ConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
     Activity activity;
-    RaspberryPiClient rasp;
+    RaspberryPi rasp;
     ProgressDialog pd;
 
-    public ConnectSSHAsyncTask(Activity activity, RaspberryPiClient rasp) {
+    public ConnectSSHAsyncTask(Activity activity, RaspberryPi rasp) {
         this.activity = activity;
         this.rasp = rasp;
         pd = new ProgressDialog(activity);

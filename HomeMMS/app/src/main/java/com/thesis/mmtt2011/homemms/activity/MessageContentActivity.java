@@ -55,8 +55,7 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             mMessage = HomeMMSDatabaseHelper.getMessage(this, messageId);
             mTitleView.setText(mMessage.getTitle());
             mContentView.setText(mMessage.getContentText());
-            String timeStamp = Utils.stringToDateCondition(mMessage.getTimestamp());
-            mTimestamp.setText(timeStamp);
+            mTimestamp.setText(mMessage.getTimestamp());
         } else {
             mUri = intent.getData();
             getSupportLoaderManager().initLoader(0, null, this);

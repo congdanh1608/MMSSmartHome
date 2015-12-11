@@ -1,6 +1,6 @@
 package com.thesis.mmtt2011.homemms.implement;
 
-import com.thesis.mmtt2011.homemms.model.RaspberryPiClient;
+import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 
 import java.util.ArrayList;
 
@@ -9,19 +9,19 @@ import java.util.ArrayList;
  */
 public class LoadCommands {
 
-    public static ArrayList<String> addCommandsUnzip(RaspberryPiClient raspberryPiClient) {
+    public static ArrayList<String> addCommandsUnzip(RaspberryPi raspberryPi) {
         ArrayList<String> listOfCommands = new ArrayList<String>();
         listOfCommands.add("unzip -o /home/"
-                + raspberryPiClient.getUsername()
+                + raspberryPi.getUsername()
                 + "/configrasppi.zip && echo EndCommands");
         return listOfCommands;
     }
 
-    public static ArrayList<String> addCommandsConfig(RaspberryPiClient raspberryPiClient, Boolean isPublicWifi, String WifiSSID, String WifiPassword) {
+    public static ArrayList<String> addCommandsConfig(RaspberryPi raspberryPi, Boolean isPublicWifi, String WifiSSID, String WifiPassword) {
         ArrayList<String> listOfCommands = new ArrayList<String>();
 
         //Config screen of Rasp Pi not sleep & run Server.jar
-        listOfCommands.add("sudo sed -i.bak \"s|exec /usr/bin/X -nolisten tcp \"$@\"|exec /usr/bin/X -s 0 dpms -nolisten tcp \"$@\"|\" /etc/X11/xinit/xserverrc && sudo echo -e \"#~\"" + raspberryPiClient.getUsername() + "\"/.xinitrc\\n java -jar /home/" + raspberryPiClient.getUsername() + "/Server.jar " + raspberryPiClient.getUsername() + "\" > /home/" + raspberryPiClient.getUsername() + "/.xinitrc && echo EndCommands");
+        listOfCommands.add("sudo sed -i.bak \"s|exec /usr/bin/X -nolisten tcp \"$@\"|exec /usr/bin/X -s 0 dpms -nolisten tcp \"$@\"|\" /etc/X11/xinit/xserverrc && sudo echo -e \"#~\"" + raspberryPi.getUsername() + "\"/.xinitrc\\n java -jar /home/" + raspberryPi.getUsername() + "/Server.jar " + raspberryPi.getUsername() + "\" > /home/" + raspberryPi.getUsername() + "/.xinitrc && echo EndCommands");
 
         //Config wifi for Rasp Pi.
         listOfCommands.add("sudo cp wifi_config/interfaces /etc/network/ && sudo cp wifi_config/wpa_supplicant.conf /etc/wpa_supplicant/ && echo EndCommands");
@@ -55,12 +55,12 @@ public class LoadCommands {
         return listOfCommands;
     }
 
-    public static String loadCommandsCreateFolder(String filePath, RaspberryPiClient raspberryPiClient) {
-        String path = "/home/" + raspberryPiClient.getUsername() + filePath;
+    public static String loadCommandsCreateFolder(String filePath, RaspberryPi raspberryPi) {
+        String path = "/home/" + raspberryPi.getUsername() + filePath;
         return "sudo mkdir " + path + " && sudo chmod 777 " + path + " && echo EndCommands";
     }
 
-    public static ArrayList<String> addCommandsRemoveInstall(RaspberryPiClient raspberryPiClient) {
+    public static ArrayList<String> addCommandsRemoveInstall(RaspberryPi raspberryPi) {
         ArrayList<String> listOfCommands = new ArrayList<String>();
         //Restore file backup + remove file.
         listOfCommands.add("sudo cp bak/interfaces /etc/network/ && sudo cp bak/wpa_supplicant.conf /etc/wpa_supplicant/");

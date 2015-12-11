@@ -31,9 +31,6 @@ public class ConfigNetworkFragment extends Fragment {
     private EditText etPasswordWifi;
     FloatingActionButton nextFab;
 
-    private View layout_config_form;
-    private View mProgressView;
-
     public ConfigNetworkFragment() {
         // Required empty public constructor
     }
@@ -45,21 +42,14 @@ public class ConfigNetworkFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_config_network, container, false);
 
-        layout_config_form = rootView.findViewById(R.id.wifi_access_form);
         etSSIDWifi = (EditText) rootView.findViewById(R.id.wifi_ssid);
 
         etPasswordWifi = (EditText) rootView.findViewById(R.id.wifi_password);
-
-        mProgressView = rootView.findViewById(R.id.auth_progress);
 
         nextFab = (FloatingActionButton) rootView.findViewById(R.id.fab_next);
         nextFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                layout_config_form.setVisibility(View.GONE);
-                showProgress(true);
-                //Authenticate wifi;
-
                 //call ScanDevicesAsyncTask activity
                 Intent intent = new Intent(getActivity(), ScanDevicesActivity.class);
                 startActivity(intent);
@@ -67,9 +57,5 @@ public class ConfigNetworkFragment extends Fragment {
             }
         });
         return rootView;
-    }
-
-    private void showProgress(final boolean show) {
-        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 }
