@@ -84,15 +84,17 @@ public class SocketControl {
 
                 case LOGIN:
                     if (getLoginSuccess(msg)) {      //Login success
+                        Client.loginSuccess = 1;
                         //Write preference
                         PreferencesHelper.writeToPreferencesReqLogin(context, false, ContantsHomeMMS.FIRST_RUN_REQUEST_LOGIN);
                         //get list user was send by server.
                         getListUserSaveToDatabase(msg);
                         Log.d("login", "succes");
                     } else {                         //Login fail
+                        Client.loginSuccess = -1;
                         //show notify login fail and request try to login again.
                         Log.d("login", "fail");
-                        MainActivity.ShowLoginAcitivty();
+//                        MainActivity.ShowLoginAcitivty();
 //                        showDialogLogin(context);
                     }
                     break;
@@ -112,7 +114,7 @@ public class SocketControl {
                         }
 
                         //Save message to database.
-                        homeMMSDatabaseHelper.createMessage(context,messageReceive);
+                        homeMMSDatabaseHelper.createMessage(context, messageReceive);
 
                         Log.d("Received", "Updated new message to Inbox");
 
@@ -133,7 +135,7 @@ public class SocketControl {
                         //Update message to Inbox or SentBox
                         if (messageReceive.getSender().getId().equals(myUser.getId())) {
                             SentFragment.UpdateNewMessageSent(messageReceive.getId());
-                        }else {
+                        } else {
                             InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
                         }
                     }
@@ -316,11 +318,11 @@ public class SocketControl {
         return null;
     }
 
-    protected String createRequestFileAttach(String mID){
+    protected String createRequestFileAttach(String mID) {
         return JsonHelper.createJsonRequestFileAttach(mID);
     }
 
-    protected String createRequestDeleteMessage(String mID){
+    protected String createRequestDeleteMessage(String mID) {
         return JsonHelper.createJsonRequestDeleteMessage(mID);
     }
 
@@ -351,7 +353,7 @@ public class SocketControl {
         }
     }
 
-    public void CheckMessageWaitSend(){
+    public void CheckMessageWaitSend() {
         List<Message> messages = new ArrayList<Message>();
         messages = homeMMSDatabaseHelper.getAllMessagesBy(context, MessageTable.COLUMN_STATUS, MessageStatus.wait_send.name());
         if (messages.size() > 0) {
@@ -362,9 +364,9 @@ public class SocketControl {
         }
     }
 
-    private boolean checkHasListAvatar(List<User> userList){
-        for (User u : userList){
-            if (u.getAvatar()!=null)
+    private boolean checkHasListAvatar(List<User> userList) {
+        for (User u : userList) {
+            if (u.getAvatar() != null && !u.getAvatar().equals("null"))
                 return true;
         }
         return false;

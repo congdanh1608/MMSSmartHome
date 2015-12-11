@@ -1,21 +1,18 @@
 package com.thesis.mmtt2011.homemms.activity;
 
 import android.app.Activity;
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,7 +20,7 @@ import android.widget.TextView;
 import com.thesis.mmtt2011.homemms.Encrypt;
 import com.thesis.mmtt2011.homemms.R;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends MainActivity {
 
     /**
      * A dummy authentication store containing known myUser names and passwords.
@@ -113,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
         View focusView = null;
 
         //Check for a valid password, if the myUser entered one.
-        if (!TextUtils.isEmpty(password) && ! isPasswordValid(password)) {
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -158,14 +155,18 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            try {
+//            try {
                 //Simulate network access.
                 MainActivity.myUser.setId(mMACAddress);
                 MainActivity.myUser.setPassword(mPassword);
-                Thread.sleep(1000);
-            } catch (InterruptedException e){
-                return false;
-            }
+
+                boolean b = client.SendLoginInfoOfClient();
+                Log.d("login", b + "");
+
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                return false;
+//            }
 
 //            for (String credential : DUMMY_CREDENTIALS) {
 //                String[] pieces = credential.split("-");
@@ -174,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
 //                    return pieces[1].equals(mPassword);
 //                }
 //            }
-            return true;
+            return b;
         }
 
         @Override
@@ -182,7 +183,6 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(success);
             mAuthTask = null;
             showProgress(false);
-
             if (success) {
                 Intent resultIntent = new Intent();
                 setResult(Activity.RESULT_OK, resultIntent);

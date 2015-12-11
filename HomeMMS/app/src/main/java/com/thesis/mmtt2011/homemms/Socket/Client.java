@@ -32,6 +32,7 @@ public class Client {
     private Handler handler;
     private Activity activity;
     private ClientThread clientThread;
+    public static int loginSuccess = 0;
 
     public Client(RaspberryPi rasp, int port, Activity activity) {
         this.rasp = rasp;
@@ -48,7 +49,7 @@ public class Client {
         clientThread.start();
     }
 
-    public void ReconnectSocket(){
+    public void ReconnectSocket() {
         clientThread.close();
         clientThread.start();
     }
@@ -76,7 +77,7 @@ public class Client {
                             Utils.showMessage(activity, "Connect to Server Successfully.");
                             SendFirstInfoOfClient();
                         }
-                    }catch (IOException ieo){
+                    } catch (IOException ieo) {
                         if (firstshow) {
                             Utils.showMessage(activity, "Cannot connect to Server. May be your Server has problem.");
                             firstshow = false;
@@ -85,7 +86,7 @@ public class Client {
                         Thread.sleep(10000);
                     }
 
-                    if (socketB!=null) {
+                    if (socketB != null) {
                         input = new BufferedReader(new InputStreamReader(socketB.getInputStream()));
                         final String temp = input.readLine();
                         handler.post(new Runnable() {
@@ -111,15 +112,15 @@ public class Client {
             }
         }
 
-        public void close(){
-            if (input!=null){
+        public void close() {
+            if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if (socketB!=null){
+            if (socketB != null) {
                 try {
                     socketB.close();
                 } catch (IOException e) {
@@ -138,7 +139,7 @@ public class Client {
                 e.printStackTrace();
             }
         }
-        if (clientThread!=null){
+        if (clientThread != null) {
             clientThread.close();
         }
         return true;
@@ -173,7 +174,7 @@ public class Client {
     }
 
     //Send message contain info of client.
-    public boolean SendLoginInfoOfClient() {
+   /* public boolean SendLoginInfoOfClient() {
         if (socketB.isConnected()) {
             try {
                 printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
@@ -183,6 +184,28 @@ public class Client {
                 e.printStackTrace();
             }
         } else return false;
+        return false;
+    }*/
+
+    //Send message contain info of client.
+    public boolean SendLoginInfoOfClient() {
+        loginSuccess = 0;
+        if (socketB.isConnected()) {
+            try {
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
+                printWriter.println(socketControl.createLoginInfoClient());
+
+                do {
+                    Thread.sleep(100);
+                    if (loginSuccess==1) return true;
+                    else return false;
+                }while (loginSuccess!=0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return false;
     }
 

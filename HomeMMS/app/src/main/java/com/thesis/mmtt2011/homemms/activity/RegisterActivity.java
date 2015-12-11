@@ -255,12 +255,13 @@ public class RegisterActivity extends AppCompatActivity {
                 //Resize avatar
                 if (Utils.checkFileIsExits(avatarCache)) {
                     Utils.resizeImage(avatarCache, avatarFile, 64, 64);
-                }
+                }else avatarFile=null;
                 //Simulate network access.
+                Log.d("package", getBaseContext().getPackageName());
                 MainActivity.myUser.setId(mMACAddress);
                 MainActivity.myUser.setPassword(mPassword);
                 MainActivity.myUser.setNameDisplay(mNameDisplay);
-                MainActivity.myUser.setAvatar(avatarName);
+                MainActivity.myUser.setAvatar(avatarFile!=null ? avatarName : null);
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 return false;

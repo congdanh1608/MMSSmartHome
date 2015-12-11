@@ -142,7 +142,7 @@ public class ComposeMessageActivity extends MainActivity {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         LinearLayout linearLayout = (LinearLayout) view;
-                        View v = linearLayout.getChildAt(1);
+                        View v = linearLayout.getChildAt(2);
                         CheckedTextView checkedTextView = (CheckedTextView) v;
                         checkedTextView.setChecked(!checkedTextView.isChecked());
                         if (checkedTextView.isChecked()) {
@@ -161,7 +161,11 @@ public class ComposeMessageActivity extends MainActivity {
         fabSendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mMessageTitleView.getText().toString().isEmpty()) {
+                if (mMessageContentView.getText().toString().isEmpty()){
+                    Snackbar.make(view, "Content is not empty.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+                else if (mMessageTitleView.getText().toString().isEmpty()) {
                     Snackbar.make(view, "Title is not empty.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }

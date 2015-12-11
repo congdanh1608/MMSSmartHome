@@ -171,13 +171,13 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
                 tvContent.setText(message.getContentTextTrim());
                 tvTimeStamp.setText(message.getTimestamp());
 
-                if(!message.getContentImage().isEmpty()) {
+                if(!message.getContentImage().equals("null")) {
                     ivImage.setVisibility(View.VISIBLE);
                 }
-                if(!message.getContentAudio().isEmpty()) {
+                if(!message.getContentAudio().equals("null")) {
                     ivAudio.setVisibility(View.VISIBLE);
                 }
-                if (!message.getContentVideo().isEmpty()) {
+                if (!message.getContentVideo().equals("null")) {
                     ivVideo.setVisibility(View.VISIBLE);
                 }
             }

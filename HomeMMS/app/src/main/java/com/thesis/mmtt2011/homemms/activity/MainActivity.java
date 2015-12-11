@@ -417,11 +417,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case ContantsHomeMMS.LOGIN_REQUEST_CODE:
-                Log.d("result", "LOGIN_REQUEST_CODE");
-                Log.d("result", resultCode + "");
-                if (resultCode == RESULT_OK) {
-                    client.SendLoginInfoOfClient();
-                }
+//                Log.d("result", "LOGIN_REQUEST_CODE");
+//                Log.d("result", resultCode + "");
+//                if (resultCode == RESULT_OK) {
+//                    boolean b = client.SendLoginInfoOfClient();
+//                    Log.d("login", b + "");
+//                }
                 break;
             case ContantsHomeMMS.REGISTER_REQUEST_CODE:
                 Log.d("result", "REGISTER_REQUEST_CODE");

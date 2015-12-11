@@ -339,9 +339,9 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         values.put(MessageTable.COLUMN_RECEIVER, ConvertStringReceiver(message.getReceiver()));
         values.put(MessageTable.COLUMN_TITLE, message.getTitle());
         values.put(MessageTable.COLUMN_CONTENT_TEXT, message.getContentText());;
-        values.put(MessageTable.COLUMN_CONTENT_IMAGE, message.getContentImage());
-        values.put(MessageTable.COLUMN_CONTENT_AUDIO, message.getContentAudio());
-        values.put(MessageTable.COLUMN_CONTENT_VIDEO, message.getContentVideo());
+        values.put(MessageTable.COLUMN_CONTENT_IMAGE, message.getContentImage()==null ? "null" : message.getContentImage());
+        values.put(MessageTable.COLUMN_CONTENT_AUDIO, message.getContentAudio()==null ? "null" : message.getContentAudio());
+        values.put(MessageTable.COLUMN_CONTENT_VIDEO, message.getContentVideo()==null ? "null" : message.getContentVideo());
         values.put(MessageTable.COLUMN_STATUS, message.getStatus());
         values.put(MessageTable.COLUMN_TIMESTAMP, message.getTimestamp());
 
@@ -381,6 +381,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
             message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
             message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
             message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
+            message.setContentVideo(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_VIDEO)));
             message.setTimeCondition(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
             message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
             return message;
@@ -404,6 +405,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
                 message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
+                message.setContentVideo(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_VIDEO)));
                 message.setTimeCondition(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
                 message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
 
@@ -431,6 +433,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
                 message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
+                message.setContentVideo(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_VIDEO)));
                 message.setTimeCondition(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
                 message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
 
@@ -457,6 +460,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 message.setContentText(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
                 message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
+                message.setContentVideo(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_VIDEO)));
                 message.setTimeCondition(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
                 message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
 
