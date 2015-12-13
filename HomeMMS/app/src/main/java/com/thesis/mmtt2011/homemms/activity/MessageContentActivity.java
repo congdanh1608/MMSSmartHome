@@ -9,13 +9,12 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thesis.mmtt2011.homemms.R;
-import com.thesis.mmtt2011.homemms.Utils;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.model.Message;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 import com.thesis.mmtt2011.homemms.persistence.MessageTable;
 
@@ -30,7 +29,6 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
     private TextView mTitleView;
     private TextView mContentView;
     private TextView mTimestamp;
-    private ImageView mImageView;
 
     public static Intent getStartIntent(Context context, Message message) {
         Intent starter = new Intent(context, MessageContentActivity.class);
@@ -47,7 +45,6 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
         mTitleView = (TextView) findViewById(R.id.message_title);
         mContentView = (TextView) findViewById(R.id.message_content);
         mTimestamp = (TextView) findViewById(R.id.timestamp);
-        mImageView = (ImageView) findViewById(R.id.contact_avatar);
         // Get the message from the intent
         Intent intent = getIntent();
         if (intent.hasExtra(TAG)) {
@@ -61,16 +58,6 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             getSupportLoaderManager().initLoader(0, null, this);
         }
 
-        mImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //get download file attach from Server.
-                if (MainActivity.isConnected && checkMessageHasAttach(mMessage)) {
-                    client.SendRequestFileAttach(mMessage);
-                } else Utils.showMessage(MessageContentActivity.this, "Server is offline");
-            }
-        });
-
         //get sender to show here
 
         //get status of message here
@@ -83,8 +70,11 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
                         .setAction("Action", null).show();
             }
         });*/
-
-
+        if (MainActivity.isConnected) {
+            if (checkMessageHasAttach(mMessage)) {
+                client.SendRequestFileAttach(mMessage);
+            }
+        } else UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
     }
 
     @Override
@@ -98,7 +88,7 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             mTitleView.setText(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_TITLE)));
             mContentView.setText(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
 
-            String timeStamp = Utils.stringToDateCondition(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+            String timeStamp = UtilsMain.stringToDateCondition(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
             mTimestamp.setText(timeStamp);
         }
     }
@@ -108,8 +98,15 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
 
     }
 
-    private boolean checkMessageHasAttach(Message message){
-        if (message.getContentAudio()!=null || message.getContentVideo()!=null || message.getContentImage()!=null){
+    private boolean checkMessageHasAttach(Message message) { //true - down, false - not down
+        String myPath = ContantsHomeMMS.AppFolder + "/" + myUser.getId() + "/";
+        if (message.getContentAudio() != null && !UtilsMain.checkFileIsExits(myPath + message.getContentAudio())) {
+            return true;
+        }
+        if (message.getContentVideo() != null && !UtilsMain.checkFileIsExits(myPath + message.getContentVideo())) {
+            return true;
+        }
+        if (message.getContentImage() != null && !UtilsMain.checkFileIsExits(myPath + message.getContentImage())) {
             return true;
         }
         return false;

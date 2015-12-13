@@ -2,7 +2,7 @@ package com.thesis.mmtt2011.homemms.model;
 
 import android.content.Context;
 
-import com.thesis.mmtt2011.homemms.Utils;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 
 import java.text.DateFormat;
@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by Xpie on 10/20/2015.
@@ -69,14 +70,16 @@ public class Message {
     public void setTimeCondition(String dateString) {
         Date now = new Date();
         try {
-            Date date = Utils.convertStringToDate(dateString);
+            Date date = UtilsMain.convertStringToDate(dateString);
             long differenceTime = now.getTime() - date.getTime();
             if (differenceTime > HOUR24_MILISECOND) {
                 DateFormat dateFormat = new SimpleDateFormat("MMM d");
+                dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 this.timestamp = dateFormat.format(date);
                 return;
             } else {
                 DateFormat dateFormat = new SimpleDateFormat("h:mm a");
+                dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 this.timestamp = dateFormat.format(date);
                 return;
             }

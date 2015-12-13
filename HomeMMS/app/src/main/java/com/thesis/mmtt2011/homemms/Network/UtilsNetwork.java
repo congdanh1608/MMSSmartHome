@@ -16,10 +16,10 @@ import ch.ethz.ssh2.Connection;
 /**
  * Created by CongDanh on 31/10/2015.
  */
-public class Utils {
+public class UtilsNetwork {
     private Activity activity;
 
-    public Utils(Activity activity){
+    public UtilsNetwork(Activity activity){
         this.activity = activity;
     }
 

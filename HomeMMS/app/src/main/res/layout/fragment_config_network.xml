@@ -55,6 +55,7 @@
             android:layout_height="wrap_content">
             <EditText
                 android:id="@+id/wifi_ssid"
+                android:text="PC-Connectify"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/ssid_wifi"
@@ -67,6 +68,7 @@
             android:layout_height="wrap_content">
             <EditText
                 android:id="@+id/wifi_password"
+                android:text="Freew1fj"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_password"

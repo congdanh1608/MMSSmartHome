@@ -1,7 +1,6 @@
 package com.thesis.mmtt2011.homemms.activity;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,16 +10,13 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.SyncStateContract;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckedTextView;
@@ -31,10 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.R;
-import com.thesis.mmtt2011.homemms.SSH.ConnectSSHAsyncTask;
-import com.thesis.mmtt2011.homemms.SSH.DisConnectSSHAsyncTask;
-import com.thesis.mmtt2011.homemms.SSH.PushFileAsyncTask;
-import com.thesis.mmtt2011.homemms.SSH.Utils;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.adapter.ContactAdapter;
 import com.thesis.mmtt2011.homemms.fragment.SentFragment;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
@@ -42,7 +35,6 @@ import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
-import com.thesis.mmtt2011.homemms.persistence.UserTable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -65,7 +57,7 @@ public class ComposeMessageActivity extends MainActivity {
 
     private HomeMMSDatabaseHelper homeMMSDatabaseHelper;
 
-    private com.thesis.mmtt2011.homemms.Utils utils;
+    private UtilsMain utilsMain;
 
     private String mFileNameAudio = null, mFileNameImage = null, mFileNameVideo = null;
 
@@ -87,8 +79,8 @@ public class ComposeMessageActivity extends MainActivity {
 
         homeMMSDatabaseHelper = new HomeMMSDatabaseHelper(this);
 
-        //create Utils.
-        utils = new com.thesis.mmtt2011.homemms.Utils(this);
+        //create UtilsMain.
+        utilsMain = new UtilsMain(this);
 
         coordinatorlayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
         mMessageTitleView = (EditText) findViewById(R.id.message_title);
@@ -106,7 +98,7 @@ public class ComposeMessageActivity extends MainActivity {
         add_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //utils.showDialog();
+                //utilsMain.showDialog();
                 AlertDialog.Builder builder = new AlertDialog.Builder(ComposeMessageActivity.this);
                 builder.setAdapter(mAdapter, null);
                 builder.setTitle(R.string.select_contact);
@@ -208,9 +200,9 @@ public class ComposeMessageActivity extends MainActivity {
         //Send message to Server.
         if (client != null && MainActivity.isConnected) {
             client.SendInfoMessage(message);
-            if (utils.checkFileIsExits(mFilePathAudio)) pushFileAttachToPi(mFileNameAudio);
-            if (utils.checkFileIsExits(mFilePathImage)) pushFileAttachToPi(mFileNameImage);
-            if (utils.checkFileIsExits(mFilePathVideo)) pushFileAttachToPi(mFileNameVideo);
+            if (utilsMain.checkFileIsExits(mFilePathAudio)) pushFileAttachToPi(mFileNameAudio);
+            if (utilsMain.checkFileIsExits(mFilePathImage)) pushFileAttachToPi(mFileNameImage);
+            if (utilsMain.checkFileIsExits(mFilePathVideo)) pushFileAttachToPi(mFileNameVideo);
 
                 //Connect SSH.
 //                new ConnectSSHAsyncTask(this, rasp).execute();
@@ -233,7 +225,7 @@ public class ComposeMessageActivity extends MainActivity {
         }else{      //Save message with status wait_send
             message.setStatus(ContantsHomeMMS.MessageStatus.wait_send.name());
             homeMMSDatabaseHelper.updateMessage(this, message);
-            utils.ShowToast("Message will send to Server when online.");
+            utilsMain.ShowToast("Message will send to Server when online.");
             //update message in Sent Fragment.
             SentFragment.UpdateNewMessageSent(message.getId());
         }
@@ -254,7 +246,7 @@ public class ComposeMessageActivity extends MainActivity {
     //Create a message.
     private Message createAMessage(List<User> receivers) {
         Message message = new Message();
-        message.setMId(utils.createMessageID(myUser.getId()));
+        message.setMId(utilsMain.createMessageID(myUser.getId()));
         message.setSender(myUser);
         message.setReceiver(receivers);
         message.setTitle(mMessageTitleView.getText().toString());
@@ -262,7 +254,7 @@ public class ComposeMessageActivity extends MainActivity {
         message.setContentAudio(mFileNameAudio);
         message.setContentImage(mFileNameImage);
         message.setContentVideo(mFileNameVideo);
-        message.setTimestamp(utils.getCurrentTime());
+        message.setTimestamp(utilsMain.getCurrentTime());
         message.setStatus(ContantsHomeMMS.MessageStatus.draft.name());
         return message;
     }
@@ -335,8 +327,8 @@ public class ComposeMessageActivity extends MainActivity {
                             final Bitmap bitmap = BitmapFactory.decodeStream(input);
                             //set image to viewimage
 //                            imgPhoto.setImageBitmap(bitmap);
-                            String tempPath = utils.getRealPathFromURI(this, selectedImageUri);
-                            utils.copyFile(new File(tempPath), new File(mFilePathImage));
+                            String tempPath = utilsMain.getRealPathFromURI(this, selectedImageUri);
+                            utilsMain.copyFile(new File(tempPath), new File(mFilePathImage));
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -375,8 +367,8 @@ public class ComposeMessageActivity extends MainActivity {
 
             case ContantsHomeMMS.REQUEST_AUDIO_CAPTURE:
                 if (resultCode == RESULT_OK) {
-                    String tempPath = utils.getRealPathFromURI(this, data.getData());
-                    utils.copyFile(new File(tempPath), new File(mFilePathAudio));
+                    String tempPath = utilsMain.getRealPathFromURI(this, data.getData());
+                    utilsMain.copyFile(new File(tempPath), new File(mFilePathAudio));
                 } else if (resultCode == RESULT_CANCELED) {
                     // myUser cancelled Image capture
                     Toast.makeText(getApplicationContext(),
@@ -404,23 +396,23 @@ public class ComposeMessageActivity extends MainActivity {
 
         if (id == R.id.action_camera) {
             mFilePathImage = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
-                    + utils.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
+                    + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
             PreferencesHelper.writeToPreferencesString(getBaseContext(), mFilePathImage, ContantsHomeMMS.ImagePref);
-            utils.openImageIntent(mFilePathImage);
+            utilsMain.openImageIntent(mFilePathImage);
             return true;
         }
 
         if (id == R.id.action_video) {
             mFilePathVideo = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
-                    + utils.createNameForFile(ContantsHomeMMS.TypeFile.Video);
-            utils.startRecordingV(mFilePathVideo);
+                    + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Video);
+            utilsMain.startRecordingV(mFilePathVideo);
             return true;
         }
 
         if (id == R.id.action_record) {
             mFilePathAudio = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
-                    + utils.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
-            utils.startRecordingAudio(mFilePathAudio);
+                    + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
+            utilsMain.startRecordingAudio(mFilePathAudio);
             return true;
         }
 

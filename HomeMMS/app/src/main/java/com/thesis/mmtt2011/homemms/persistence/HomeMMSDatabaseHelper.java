@@ -338,7 +338,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         values.put(MessageTable.COLUMN_SENDER, message.getSender().getId());
         values.put(MessageTable.COLUMN_RECEIVER, ConvertStringReceiver(message.getReceiver()));
         values.put(MessageTable.COLUMN_TITLE, message.getTitle());
-        values.put(MessageTable.COLUMN_CONTENT_TEXT, message.getContentText());;
+        values.put(MessageTable.COLUMN_CONTENT_TEXT, message.getContentText());
         values.put(MessageTable.COLUMN_CONTENT_IMAGE, message.getContentImage()==null ? "null" : message.getContentImage());
         values.put(MessageTable.COLUMN_CONTENT_AUDIO, message.getContentAudio()==null ? "null" : message.getContentAudio());
         values.put(MessageTable.COLUMN_CONTENT_VIDEO, message.getContentVideo()==null ? "null" : message.getContentVideo());

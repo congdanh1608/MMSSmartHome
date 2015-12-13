@@ -30,7 +30,7 @@ public class DisConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        if (Utils.disconnectSSH(rasp)) return true;
+        if (UtilsSSH.disconnectSSH(rasp)) return true;
         return false;
     }
 

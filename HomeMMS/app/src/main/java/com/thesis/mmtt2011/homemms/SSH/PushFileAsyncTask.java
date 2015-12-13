@@ -41,10 +41,10 @@ public class PushFileAsyncTask extends AsyncTask<Void, Void, Integer> {
     @Override
     protected Integer doInBackground(Void... params) {
         if (rasp.getConnection() == null){
-            Utils.connectSSH(rasp);
+            UtilsSSH.connectSSH(rasp);
         }
         String pathFile = "/" + ContantsHomeMMS.AppName+ "/" + MainActivity.myUser.getId() + "/";
-        return Utils.pushFile(bytes, fName, pathFile, rasp);
+        return UtilsSSH.pushFile(bytes, fName, pathFile, rasp);
     }
 
     @Override

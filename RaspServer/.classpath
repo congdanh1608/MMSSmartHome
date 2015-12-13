@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="/root/Libs/java-json.jar/java-json.jar"/>
+	<classpathentry kind="lib" path="/root/Libs/ganymed-ssh2-build210.jar"/>
+	<classpathentry kind="lib" path="/root/Libs/swt-4.5.1-gtk-linux-x86/swt.jar"/>
+	<classpathentry kind="lib" path="/root/Libs/mysql-connector-java-5.1.37/mysql-connector-java-5.1.37-bin.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

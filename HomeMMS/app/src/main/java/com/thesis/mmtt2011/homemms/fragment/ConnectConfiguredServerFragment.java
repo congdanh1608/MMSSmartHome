@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.Network.Discover;
 import com.thesis.mmtt2011.homemms.Network.DiscoveryThread;
-import com.thesis.mmtt2011.homemms.Network.Utils;
+import com.thesis.mmtt2011.homemms.Network.UtilsNetwork;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
@@ -34,7 +34,7 @@ public class ConnectConfiguredServerFragment extends Fragment {
 
     private ServerManualConnectTask mManualConnectTask = null;
     private ServerAutoConnectTask mAutoConnectTask = null;
-    private Utils utils;
+    private UtilsNetwork utilsNetwork;
 
     private LinearLayout layout_config_server;
 
@@ -49,8 +49,8 @@ public class ConnectConfiguredServerFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_connect_configured_server, container, false);
 
-        //Create utils
-        utils = new Utils(getActivity());
+        //Create utilsMain
+        utilsNetwork = new UtilsNetwork(getActivity());
         layout_config_server = (LinearLayout) rootView.findViewById(R.id.layout_config_server);
         etIPServer = (EditText) rootView.findViewById(R.id.ipServer);
         etIPServer.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -194,7 +194,7 @@ public class ConnectConfiguredServerFragment extends Fragment {
                 if (MainActivity.rasp.getIPAddress()!=null && MainActivity.rasp.getIPAddress().equals(ipServer)) {
                     MainActivity.rasp.setIPAddress(ipServer);
                     MainActivity.rasp.setMacAddress(Discover.getMacFromArpCache(ipServer));
-                    MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utils.getnmbLookupLocation()));
+                    MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utilsNetwork.getnmbLookupLocation()));
 
                     //Save to Preferences.
                     GetAndSaveInfoToPrefer();
@@ -243,7 +243,7 @@ public class ConnectConfiguredServerFragment extends Fragment {
                 String ipServer = MainActivity.rasp.getIPAddress();
                 if (ipServer != null) {
                     MainActivity.rasp.setMacAddress(Discover.getMacFromArpCache(ipServer));
-                    MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utils.getnmbLookupLocation()));
+                    MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utilsNetwork.getnmbLookupLocation()));
 
                     //Save to Preferences
                     GetAndSaveInfoToPrefer();
@@ -288,8 +288,8 @@ public class ConnectConfiguredServerFragment extends Fragment {
         PreferencesHelper.writeToPreferencesString(getActivity(), MainActivity.rasp.getDeviceName(), ContantsHomeMMS.SERVER_NAME);
 
         //Get Mac addrees and Name of access point, save in Preferences.
-        String MacAddressOfAP = utils.getMacAddressOfAP();
-        String NameOfAP = utils.getSSIDOfAP();
+        String MacAddressOfAP = utilsNetwork.getMacAddressOfAP();
+        String NameOfAP = utilsNetwork.getSSIDOfAP();
         if (MacAddressOfAP != null) {
             PreferencesHelper.writeToPreferencesString(getActivity(), MacAddressOfAP, ContantsHomeMMS.AP_MACADDRESS);
         }

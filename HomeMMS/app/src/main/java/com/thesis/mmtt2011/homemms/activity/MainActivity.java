@@ -26,11 +26,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.thesis.mmtt2011.homemms.Network.Utils;
+import com.thesis.mmtt2011.homemms.Network.UtilsNetwork;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.SSH.PushFileAsyncTask;
+import com.thesis.mmtt2011.homemms.SSH.UtilsSSH;
 import com.thesis.mmtt2011.homemms.SlidingTabLayout;
 import com.thesis.mmtt2011.homemms.Socket.Client;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.adapter.ViewPagerAdapter;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 import com.thesis.mmtt2011.homemms.model.Message;
@@ -60,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
     public static Client client;
     private static final int port = 2222;
     public static User myUser;
-    private Utils utilsNetwork;
-    private static com.thesis.mmtt2011.homemms.Utils utils;
+    private UtilsNetwork utilsNetworkNetwork;
+    private static UtilsMain utilsMain;
     //Demo info
     public static RaspberryPi rasp;
 
@@ -80,9 +82,9 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        //create Utils.
-        utilsNetwork = new Utils(this);
-        utils = new com.thesis.mmtt2011.homemms.Utils(this);
+        //create UtilsMain.
+        utilsNetworkNetwork = new UtilsNetwork(this);
+        utilsMain = new UtilsMain(this);
 
         mActivity = this;
         homeMMSDatabaseHelper = new HomeMMSDatabaseHelper(this);
@@ -90,11 +92,11 @@ public class MainActivity extends AppCompatActivity {
         //get my User info Vì chưa biết user đã có đăng ký hay chưa?
         //Nếu đã dk rồi thì sẽ có full info myUser.
         //Nếu chưa sẽ chỉ có ID (Mac) trong info myUser.;
-        User user = HomeMMSDatabaseHelper.getUser(getBaseContext(), utilsNetwork.getMacAddress());
+        User user = HomeMMSDatabaseHelper.getUser(getBaseContext(), utilsNetworkNetwork.getMacAddress());
         if (user != null) {
             myUser = user;
         } else {
-            myUser = new User(utilsNetwork.getMacAddress(), null, null, null
+            myUser = new User(utilsNetworkNetwork.getMacAddress(), null, null, null
                     , ContantsHomeMMS.UserStatus.online.name());
 //            long longid = HomeMMSDatabaseHelper.createUser(getBaseContext(), myUser);
 //            Log.i("HomeMMS", String.valueOf(longid));
@@ -141,9 +143,9 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 /*Implement compose photo message;*/
                 mFilePathImage = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
-                        + utils.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
+                        + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
                 PreferencesHelper.writeToPreferencesString(getBaseContext(), mFilePathImage, ContantsHomeMMS.ImagePref);
-                utils.openImageIntent(mFilePathImage);
+                utilsMain.openImageIntent(mFilePathImage);
             }
         });
 
@@ -154,8 +156,8 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Hit new message record", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 mFilePathAudio = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
-                        + utils.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
-                utils.startRecordingAudio(mFilePathAudio);
+                        + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
+                utilsMain.startRecordingAudio(mFilePathAudio);
             }
         });
 
@@ -167,8 +169,8 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                  /*Implement compose video message;*/
                 mFilePathVideo = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
-                        + utils.createNameForFile(ContantsHomeMMS.TypeFile.Video);
-                utils.startRecordingV(mFilePathVideo);
+                        + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Video);
+                utilsMain.startRecordingV(mFilePathVideo);
             }
         });
 
@@ -357,8 +359,8 @@ public class MainActivity extends AppCompatActivity {
                             final Bitmap bitmap = BitmapFactory.decodeStream(input);
                             //set image to viewimage
 //                            imgPhoto.setImageBitmap(bitmap);
-                            String tempPath = utils.getRealPathFromURI(this, selectedImageUri);
-                            utils.copyFile(new File(tempPath), new File(mFilePathImage));
+                            String tempPath = utilsMain.getRealPathFromURI(this, selectedImageUri);
+                            utilsMain.copyFile(new File(tempPath), new File(mFilePathImage));
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -401,8 +403,8 @@ public class MainActivity extends AppCompatActivity {
             case ContantsHomeMMS.REQUEST_AUDIO_CAPTURE:
                 if (resultCode == RESULT_OK) {
                     gotoComposeMessageActivity();
-                    String tempPath = utils.getRealPathFromURI(this, data.getData());
-                    utils.copyFile(new File(tempPath), new File(mFilePathAudio));
+                    String tempPath = utilsMain.getRealPathFromURI(this, data.getData());
+                    utilsMain.copyFile(new File(tempPath), new File(mFilePathAudio));
                 } else if (resultCode == RESULT_CANCELED) {
                     // myUser cancelled Image capture
                     Toast.makeText(getApplicationContext(),
@@ -429,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     client.SendMessageInfoOfClient();
                     String avatarFile = ContantsHomeMMS.myUserFolder + myUser.getId() + "/" + myUser.getAvatar();
-                    if (utils.checkFileIsExits(avatarFile)) {
+                    if (utilsMain.checkFileIsExits(avatarFile)) {
                         //Push File by SSH
                         pushFileAttachToPi(myUser.getAvatar());
                     }
@@ -443,16 +445,16 @@ public class MainActivity extends AppCompatActivity {
 
     public static void createClient() {
         //connect socket.
-        int testWifi = utils.checkIsConnectToWifiHome();
+        int testWifi = utilsMain.checkIsConnectToWifiHome();
         if (testWifi == 1) {
             if (rasp != null && !PreferencesHelper.getIsFirstRun(mActivity)) {
                 client = new Client(rasp, port, mActivity);
                 client.StartSocket();
             }
         } else if (testWifi == -1) {
-            utils.ShowToast("App is offline");
+            utilsMain.ShowToast("App is offline");
         } else if (testWifi == 0) {
-            utils.ShowToast("Dont config Server.");
+            utilsMain.ShowToast("Dont config Server.");
         }
     }
 
@@ -497,8 +499,8 @@ public class MainActivity extends AppCompatActivity {
     public static void pushFileAttachToPi(String mFileName) {
         if (mFileName != null) {
             String pathFile = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/" + mFileName;
-            if (utils.checkFileIsExits(pathFile)) {
-                byte[] bytes = com.thesis.mmtt2011.homemms.SSH.Utils.loadResourceFromPath(pathFile);
+            if (utilsMain.checkFileIsExits(pathFile)) {
+                byte[] bytes = UtilsSSH.loadResourceFromPath(pathFile);
                 if (bytes != null) {
                     PushFileAsyncTask async = new PushFileAsyncTask(bytes, mFileName, rasp, mActivity);
                     async.execute();
@@ -508,9 +510,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createFolderApp() {
-        if (utils.CreateFolder(ContantsHomeMMS.AppFolder)) {
-            if (utils.CreateFolder(ContantsHomeMMS.AppCacheFolder)) {
-                utils.CreateFolder(ContantsHomeMMS.myUserFolder + myUser.getId());
+        if (utilsMain.CreateFolder(ContantsHomeMMS.AppFolder)) {
+            if (utilsMain.CreateFolder(ContantsHomeMMS.AppCacheFolder)) {
+                utilsMain.CreateFolder(ContantsHomeMMS.myUserFolder + myUser.getId());
             }
         }
 

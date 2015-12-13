@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 
+import com.thesis.mmtt2011.homemms.SSH.UtilsSSH;
 import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class RemoveRaspAsyncTask extends AsyncTask<Void, Void, Void>{
     @Override
     protected Void doInBackground(Void... voids) {
         if (rasp.getConnection()==null) {
-            com.thesis.mmtt2011.homemms.SSH.Utils.connectSSH(rasp); //Create connection for raspPi.
+            UtilsSSH.connectSSH(rasp); //Create connection for raspPi.
         }
             try {
                 //Remove config in Rasp Pi.
@@ -50,7 +51,7 @@ public class RemoveRaspAsyncTask extends AsyncTask<Void, Void, Void>{
                     command += "\n";
                     Session session = rasp.getConnection().openSession();
                     session.execCommand(command);
-                    while (!Utils.getResponse(session).contains("EndCommands")) {
+                    while (!UtilsImple.getResponse(session).contains("EndCommands")) {
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {
@@ -88,7 +89,7 @@ public class RemoveRaspAsyncTask extends AsyncTask<Void, Void, Void>{
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Utils.excCommand(rasp, LoadCommands.addCommandsReboot());
+                        UtilsImple.excCommand(rasp, LoadCommands.addCommandsReboot());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

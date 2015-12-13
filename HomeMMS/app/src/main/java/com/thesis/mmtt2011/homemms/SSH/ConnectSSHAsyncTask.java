@@ -32,7 +32,7 @@ public class ConnectSSHAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        if (Utils.connectSSH(rasp)) return true;
+        if (UtilsSSH.connectSSH(rasp)) return true;
         return false;
     }
 

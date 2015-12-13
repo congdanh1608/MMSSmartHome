@@ -15,7 +15,7 @@ import java.util.Enumeration;
 public class DiscoveryThread implements Runnable {
 
     private static Activity mActivity;
-    private static Utils utils;
+    private static UtilsNetwork utilsNetwork;
     DatagramSocket datagramSocket;
 
     @Override
@@ -68,7 +68,7 @@ public class DiscoveryThread implements Runnable {
                 String ipOfRasp = convertStringIP(receivePacket.getAddress().toString());
                 MainActivity.rasp.setIPAddress(ipOfRasp);
                 MainActivity.rasp.setMacAddress(Discover.getMacFromArpCache(ipOfRasp));
-                MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipOfRasp, utils.getnmbLookupLocation()));
+                MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipOfRasp, utilsNetwork.getnmbLookupLocation()));
                 System.out.println(receivePacket.getAddress());
             }
             //Close the port!
@@ -88,7 +88,7 @@ public class DiscoveryThread implements Runnable {
 
     public static DiscoveryThread getInstance(Activity activity) {
         mActivity = activity;
-        utils = new Utils(mActivity);
+        utilsNetwork = new UtilsNetwork(mActivity);
         return DiscoveryThreadHolder.INSTANCE;
     }
 

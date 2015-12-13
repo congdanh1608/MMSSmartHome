@@ -21,7 +21,7 @@ public class ContantsHomeMMS {
     public static final String nmblookupName = "nmblookup";
 
     //info wifi
-    public static String SSIDOfAP = "PC-Connectify", PassOfAP = "Freew1fi";
+    public static String SSIDOfAP = null, PassOfAP = null;
 
     //extension File
     public static final String exAudio = ".mp3", exVideo = ".mp4", exImage = ".jpg";

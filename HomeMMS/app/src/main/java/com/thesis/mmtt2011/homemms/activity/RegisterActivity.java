@@ -29,8 +29,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.Encrypt;
+import com.thesis.mmtt2011.homemms.Network.UtilsNetwork;
 import com.thesis.mmtt2011.homemms.R;
-import com.thesis.mmtt2011.homemms.Utils;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
@@ -54,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     private View mRegisterFormView;
     private ImageView set_avatar;
     private String avatarFile = null, avatarCache = null, avatarName = null;
-    private com.thesis.mmtt2011.homemms.Network.Utils utilNetwork;
+    private UtilsNetwork utilNetwork;
 
     public String getMacAddress() {
         WifiManager wimanager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
@@ -67,8 +68,8 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        //create utils
-        utilNetwork = new com.thesis.mmtt2011.homemms.Network.Utils(this);
+        //create utilsMain
+        utilNetwork = new UtilsNetwork(this);
 
         //Setup register form
         mMacAddressView = (TextView) findViewById(R.id.mac_address);
@@ -123,7 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void onSetAvatar() {
         //Check folder app
-        if (Utils.CreateFolder(ContantsHomeMMS.AppFolder) && Utils.CreateFolder(ContantsHomeMMS.AppCacheFolder)) {
+        if (UtilsMain.CreateFolder(ContantsHomeMMS.AppFolder) && UtilsMain.CreateFolder(ContantsHomeMMS.AppCacheFolder)) {
             openImageIntent();
         }
     }
@@ -250,11 +251,11 @@ public class RegisterActivity extends AppCompatActivity {
             try {
                 //Get name for new avatar
                 String mac = utilNetwork.getMacAddress();
-                avatarName = Utils.createNameForAvatar(mac);
+                avatarName = UtilsMain.createNameForAvatar(mac);
                 avatarFile = ContantsHomeMMS.myUserFolder + MainActivity.myUser.getId() + "/" + avatarName;
                 //Resize avatar
-                if (Utils.checkFileIsExits(avatarCache)) {
-                    Utils.resizeImage(avatarCache, avatarFile, 64, 64);
+                if (UtilsMain.checkFileIsExits(avatarCache)) {
+                    UtilsMain.resizeImage(avatarCache, avatarFile, 64, 64);
                 }else avatarFile=null;
                 //Simulate network access.
                 Log.d("package", getBaseContext().getPackageName());
@@ -365,7 +366,7 @@ public class RegisterActivity extends AppCompatActivity {
                             final Bitmap bitmap = BitmapFactory.decodeStream(input);
                             //set image to viewimage
 //                            imgPhoto.setImageBitmap(bitmap);
-                            avatarCache = Utils.getRealPathFromURI(this, selectedImageUri);
+                            avatarCache = UtilsMain.getRealPathFromURI(this, selectedImageUri);
                             set_avatar.setImageBitmap(bitmap);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();

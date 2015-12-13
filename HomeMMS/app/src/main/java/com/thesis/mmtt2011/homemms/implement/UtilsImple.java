@@ -19,7 +19,7 @@ import ch.ethz.ssh2.StreamGobbler;
 /**
  * Created by CongDanh on 20/11/2015.
  */
-public class Utils {
+public class UtilsImple {
 
     //limited Heap Memory less 64MB
     //Crash out of memory if file's size > 30MB

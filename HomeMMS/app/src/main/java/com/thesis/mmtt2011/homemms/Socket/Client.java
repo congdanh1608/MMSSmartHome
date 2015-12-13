@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Handler;
 import android.util.Log;
 
-import com.thesis.mmtt2011.homemms.Utils;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.RaspberryPi;
@@ -63,23 +63,23 @@ public class Client {
             try {
 //                socketB = new Socket(rasp.getIPAddress(), port);
 //                MainActivity.isConnected = true;
-//                Utils.showMessage(activity, "Connect to Server Successfully.");
+//                UtilsMain.showMessage(activity, "Connect to Server Successfully.");
 //                SendFirstInfoOfClient();
                 boolean firstshow = true;
                 while (true) {
                     //try to connect to Server every 20s.
                     try {
                         if (!MainActivity.isConnected) {
-//                            Utils.showMessage(activity, "Trying connect to Server.");
+//                            UtilsMain.showMessage(activity, "Trying connect to Server.");
                             socketB = new Socket(rasp.getIPAddress(), port);
 //                            socketB.setKeepAlive(true);
                             MainActivity.isConnected = true;
-                            Utils.showMessage(activity, "Connect to Server Successfully.");
+                            UtilsMain.showMessage(activity, "Connect to Server Successfully.");
                             SendFirstInfoOfClient();
                         }
                     } catch (IOException ieo) {
                         if (firstshow) {
-                            Utils.showMessage(activity, "Cannot connect to Server. May be your Server has problem.");
+                            UtilsMain.showMessage(activity, "Cannot connect to Server. May be your Server has problem.");
                             firstshow = false;
                         }
                         //fail connect, wait 20s to try again.
@@ -94,7 +94,7 @@ public class Client {
                                 //Server socket closed.
                                 if (temp == null && MainActivity.isConnected) {
                                     MainActivity.isConnected = false;
-                                    Utils.showMessage(activity, "Was disconnected to Server. May be your network or Server has problem.");
+                                    UtilsMain.showMessage(activity, "Was disconnected to Server. May be your network or Server has problem.");
                                 }
                                 //Receive message from Server.
                                 if (temp != null && !temp.equals("")) {
@@ -196,9 +196,9 @@ public class Client {
                 printWriter.println(socketControl.createLoginInfoClient());
 
                 do {
-                    Thread.sleep(100);
+                    Thread.sleep(1000);
                     if (loginSuccess==1) return true;
-                    else return false;
+                    else if (loginSuccess==-1) return false;
                 }while (loginSuccess!=0);
             } catch (IOException e) {
                 e.printStackTrace();

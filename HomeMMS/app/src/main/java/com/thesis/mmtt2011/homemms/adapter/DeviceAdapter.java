@@ -11,11 +11,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thesis.mmtt2011.homemms.R;
-import com.thesis.mmtt2011.homemms.SSH.Utils;
+import com.thesis.mmtt2011.homemms.SSH.UtilsSSH;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.implement.InstallRaspAsyncTask;
 import com.thesis.mmtt2011.homemms.model.Device;
 import com.thesis.mmtt2011.homemms.model.RaspberryPi;
-import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 import java.util.List;
 
@@ -26,13 +26,13 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
 
     private List<Device> devices;
     public static Activity activity;
-    public static com.thesis.mmtt2011.homemms.Utils utils;
+    public static UtilsMain utilsMain;
 
     public DeviceAdapter(List<Device> _devices, Activity activity) {
         devices = _devices;
         this.activity = activity;
 
-        utils = new com.thesis.mmtt2011.homemms.Utils(activity);
+        utilsMain = new UtilsMain(activity);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         public void onClick(View v) {
             if (mDevice != null) {
                 //check and create Pi client if it was Pi.
-                if (Utils.CheckIsRaspPiDefault(mDevice)){
+                if (UtilsSSH.CheckIsRaspPiDefault(mDevice)){
                     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                     builder.setTitle(R.string.install_config);
                     builder.setMessage(R.string.install_alert_message)
@@ -102,7 +102,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
                                     // Create the AlertDialog object and return it
                                     RaspberryPi rasp = new RaspberryPi(mDevice.getDeviceName(), mDevice.getIPAddress(), mDevice.getMacAddress());
                                     //Install config to Pi with Info of Access Point.
-                                    new InstallRaspAsyncTask(activity, rasp, false, ContantsHomeMMS.SSIDOfAP, ContantsHomeMMS.PassOfAP).execute();
+                                    new InstallRaspAsyncTask(activity, rasp).execute();
                                 }
                             })
                             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -114,7 +114,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
                     alertDialog.show();
                 }
                 else {
-                    utils.ShowToast("It's not Rasp Pi");
+                    utilsMain.ShowToast("It's not Rasp Pi");
                 }
             }
         }

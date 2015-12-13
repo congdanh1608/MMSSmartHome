@@ -26,14 +26,14 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
     private ArrayList<RaspberryPi> listRaspberryPi;
     private String startIP = null, endIP = null;
     private String nmbLookupLocation;
-    private Utils utilsNetwork;
+    private UtilsNetwork utilsNetworkNetwork;
 
     public ScanDevicesAsyncTask(Activity activity) {
         this.activity = activity;
         pd = new ProgressDialog(activity);
 
-        utilsNetwork = new Utils(activity);
-        nmbLookupLocation = utilsNetwork.getnmbLookupLocation();
+        utilsNetworkNetwork = new UtilsNetwork(activity);
+        nmbLookupLocation = utilsNetworkNetwork.getnmbLookupLocation();
         listOfIpAddressWithSubnet = Interface.GetInterfaceAddresses();
         listRaspberryPi = new ArrayList<RaspberryPi>();
     }
@@ -42,7 +42,7 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
         for (IpAddressWithSubnet ipAddressWithSubnet : listOfIpAddressWithSubnet) {
             String IPAddress = ipAddressWithSubnet.getIpAddress();
             int SubnetMask = ipAddressWithSubnet.getSubnet();
-            long longIp = Utils.ipToLong(IPAddress);
+            long longIp = UtilsNetwork.ipToLong(IPAddress);
             String binaryLongIp = Long.toBinaryString(longIp);
             if (binaryLongIp.length() < 32) {
                 int add = 32 - binaryLongIp.length();
@@ -60,40 +60,40 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
                 endAddress += "1";
             }
 
-            startIP = Utils.fromBinaryToIp(startAddress);
-            endIP = Utils.fromBinaryToIp(endAddress);
+            startIP = UtilsNetwork.fromBinaryToIp(startAddress);
+            endIP = UtilsNetwork.fromBinaryToIp(endAddress);
         }
     }
 
     private ArrayList<String> slipIP(String hexStartAddress, String hexEndAddress) {
         int total = 0, spart = 0;
         ArrayList<String> ipSlip = new ArrayList<String>();
-        total = Utils.countIP(hexStartAddress, hexEndAddress);
+        total = UtilsNetwork.countIP(hexStartAddress, hexEndAddress);
         //chia 2
         spart = (int) total / 4;
         // 0_1--2_3--4_5--6_7
         //0 - 1
         ipSlip.add(0, hexStartAddress);
         for (int i = 0; i < spart; i++) {
-            hexStartAddress = Utils.addTwoHexToString(hexStartAddress, "01");
+            hexStartAddress = UtilsNetwork.addTwoHexToString(hexStartAddress, "01");
         }
         ipSlip.add(1, hexStartAddress);
         //2 - 3
-        hexStartAddress = Utils.addTwoHexToString(hexStartAddress, "01");
+        hexStartAddress = UtilsNetwork.addTwoHexToString(hexStartAddress, "01");
         ipSlip.add(2, hexStartAddress);
         for (int i = 0; i < spart; i++) {
-            hexStartAddress = Utils.addTwoHexToString(hexStartAddress, "01");
+            hexStartAddress = UtilsNetwork.addTwoHexToString(hexStartAddress, "01");
         }
         ipSlip.add(3, hexStartAddress);
         //4 - 5
-        hexStartAddress = Utils.addTwoHexToString(hexStartAddress, "01");
+        hexStartAddress = UtilsNetwork.addTwoHexToString(hexStartAddress, "01");
         ipSlip.add(4, hexStartAddress);
         for (int i = 0; i < spart; i++) {
-            hexStartAddress = Utils.addTwoHexToString(hexStartAddress, "01");
+            hexStartAddress = UtilsNetwork.addTwoHexToString(hexStartAddress, "01");
         }
         ipSlip.add(5, hexStartAddress);
         //6 - 7
-        ipSlip.add(6, Utils.addTwoHexToString(hexStartAddress, "01"));
+        ipSlip.add(6, UtilsNetwork.addTwoHexToString(hexStartAddress, "01"));
         ipSlip.add(7, hexEndAddress);
         return ipSlip;
     }
@@ -103,14 +103,14 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
             public void run() {
                 String start1 = start;
                 while (!start1.equals(end)) {
-                    final String currentIpAddress = Utils.fromHexToIp(start1);
+                    final String currentIpAddress = UtilsNetwork.fromHexToIp(start1);
                     InetAddress inetAddress = null;
                     try {
                         inetAddress = InetAddress.getByName(currentIpAddress);
                         if (inetAddress.isReachable(500)) {
                             String HostName = Discover.getHostNameNmblookup(currentIpAddress, nmbLookupLocation);
                             String MacAddress = Discover.getMacFromArpCache(currentIpAddress);
-                            if (HostName.contains("Unknown") && !MacAddress.contains("Unknown") && Utils.CheckMacPi(MacAddress)) {
+                            if (HostName.contains("Unknown") && !MacAddress.contains("Unknown") && UtilsNetwork.CheckMacPi(MacAddress)) {
                                 HostName = "Raspberry Pi";
                                 listRaspberryPi.add(new RaspberryPi(HostName, currentIpAddress, MacAddress));
                             }
@@ -129,7 +129,7 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    start1 = Utils.addTwoHexToString(start1, "01");
+                    start1 = UtilsNetwork.addTwoHexToString(start1, "01");
                 }
             }
         });
@@ -157,8 +157,8 @@ public class ScanDevicesAsyncTask extends AsyncTask<Void, Integer, Void> {
             FindRangeOfIPSubner();
         }
 
-        String HexStartAddress = Utils.fromIpToHex(startIP);
-        final String HexEndAddress = Utils.fromIpToHex(endIP);
+        String HexStartAddress = UtilsNetwork.fromIpToHex(startIP);
+        final String HexEndAddress = UtilsNetwork.fromIpToHex(endIP);
 
         //Mutil-Thread. 4 Thread
         final ArrayList<String> ipSlip = slipIP(HexStartAddress, HexEndAddress);

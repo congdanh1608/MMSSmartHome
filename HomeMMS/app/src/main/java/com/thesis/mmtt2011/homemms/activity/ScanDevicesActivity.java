@@ -2,21 +2,18 @@ package com.thesis.mmtt2011.homemms.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 
 import com.thesis.mmtt2011.homemms.Network.ScanDevicesAsyncTask;
+import com.thesis.mmtt2011.homemms.Network.UtilsNetwork;
 import com.thesis.mmtt2011.homemms.R;
-import com.thesis.mmtt2011.homemms.Utils;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.adapter.DeviceAdapter;
 import com.thesis.mmtt2011.homemms.model.Device;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
@@ -33,8 +30,8 @@ public class ScanDevicesActivity extends AppCompatActivity {
 
     public static List<Device> devices;
 
-    private Utils utils;
-    private com.thesis.mmtt2011.homemms.Network.Utils utilsNetwork;
+    private UtilsMain utilsMain;
+    private UtilsNetwork utilsNetworkNetwork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +40,8 @@ public class ScanDevicesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        utils = new Utils(this);
-        utilsNetwork = new com.thesis.mmtt2011.homemms.Network.Utils(this);
+        utilsMain = new UtilsMain(this);
+        utilsNetworkNetwork = new UtilsNetwork(this);
 
         //Copy nmblookup file to data.
         Installnmblookup();
@@ -79,23 +76,23 @@ public class ScanDevicesActivity extends AppCompatActivity {
 
     private void initScan() {
         devices = new ArrayList<Device>();
-        if (utilsNetwork.getMacAddress() != null) {
+        if (utilsNetworkNetwork.getMacAddress() != null) {
             new ScanDevicesAsyncTask(this).execute();
-        } else utils.ShowToast("Device don't connect network or wi-fi is disabled");
+        } else utilsMain.ShowToast("Device don't connect network or wi-fi is disabled");
     }
 
     private void Installnmblookup() {
-        String nmblookupPath = utilsNetwork.getnmbLookupLocation();
+        String nmblookupPath = utilsNetworkNetwork.getnmbLookupLocation();
 
         //Check CPU x86?
-        Boolean x86Cpu = Utils.isX86Cpu();
+        Boolean x86Cpu = UtilsMain.isX86Cpu();
 
         //Scan Network with nmblookup.
-        if (!Utils.ChecknmblookupAvalability(nmblookupPath)) {
+        if (!UtilsMain.ChecknmblookupAvalability(nmblookupPath)) {
             if (x86Cpu) {
-                Utils.copyAsset(getAssets(), "x86/" + ContantsHomeMMS.nmblookupName, nmblookupPath);
+                UtilsMain.copyAsset(getAssets(), "x86/" + ContantsHomeMMS.nmblookupName, nmblookupPath);
             } else {
-                Utils.copyAsset(getAssets(), ContantsHomeMMS.nmblookupName, nmblookupPath);
+                UtilsMain.copyAsset(getAssets(), ContantsHomeMMS.nmblookupName, nmblookupPath);
             }
             try {
                 Process p = Runtime.getRuntime().exec("chmod 774 " + nmblookupPath);

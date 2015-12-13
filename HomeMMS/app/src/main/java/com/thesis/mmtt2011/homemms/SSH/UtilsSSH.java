@@ -1,5 +1,6 @@
 package com.thesis.mmtt2011.homemms.SSH;
 
+import com.thesis.mmtt2011.homemms.implement.UtilsImple;
 import com.thesis.mmtt2011.homemms.model.Device;
 import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
@@ -16,7 +17,7 @@ import ch.ethz.ssh2.Session;
 /**
  * Created by CongDanh on 20/10/2015.
  */
-public class Utils {
+public class UtilsSSH {
     public static boolean connectSSH(RaspberryPi raspberryPi) {
         Connection connection = new Connection(raspberryPi.getIPAddress());
         try {
@@ -111,7 +112,7 @@ public class Utils {
         try {
             Session session = connection.openSession();
             session.execCommand(string);
-            result = com.thesis.mmtt2011.homemms.implement.Utils.getResponse(session);
+            result = UtilsImple.getResponse(session);
             session.close();
         } catch (IOException e) {
             e.printStackTrace();

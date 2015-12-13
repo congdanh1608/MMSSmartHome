@@ -1,12 +1,8 @@
 package com.thesis.mmtt2011.homemms.Socket;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
-import android.widget.EditText;
 
-import com.thesis.mmtt2011.homemms.SSH.ConnectSSHAsyncTask;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.fragment.InboxFragment;
 import com.thesis.mmtt2011.homemms.fragment.SentFragment;
@@ -18,7 +14,7 @@ import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS.*;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 import com.thesis.mmtt2011.homemms.persistence.MessageTable;
-import com.thesis.mmtt2011.homemms.persistence.Utils;
+import com.thesis.mmtt2011.homemms.persistence.UtilsPersis;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -208,7 +204,7 @@ public class SocketControl {
         try {
             JSONObject jsonObj = new JSONObject();
             jsonObj.put(ContantsHomeMMS.mIDKey, message.getId());
-            jsonObj.put(ContantsHomeMMS.recieverKey, Utils.convertListUserToString(message.getReceiver()));
+            jsonObj.put(ContantsHomeMMS.recieverKey, UtilsPersis.convertListUserToString(message.getReceiver()));
             jsonObj.put(ContantsHomeMMS.titleKey, message.getTitle());
             jsonObj.put(ContantsHomeMMS.contentTextKey, message.getContentText());
             jsonObj.put(ContantsHomeMMS.contentAudioKey, message.getContentAudio());

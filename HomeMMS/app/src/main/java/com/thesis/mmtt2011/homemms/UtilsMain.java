@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.thesis.mmtt2011.homemms.Network.UtilsNetwork;
 import com.thesis.mmtt2011.homemms.activity.ComposeMessageActivity;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
@@ -38,29 +39,30 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by CongDanh on 22/10/2015.
  */
-public class Utils {
+public class UtilsMain {
     public static long HOUR24_MILISECOND = 24 * 60 * 60 * 1000;
-    private com.thesis.mmtt2011.homemms.Network.Utils utilsNetwork;
+    private UtilsNetwork utilsNetworkNetwork;
     private Activity activity;
     private MediaRecorder mRecorderAudio = null;
 
-    public Utils(Activity activity) {
+    public UtilsMain(Activity activity) {
         this.activity = activity;
-        utilsNetwork = new com.thesis.mmtt2011.homemms.Network.Utils(activity);
+        utilsNetworkNetwork = new UtilsNetwork(activity);
     }
 
     public int checkIsConnectToWifiHome() {
-        if (utilsNetwork.checkIsWifiConnect()) {
+        if (utilsNetworkNetwork.checkIsWifiConnect()) {
             String MACADDRESSOfAP = PreferencesHelper.getIsPreferenceString(activity, ContantsHomeMMS.AP_MACADDRESS);
             String SSIDOfAP = PreferencesHelper.getIsPreferenceString(activity, ContantsHomeMMS.AP_NAME);
             if (MACADDRESSOfAP==null || SSIDOfAP==null){
                 return 0;   //unknow wifi
             }
-            if (utilsNetwork.getMacAddressOfAP().equals(MACADDRESSOfAP) && utilsNetwork.getSSIDOfAP().equals(SSIDOfAP)) {
+            if (utilsNetworkNetwork.getMacAddressOfAP().equals(MACADDRESSOfAP) && utilsNetworkNetwork.getSSIDOfAP().equals(SSIDOfAP)) {
                 return 1;   //true wifi home
             }
         }
@@ -303,9 +305,19 @@ public class Utils {
         return mID;
     }
 
+    public static String getCurrentTimeMMMddHHmmss() {
+        String time = null;
+        DateFormat dateFormat = new SimpleDateFormat("MMM dd HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date date = new Date();
+        time = dateFormat.format(date);
+        return time;
+    }
+
     public static String getCurrentTimeHms() {
         String time = null;
         DateFormat dateFormat = new SimpleDateFormat("yyyymmddHHmmss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date date = new Date();
         time = dateFormat.format(date); // 075959
         return time;
@@ -327,9 +339,11 @@ public class Utils {
             long differenceTime = now.getTime() - date.getTime();
             if (differenceTime > HOUR24_MILISECOND) {
                 DateFormat dateFormat = new SimpleDateFormat("MMM d");
+                dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 return dateFormat.format(date);
             } else {
                 DateFormat dateFormat = new SimpleDateFormat("h:mm a");
+                dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 return dateFormat.format(date);
             }
         } catch (Exception e) {
@@ -341,6 +355,7 @@ public class Utils {
     public static Date convertStringToDate(String dateString) {
         Date date = null;
         DateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
         try {
             date = df.parse(dateString);
             return date;

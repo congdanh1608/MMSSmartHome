@@ -1,8 +1,6 @@
 package com.thesis.mmtt2011.homemms.Socket;
 
-import android.util.Log;
-
-import com.thesis.mmtt2011.homemms.Utils;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.model.ObjectFile;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
@@ -78,7 +76,7 @@ public class RecieveFile {
 
             try {
                 String pathUserReceive = ContantsHomeMMS.AppFolder + "/" + sender;
-                if (Utils.CreateFolder(pathUserReceive)) {
+                if (UtilsMain.CreateFolder(pathUserReceive)) {
                     String pathFileReceive = pathUserReceive + "/" + nameFile;
                     File fileReceive = new File(pathFileReceive);
                     if (fileReceive.exists()) {

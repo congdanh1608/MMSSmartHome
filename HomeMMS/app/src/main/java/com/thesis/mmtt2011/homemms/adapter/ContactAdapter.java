@@ -2,6 +2,7 @@ package com.thesis.mmtt2011.homemms.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.model.User;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +60,9 @@ public class ContactAdapter extends ArrayAdapter{
         tvUserName.setChecked(false);
         CircleImageView avatar = (CircleImageView)convertView.findViewById(R.id.avatar_circle);
         User contact = contacts.get(position);
-        if(contact.getStatus()=="online") {
-            imStatus.setColorFilter(R.color.colorAccent);
+        if(contact.getStatus().equals(ContantsHomeMMS.UserStatus.online.name())) {
+//            imStatus.setColorFilter(R.color.colorAccent);
+            imStatus.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
         }
         tvUserName.setText(contact.getNameDisplay());
         if(selectedContacts.contains(contact)) {
