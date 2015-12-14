@@ -25,7 +25,7 @@
                 android:id="@+id/avatar_circle"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_launcher"
+                android:src="@drawable/ic_homemms"
                 />
         <LinearLayout
             android:layout_width="0dp"

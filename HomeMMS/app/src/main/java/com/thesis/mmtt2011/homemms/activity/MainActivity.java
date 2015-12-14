@@ -267,11 +267,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        /*if (id == R.id.action_logout) {
-            Intent intent = new Intent(this, LoginActivity.class);
+        if (id == R.id.action_user_info) {
+            Intent intent = new Intent(this, UserInfoActivity.class);
             startActivity(intent);
             return true;
-        }*/
+        }
 
         return super.onOptionsItemSelected(item);
     }

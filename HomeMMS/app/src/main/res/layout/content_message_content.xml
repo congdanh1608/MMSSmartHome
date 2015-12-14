@@ -67,7 +67,7 @@
                     android:id="@+id/contact_avatar"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_launcher" />
+                    android:src="@drawable/ic_homemms" />
                 <TextView
                     android:id="@+id/username"
                     android:layout_width="0dp"

@@ -57,4 +57,7 @@
     <string name="choose_contact">Receivers</string>
     <string name="config_network">Setting your network</string>
     <string name="ssid_wifi">SSID</string>
+    <string name="title_activity_user_info">Profile</string>
+    <string name="change_avatar">Change avatar</string>
+    <string name="change_password">Change password</string>
 </resources>
