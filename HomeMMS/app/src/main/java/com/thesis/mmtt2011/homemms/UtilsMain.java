@@ -57,13 +57,20 @@ public class UtilsMain {
 
     public int checkIsConnectToWifiHome() {
         if (utilsNetworkNetwork.checkIsWifiConnect()) {
-            String MACADDRESSOfAP = PreferencesHelper.getIsPreferenceString(activity, ContantsHomeMMS.AP_MACADDRESS);
-            String SSIDOfAP = PreferencesHelper.getIsPreferenceString(activity, ContantsHomeMMS.AP_NAME);
-            if (MACADDRESSOfAP==null || SSIDOfAP==null){
-                return 0;   //unknow wifi
+            if (!PreferencesHelper.getIsPreferenceBoolean(activity, ContantsHomeMMS.STATE_NORMAL)) {
+                if (utilsNetworkNetwork.getSSIDOfAP().contains(ContantsHomeMMS.HP_NAME)) {
+                    return 1;   //true wifi home
+                }
             }
-            if (utilsNetworkNetwork.getMacAddressOfAP().equals(MACADDRESSOfAP) && utilsNetworkNetwork.getSSIDOfAP().equals(SSIDOfAP)) {
-                return 1;   //true wifi home
+            else {
+                String MACADDRESSOfAP = PreferencesHelper.getIsPreferenceString(activity, ContantsHomeMMS.AP_MACADDRESS);
+                String SSIDOfAP = PreferencesHelper.getIsPreferenceString(activity, ContantsHomeMMS.AP_NAME);
+                if (MACADDRESSOfAP == null || SSIDOfAP == null) {
+                    return 0;   //unknow wifi
+                }
+                if (utilsNetworkNetwork.getMacAddressOfAP().equals(MACADDRESSOfAP) && utilsNetworkNetwork.getSSIDOfAP().equals(SSIDOfAP)) {
+                    return 1;   //true wifi home
+                }
             }
         }
         return -1; //not wifi home.

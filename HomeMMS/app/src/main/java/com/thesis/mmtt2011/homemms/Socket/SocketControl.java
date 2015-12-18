@@ -52,7 +52,7 @@ public class SocketControl {
                     switch (getHasRegister(msg)) {
                         case REGISTERED:
                             //Write preference
-                            PreferencesHelper.writeToPreferencesReqLogin(context, false, ContantsHomeMMS.FIRST_RUN_REQUEST_LOGIN);
+                            PreferencesHelper.writeToPreferencesBoolean(context, false, ContantsHomeMMS.FIRST_RUN_REQUEST_LOGIN);
                             //if device was registered, server will send list myUser in database.
                             getListUserSaveToDatabase(msg);
                             //Check message wait send.
@@ -82,7 +82,7 @@ public class SocketControl {
                     if (getLoginSuccess(msg)) {      //Login success
                         Client.loginSuccess = 1;
                         //Write preference
-                        PreferencesHelper.writeToPreferencesReqLogin(context, false, ContantsHomeMMS.FIRST_RUN_REQUEST_LOGIN);
+                        PreferencesHelper.writeToPreferencesBoolean(context, false, ContantsHomeMMS.FIRST_RUN_REQUEST_LOGIN);
                         //get list user was send by server.
                         getListUserSaveToDatabase(msg);
                         Log.d("login", "succes");
@@ -320,6 +320,10 @@ public class SocketControl {
 
     protected String createRequestDeleteMessage(String mID) {
         return JsonHelper.createJsonRequestDeleteMessage(mID);
+    }
+
+    protected String createRequestServerToNormailState() {
+        return JsonHelper.createJsonRequestServerToNormalState();
     }
 
     private Message getRecieveInfo(String msg) {

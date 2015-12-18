@@ -25,7 +25,7 @@ public class DiscoveryThread implements Runnable {
             //Open a random port to send the package
             datagramSocket = new DatagramSocket();
             datagramSocket.setBroadcast(true);
-            byte[] sendData = "DISCOVER_FUIFSERVER_REQUEST".getBytes();
+            byte[] sendData = "DISCOVER_SERVER_REQUEST".getBytes();
             //Try the 255.255.255.255 first
             try {
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("255.255.255.255"), 3333);
@@ -63,7 +63,7 @@ public class DiscoveryThread implements Runnable {
             System.out.println(getClass().getName() + ">>> Broadcast response from server: " + receivePacket.getAddress().getHostAddress());
             //Check if the message is correct
             String message = new String(receivePacket.getData()).trim();
-            if (message.equals("DISCOVER_FUIFSERVER_RESPONSE")) {
+            if (message.equals("DISCOVER_SERVER_RESPONSE")) {
                 //DO SOMETHING WITH THE SERVER'S IP
                 String ipOfRasp = convertStringIP(receivePacket.getAddress().toString());
                 MainActivity.rasp.setIPAddress(ipOfRasp);

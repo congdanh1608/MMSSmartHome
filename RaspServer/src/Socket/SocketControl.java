@@ -22,6 +22,7 @@ import Database.Utils;
 import Helper.JsonHelper;
 import Model.Message;
 import Model.User;
+import Router.RestoreRaspNormal;
 import Socket.Server.ClientThread_;
 import presistence.ContantsHomeMMS;
 import presistence.ContantsHomeMMS.Command;
@@ -237,6 +238,11 @@ public class SocketControl {
 
 					}
 				}
+				break;
+				
+			case RESTORENORMAL:
+				Thread thread = new RestoreRaspNormal();
+				thread.run();
 				break;
 
 			default:

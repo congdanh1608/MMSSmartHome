@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -36,6 +37,7 @@ import Database.UserModel;
 import Database.Utils;
 import Model.Message;
 import Network.DiscoveryThread;
+import Router.DectectNetworkProblem;
 import Socket.Server;
 import presistence.ContantsHomeMMS;
 
@@ -93,6 +95,8 @@ public class ServerGUI {
 		startSocketListener();
 		//start socket listen broadcast
 		startListenBroadcase();
+		//start dectect network problem.
+		startDectectNetworkProblem();
 	}
 
 	/**
@@ -296,9 +300,10 @@ public class ServerGUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				DateFormat dateFormat = new SimpleDateFormat("HH:mm"); // 12:00
+				dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
 				DateFormat dateFormat2 = new SimpleDateFormat("EEE dd/MM/yyyy");// Sun
 																				// 10/11/2015
-
+				dateFormat2.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
 				Date date = new Date();
 				lblCurrenttime.setText(dateFormat.format(date));
 				lblCurrentday.setText(dateFormat2.format(date));
@@ -346,5 +351,10 @@ public class ServerGUI {
 	private void createFolderApp(){
 		UtilsMain.createFolder(ContantsHomeMMS.AppFolder);
 		UtilsMain.createFolder(ContantsHomeMMS.AppCacheFolder);
+	}
+	
+	private void startDectectNetworkProblem(){
+		Thread thread = new DectectNetworkProblem();
+		thread.start();
 	}
 }

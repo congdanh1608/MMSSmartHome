@@ -48,7 +48,7 @@ public class ContantsHomeMMS {
     public static final String loginKey = "LOGIN", loginSuccess = "LOGINSUCCESS", loginFail = "LOGINFAIL";
 
     public enum Command {
-        LOGIN, HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE, RECIEVEFILEATTACH, DELETEMSG;
+        LOGIN, HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE, RECIEVEFILEATTACH, DELETEMSG, RESTORENORMAL;
     }
 
     //Status of first load app
@@ -79,5 +79,10 @@ public class ContantsHomeMMS {
     public static final String FIRST_RUN_REQUEST_LOGIN = "isFirstRunReqestLogin";
     public static final String SERVER_IP = "ServerIP", SERVER_MAC = "ServerMAC", SERVER_NAME = "ServerNAME";
     public static final String AP_MACADDRESS = "AP_BSSID", AP_NAME = "AP_SSID";;
-    public static final String USER_AVATAR = "UserAvatar";
+    public static final String STATE_NORMAL = "STATE_NORMAL";
+
+    //Info Raspberry is a hostpot.
+    public static final String HP_NAME = "pifi";
+    public static final String HP_PASS = "r@spberryfi";
+    public static final String HP_SERVER_IP = "192.168.10.1";
 }

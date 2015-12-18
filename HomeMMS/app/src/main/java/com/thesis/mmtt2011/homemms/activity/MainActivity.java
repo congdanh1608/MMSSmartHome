@@ -142,10 +142,14 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Hit new message photo", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 /*Implement compose photo message;*/
-                mFilePathImage = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
-                        + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
-                PreferencesHelper.writeToPreferencesString(getBaseContext(), mFilePathImage, ContantsHomeMMS.ImagePref);
-                utilsMain.openImageIntent(mFilePathImage);
+
+                //Test
+                PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
+
+//                mFilePathImage = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
+//                        + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
+//                PreferencesHelper.writeToPreferencesString(getBaseContext(), mFilePathImage, ContantsHomeMMS.ImagePref);
+//                utilsMain.openImageIntent(mFilePathImage);
             }
         });
 
@@ -155,9 +159,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Hit new message record", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                mFilePathAudio = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
-                        + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
-                utilsMain.startRecordingAudio(mFilePathAudio);
+
+                //Test
+                client.SendRequestServerToNormalState();
+
+//                mFilePathAudio = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
+//                        + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
+//                utilsMain.startRecordingAudio(mFilePathAudio);
             }
         });
 
@@ -444,6 +452,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void createClient() {
+        //check state Server is Router --> set IP Address rasp again.
+        if (!PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL)){
+            rasp.setIPAddress(ContantsHomeMMS.HP_SERVER_IP);
+        }
+
         //connect socket.
         int testWifi = utilsMain.checkIsConnectToWifiHome();
         if (testWifi == 1) {

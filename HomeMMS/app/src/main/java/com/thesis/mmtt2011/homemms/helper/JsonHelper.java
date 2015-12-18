@@ -205,4 +205,16 @@ public class JsonHelper {
         }
         return null;
     }
+
+    //create String (Json) message request server to normal state run.
+    public static String createJsonRequestServerToNormalState() {
+        try {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put(ContantsHomeMMS.cmdKey, ContantsHomeMMS.Command.RESTORENORMAL);
+            return jsonObj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

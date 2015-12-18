@@ -34,12 +34,9 @@ public class PreferencesHelper {
         editor.apply();
     }
 
-    public static void writeToPreferencesReqLogin(Context context, Boolean aBoolean, String StrPref) {
+    public static void writeToPreferencesBoolean(Context context, Boolean aBoolean, String StrPref) {
         SharedPreferences.Editor editor = getEditor(context);
         editor.putBoolean(StrPref, aBoolean);
-        /*editor.putString(PREFERENCE_FIRST_NAME, player.getFirstName());
-        editor.putString(PREFERENCE_LAST_INITIAL, player.getLastInitial());
-        editor.putString(PREFERENCE_AVATAR, player.getAvatar().name());*/
         editor.apply();
     }
 

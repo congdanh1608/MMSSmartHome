@@ -72,7 +72,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
             UtilsSSH.connectSSH(rasp); //Create connection for raspPi.
         }
         publishProgress(2);
-       /* byte[] bytes = UtilsImple.LoadFileConfig(activity);          //Load file config to byte[]
+        byte[] bytes = UtilsImple.LoadFileConfig(activity);          //Load file config to byte[]
         if (UtilsImple.pushFileConfigToPi(bytes, rasp)) {            //Push file to Rasp Pi
             try {
                 publishProgress(3);
@@ -120,7 +120,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
                 e.printStackTrace();
             }
 
-        }*/
+        }
         return null;
     }
 

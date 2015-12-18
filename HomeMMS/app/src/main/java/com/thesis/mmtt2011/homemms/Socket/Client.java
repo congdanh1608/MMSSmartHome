@@ -70,9 +70,7 @@ public class Client {
                     //try to connect to Server every 20s.
                     try {
                         if (!MainActivity.isConnected) {
-//                            UtilsMain.showMessage(activity, "Trying connect to Server.");
                             socketB = new Socket(rasp.getIPAddress(), port);
-//                            socketB.setKeepAlive(true);
                             MainActivity.isConnected = true;
                             UtilsMain.showMessage(activity, "Connect to Server Successfully.");
                             SendFirstInfoOfClient();
@@ -299,6 +297,20 @@ public class Client {
             try {
                 printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
                 printWriter.println(socketControl.createRequestDeleteMessage(message.getId()));
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else return false;
+        return false;
+    }
+
+    //Send mesage request Server restore to normal state/ Server will connect to AP.
+    public boolean SendRequestServerToNormalState() {
+        if (socketB.isConnected()) {
+            try {
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
+                printWriter.println(socketControl.createRequestServerToNormailState());
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();

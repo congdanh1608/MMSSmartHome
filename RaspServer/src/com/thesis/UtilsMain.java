@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.NetworkInterface;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -100,7 +101,7 @@ public class UtilsMain {
 	public static String getCurrentTime() {
 		String time = null;
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
-		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
 		Date date = new Date();
 		time = dateFormat.format(date); // 20151030_075959
 		return time;
@@ -112,4 +113,5 @@ public class UtilsMain {
 		ip = ip_temp.substring(1, ip_temp.lastIndexOf(":"));
 		return ip;
 	}
+	
 }
