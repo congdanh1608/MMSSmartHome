@@ -73,7 +73,7 @@
         </receiver>
 
         <activity
-            android:name=".activity.UserInfo"
+            android:name=".activity.UserInfoActivity"
             android:label="@string/title_activity_user_info"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

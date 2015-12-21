@@ -38,6 +38,8 @@ import Database.Utils;
 import Model.Message;
 import Network.DiscoveryThread;
 import Router.DectectNetworkProblem;
+import Router.LoadCommand;
+import Router.UtilsRouter;
 import Socket.Server;
 import presistence.ContantsHomeMMS;
 
@@ -46,7 +48,7 @@ public class ServerGUI {
 	private JFrame frame;
 	private JLabel lblServerStatus, lblTime, lblCurrentday, lblCurrenttime;;
 
-	private JButton btnStartListening;
+	private JButton btnStartListening, btn2;
 	private JPanel panelLeft, panelRight;
 	private int col = 4, rows = 4;
 	private List<JPanel> jPanels;
@@ -96,7 +98,7 @@ public class ServerGUI {
 		//start socket listen broadcast
 		startListenBroadcase();
 		//start dectect network problem.
-		startDectectNetworkProblem();
+//		startDectectNetworkProblem();
 	}
 
 	/**
@@ -143,23 +145,35 @@ public class ServerGUI {
 		panelRight.setBounds(xright, 0, widthRight, (int) (screenSize.height * 0.95));
 		frame.getContentPane().add(panelRight);
 
-		btnStartListening = new JButton("Start Listening");
+		btnStartListening = new JButton("Ad-hoc");
 		btnStartListening.setBounds(52, (int) (screenSize.height * 0.9), 144, 25);
-		btnStartListening.setVisible(false);
+		btnStartListening.setVisible(true);
 		btnStartListening.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Run Server listen.
-				startSocketListener();
+//				startSocketListener();
 				//start socket listen broadcast
-				startListenBroadcase();
+//				startListenBroadcase();
+				UtilsRouter.executeCommand(LoadCommand.loadShellInstallRouter());
 			}
 		});
+		
+		btn2 = new JButton("Normal");
+		btn2.setBounds(52, (int) (screenSize.height * 0.8), 144, 25);
+		btn2.setVisible(true);
+		btn2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				UtilsRouter.executeCommand(LoadCommand.loadShellInstallNormal());
+			}
+		});
+		
 		panelRight.setLayout(null);
 
 		lblServerStatus = new JLabel("Server has stopped");
 		lblServerStatus.setBounds(53, 12, 143, 15);
 		panelRight.add(lblServerStatus);
 		panelRight.add(btnStartListening);
+		panelRight.add(btn2);
 
 		lblCurrenttime = new JLabel("00:00");
 		lblCurrenttime.setHorizontalAlignment(SwingConstants.CENTER);
@@ -199,7 +213,7 @@ public class ServerGUI {
 				JPanel note = new JPanel();
 				note.setName(name_note);
 				note.setLayout(new BoxLayout(note, BoxLayout.Y_AXIS));
-				// note.setVisible(false);
+				 note.setVisible(false);
 				GridBagConstraints gbc = new GridBagConstraints();
 				gbc.insets = new Insets(5, 5, 10, 10);
 				gbc.fill = GridBagConstraints.BOTH;
@@ -216,6 +230,8 @@ public class ServerGUI {
 
 				tAMessage = new JTextArea();
 				tAMessage.setEditable(false);
+				tAMessage.setLineWrap(true);
+				tAMessage.setWrapStyleWord(true);;
 				note.add(tAMessage);
 
 				lblTime = new JLabel("00:00 00 00/00/0000");
@@ -231,7 +247,7 @@ public class ServerGUI {
 	private void updateMessageForListPanel(List<JPanel> jPanels, final List<Message> messages) {
 		for (int i = 0; i < jPanels.size(); i++) {
 			if (messages.size() > i) {
-				// jPanels.get(i).setVisible(true);
+				 jPanels.get(i).setVisible(true);
 				JLabel lbSender = (JLabel) jPanels.get(i).getComponent(0);
 				JLabel lbTitle = (JLabel) jPanels.get(i).getComponent(1);
 				JTextArea tAMessage = (JTextArea) jPanels.get(i).getComponent(2);

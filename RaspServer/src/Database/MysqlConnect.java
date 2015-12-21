@@ -14,7 +14,7 @@ public class MysqlConnect {
         	// Load the Connector/J driver if dont add mysql connector java to Extenal Libs.
         	//Class.forName("com.mysql.jdbc.Driver").newInstance();
         	
-            String url = "jdbc:mysql://localhost:3306/homemmsdb";
+            String url = "jdbc:mysql://localhost:3306/homemmsdb?useUnicode=true&characterEncoding=utf-8";
             String user = "homemms";
             String password = "123456";
  

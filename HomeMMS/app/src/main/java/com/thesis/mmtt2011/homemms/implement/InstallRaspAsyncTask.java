@@ -201,7 +201,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
             super.onPreExecute();
             progressDialog = new ProgressDialog(activity);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("Server reboot. Please waiting...");
+            progressDialog.setMessage("Server is rebooting. Please waiting...");
             progressDialog.setTitle("Server is rebooting.");
             progressDialog.setCancelable(false);
             progressDialog.show();

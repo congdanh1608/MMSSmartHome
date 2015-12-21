@@ -144,12 +144,12 @@ public class MainActivity extends AppCompatActivity {
                 /*Implement compose photo message;*/
 
                 //Test
-                PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
+//                PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
 
-//                mFilePathImage = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
-//                        + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
-//                PreferencesHelper.writeToPreferencesString(getBaseContext(), mFilePathImage, ContantsHomeMMS.ImagePref);
-//                utilsMain.openImageIntent(mFilePathImage);
+                mFilePathImage = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
+                        + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
+                PreferencesHelper.writeToPreferencesString(getBaseContext(), mFilePathImage, ContantsHomeMMS.ImagePref);
+                utilsMain.openImageIntent(mFilePathImage);
             }
         });
 
@@ -161,11 +161,11 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
 
                 //Test
-                client.SendRequestServerToNormalState();
+//                client.SendRequestServerToNormalState();
 
-//                mFilePathAudio = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
-//                        + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
-//                utilsMain.startRecordingAudio(mFilePathAudio);
+                mFilePathAudio = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
+                        + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
+                utilsMain.startRecordingAudio(mFilePathAudio);
             }
         });
 

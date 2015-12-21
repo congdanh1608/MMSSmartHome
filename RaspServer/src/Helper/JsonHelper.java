@@ -142,6 +142,30 @@ public class JsonHelper {
 		return null;
 	}
 	
+	public static String createJsonChangeProfileSuccess(){
+		try {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put(ContantsHomeMMS.ResultEditProfile, ContantsHomeMMS.editSuccess);
+			jsonObj.put(ContantsHomeMMS.cmdKey, Command.PROFILEEDIT);
+			return jsonObj.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String createJsonChangeProfileFail(){
+		try {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put(ContantsHomeMMS.ResultEditProfile, ContantsHomeMMS.editFail);
+			jsonObj.put(ContantsHomeMMS.cmdKey, Command.PROFILEEDIT);
+			return jsonObj.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static String createJsonRegisted(){
 		List<User> users = new ArrayList<User>();
 		users = userModel.getAllUser();

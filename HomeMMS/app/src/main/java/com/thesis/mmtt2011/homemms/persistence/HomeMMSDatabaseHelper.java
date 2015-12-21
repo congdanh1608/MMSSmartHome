@@ -176,12 +176,13 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    public int updateUser(User user) {
+    public static int updateUser(Context context, User user) {
         ContentValues values = new ContentValues();
         values.put(UserTable.COLUMN_NAME, user.getNameDisplay());
         values.put(UserTable.COLUMN_STATUS, user.getStatus());
+        values.put(UserTable.COLUMN_AVATAR, user.getAvatar());
         String[] selectionArgs = {user.getId()};
-        return getWritableDatabase().update(UserTable.NAME, values, UserTable.COLUMN_ID + " = ?",
+        return getWritableDatabase(context).update(UserTable.NAME, values, UserTable.COLUMN_ID + " = ?",
                 selectionArgs);
     }
 

@@ -131,6 +131,23 @@ public class JsonHelper {
         return false;
     }
 
+    public static boolean loadChangeProfileResult(String msg) {
+        if (msg != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(msg);
+                String result = jsonObj.isNull(ContantsHomeMMS.ResultEditProfile) ? null : jsonObj.getString(ContantsHomeMMS.ResultEditProfile);
+                if (result != null && result.equals(ContantsHomeMMS.editSuccess))     //Login successful.
+                    return true;
+                else if (result != null && result.equals(ContantsHomeMMS.editFail))  //Login fail.
+                    return false;
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
     public static ContantsHomeMMS.FirstStatus loadHasRegister(String msg) {
         if (msg != null) {
             try {
@@ -199,6 +216,23 @@ public class JsonHelper {
             JSONObject jsonObj = new JSONObject();
             jsonObj.put(ContantsHomeMMS.mIDKey, mID);
             jsonObj.put(ContantsHomeMMS.cmdKey, ContantsHomeMMS.Command.DELETEMSG);
+            return jsonObj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //create String (Json) message request change profile of user.
+    public static String createJsonRequestChangeProfile(User user, String nameDisplay, String Avatar, String newPassword, String oldPassword) {
+        try {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put(ContantsHomeMMS.IDUserKey, user.getId());
+            if (!nameDisplay.isEmpty()) jsonObj.put(ContantsHomeMMS.NameKey, nameDisplay);
+            if (Avatar!=null) jsonObj.put(ContantsHomeMMS.AvatarKey, Avatar);
+            if (!newPassword.isEmpty()) jsonObj.put(ContantsHomeMMS.PassKey, newPassword);
+            if (!oldPassword.isEmpty()) jsonObj.put(ContantsHomeMMS.OldPassKey, oldPassword);
+            jsonObj.put(ContantsHomeMMS.cmdKey, ContantsHomeMMS.Command.PROFILEEDIT);
             return jsonObj.toString();
         } catch (JSONException e) {
             e.printStackTrace();
