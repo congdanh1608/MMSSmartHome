@@ -82,7 +82,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
                     imvDevice.setImageResource(R.drawable.ic_developer_board_white_48dp);
                     break;
                 case 2:
-                    imvDevice.setImageResource(R.drawable.ic_android_white_48dp);
+                    imvDevice.setImageResource(R.drawable.ic_computer_white_48dp);
                     break;
                 default:
                     break;
@@ -114,7 +114,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
                     alertDialog.show();
                 }
                 else {
-                    utilsMain.ShowToast("It's not Rasp Pi");
+                    utilsMain.ShowToast("It's not Rasp Pi Default");
                 }
             }
         }

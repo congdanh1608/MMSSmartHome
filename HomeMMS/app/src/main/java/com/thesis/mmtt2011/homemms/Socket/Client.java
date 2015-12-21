@@ -8,6 +8,7 @@ import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.RaspberryPi;
+import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS.*;
 
@@ -32,7 +33,7 @@ public class Client {
     private Handler handler;
     private Activity activity;
     private ClientThread clientThread;
-    public static int loginSuccess = 0;
+    public static int loginSuccess = 0, changeprofile = 0;
 
     public Client(RaspberryPi rasp, int port, Activity activity) {
         this.rasp = rasp;
@@ -161,7 +162,7 @@ public class Client {
     public boolean SendMessageInfoOfClient() {
         if (socketB.isConnected()) {
             try {
-                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream(),  "UTF-8")), true);
                 printWriter.println(socketControl.createInfoClient());
                 return true;
             } catch (IOException e) {
@@ -302,6 +303,27 @@ public class Client {
                 e.printStackTrace();
             }
         } else return false;
+        return false;
+    }
+
+    //Send mesage request change profile of user
+    public boolean SendRequestChangeProfile(User user, String nameDisplay, String Avatar, String newPassword, String oldPassword) {
+        changeprofile = 0;
+        if (socketB.isConnected()) {
+            try {
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
+                printWriter.println(socketControl.createRequestChangeProfile(user, nameDisplay, Avatar, newPassword, oldPassword));
+                do {
+                    Thread.sleep(1000);
+                    if (changeprofile==1) return true;
+                    else if (changeprofile==-1) return false;
+                }while (changeprofile!=0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return false;
     }
 

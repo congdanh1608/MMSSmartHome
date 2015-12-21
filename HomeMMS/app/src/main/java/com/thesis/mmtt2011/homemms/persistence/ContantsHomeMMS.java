@@ -33,7 +33,7 @@ public class ContantsHomeMMS {
 
     public static final String cmdKey = "cmdKey", IDUserKey = "IDUSERKEY", NameKey = "NAMEKEY",
     PassKey = "PASSWORDKEY", AvatarKey = "AVATARKEY", StatusKey = "STATUSKEY",
-    recieverNoteKey = "RECIEVERNOTEKEY";
+    recieverNoteKey = "RECIEVERNOTEKEY", OldPassKey = "OLDPASSWORD";
 
     public static final String timeKey = "TIMEKEY", senderKey = "SENDERKEY", recieverKey = "RECIEVERKEY",
             mIDKey = "MID", titleKey = "TITLENOTE", contentTextKey = "MSG", contentAudioKey = "ATTACHAKEY",
@@ -47,8 +47,11 @@ public class ContantsHomeMMS {
 
     public static final String loginKey = "LOGIN", loginSuccess = "LOGINSUCCESS", loginFail = "LOGINFAIL";
 
+    //Result change password
+    public static final String ResultEditProfile = "EDITPROFILE", editSuccess = "EDITSUCCESS", editFail = "EDITFAIL";
+
     public enum Command {
-        LOGIN, HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE, RECIEVEFILEATTACH, DELETEMSG, RESTORENORMAL;
+        LOGIN, HASREGISTER, INFOREGISTER, RECIEVER, PUSHKEY, PULLKEY, MSGKEY, ENDNOTE, DISCONNECT, RECIEVERNOTE, RECIEVEFILEATTACH, DELETEMSG, PROFILEEDIT, RESTORENORMAL;
     }
 
     //Status of first load app

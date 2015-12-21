@@ -141,6 +141,17 @@ public class SocketControl {
                     RecieveFile.recieveFileFromServer();
                     break;
 
+                case PROFILEEDIT:
+                    if (getChangeProfile(msg)) {      //Login success
+                        Client.changeprofile = 1;
+                        Log.d("changeprofile", "succes");
+                    } else {                         //Login fail
+                        Client.changeprofile = -1;
+                        //show notify login fail and request try to login again.
+                        Log.d("changeprofile", "fail");
+                    }
+                    break;
+
                 default:
                     break;
             }
@@ -322,6 +333,10 @@ public class SocketControl {
         return JsonHelper.createJsonRequestDeleteMessage(mID);
     }
 
+    protected String createRequestChangeProfile(User user, String nameDisplay, String Avatar, String newPassword, String oldPassword){
+        return JsonHelper.createJsonRequestChangeProfile(user, nameDisplay, Avatar, newPassword, oldPassword);
+    }
+
     protected String createRequestServerToNormailState() {
         return JsonHelper.createJsonRequestServerToNormalState();
     }
@@ -334,6 +349,10 @@ public class SocketControl {
         return JsonHelper.loadLogin(msg);
     }
 
+    private boolean getChangeProfile(String msg) {
+        return JsonHelper.loadChangeProfileResult(msg);
+    }
+
     private ContantsHomeMMS.FirstStatus getHasRegister(String msg) {
         return JsonHelper.loadHasRegister(msg);
     }
@@ -342,7 +361,7 @@ public class SocketControl {
         List<User> userList = JsonHelper.loadUserDatabase(msg);
         for (User u : userList) {
             if (homeMMSDatabaseHelper.getUser(context, u.getId()) != null) {
-                homeMMSDatabaseHelper.updateUser(u);
+                homeMMSDatabaseHelper.updateUser(context, u);
             } else {
                 homeMMSDatabaseHelper.createUser(context, u);
             }

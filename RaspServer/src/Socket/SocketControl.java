@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public class SocketControl {
 	private ServerGUI sGui;
 
 	private static PrintWriter printWriter;
+
+	private String oldPassword = null;
 
 	public SocketControl(ClientThread_ ct, Socket socket, ServerGUI sGui) {
 		this.ct = ct;
@@ -217,7 +220,7 @@ public class SocketControl {
 						List<User> receivers = m.getReceiver();
 						if (receivers == null || receivers.size() == 1) {
 							messageModel.DeleteMessage(mIDDelete);
-							
+
 							// Delete file attach.
 							String tempA = m.getContentAudio();
 							String tempV = m.getContentVideo();
@@ -239,7 +242,40 @@ public class SocketControl {
 					}
 				}
 				break;
-				
+
+			case PROFILEEDIT:
+				// Get user info register and save in database.
+				User _user = getInfoEditProfileOfClient(msg);
+				if (oldPassword == null) { // Not change password.
+					if (_user.getNameDisplay() != null) {
+						userModel.UpdateNameDisplayUser(_user.getId(), _user.getNameDisplay());
+					}
+					if (_user.getAvatar() != null) {
+						userModel.UpdateAvatarUser(_user.getId(), _user.getAvatar());
+					}
+					sendAskChangeProfileSuccess();
+				} else {
+					if (_user.getNameDisplay() != null) {
+						userModel.UpdateNameDisplayUser(_user.getId(), _user.getNameDisplay());
+					}
+					if (_user.getAvatar() != null) {
+						userModel.UpdateAvatarUser(_user.getId(), _user.getAvatar());
+					}
+					
+					if (oldPassword.equals(userModel.getUser(_user.getId()).getPassword())) {
+						// Old Password is exactly
+						userModel.UpdatePasswordUser(_user.getId(), _user.getPassword());
+						
+						//Server ask success to Client.
+						sendAskChangeProfileSuccess();
+					} else {
+						// Old Password is wrong
+						//Server ask wrong pass to Client.
+						sendAskChangeProfileFail();
+					}
+				}
+				break;
+
 			case RESTORENORMAL:
 				Thread thread = new RestoreRaspNormal();
 				thread.run();
@@ -255,7 +291,7 @@ public class SocketControl {
 		if (sk != null) {
 			try {
 				System.out.println("Server send " + msg);
-				printWriter = new PrintWriter(sk.getOutputStream(), true);
+				printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
 				printWriter.println(msg);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -421,6 +457,29 @@ public class SocketControl {
 	protected User getInfoClient(String msg) {
 		User user = JsonHelper.loadJsonInfoRegister(msg);
 		userModel.AddUser(user);
+		return user;
+	}
+
+	protected User getInfoEditProfileOfClient(String msg) {
+		try {
+			JSONObject jsonObj = new JSONObject(msg);
+			if (jsonObj != null) {
+				String id = jsonObj.isNull(ContantsHomeMMS.IDUserKey) ? null
+						: jsonObj.getString(ContantsHomeMMS.IDUserKey);
+				user.setId(id);
+				user.setNameDisplay(
+						jsonObj.isNull(ContantsHomeMMS.NameKey) ? null : jsonObj.getString(ContantsHomeMMS.NameKey));
+				user.setAvatar(jsonObj.isNull(ContantsHomeMMS.AvatarKey) ? null
+						: jsonObj.getString(ContantsHomeMMS.AvatarKey));
+				user.setPassword(
+						jsonObj.isNull(ContantsHomeMMS.PassKey) ? null : jsonObj.getString(ContantsHomeMMS.PassKey));
+				oldPassword = jsonObj.isNull(ContantsHomeMMS.OldPassKey) ? null
+						: jsonObj.getString(ContantsHomeMMS.OldPassKey);
+
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		return user;
 	}
 
@@ -639,6 +698,14 @@ public class SocketControl {
 
 	protected void sendAskAcceptSendFileAttach() {
 		SendMsg(socket, JsonHelper.createJsonAskAcceptSendFileAttach());
+	}
+	
+	protected void sendAskChangeProfileSuccess() {
+		SendMsg(socket, JsonHelper.createJsonChangeProfileSuccess());
+	}
+	
+	protected void sendAskChangeProfileFail() {
+		SendMsg(socket, JsonHelper.createJsonChangeProfileFail());
 	}
 
 	private void getAllAvatarSendToClient() {
