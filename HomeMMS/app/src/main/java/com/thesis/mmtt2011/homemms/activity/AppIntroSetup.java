@@ -46,7 +46,9 @@ public class AppIntroSetup extends AppCompatActivity {
         if (fm.getBackStackEntryCount() > 0) {
             fm.popBackStack();
         } else {
-            super.onBackPressed();
+            //background process and show home screen not main
+            this.moveTaskToBack(true);
+            //super.onBackPressed();
         }
     }
 }

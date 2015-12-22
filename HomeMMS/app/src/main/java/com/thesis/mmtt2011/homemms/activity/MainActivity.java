@@ -240,8 +240,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //check role user to show menu appropriate
+        /*if(myUser.getRole() == ContantsHomeMMS.UserRole.admin.name()) {
+            getMenuInflater().inflate(R.menu.menu_admin, menu);
+        } else {
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.menu_main, menu);
+        }*/
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         //SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
@@ -269,11 +274,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.action_scan_devices) {
+        /*if (id == R.id.action_scan_devices) {
             Intent intent = new Intent(this, ScanDevicesActivity.class);
             startActivity(intent);
             return true;
-        }
+        }*/
 
         if (id == R.id.action_user_info) {
             Intent intent = new Intent(this, UserInfoActivity.class);
@@ -281,6 +286,32 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.action_reconnect) {
+            //reconnect when server change IP
+            return true;
+        }
+
+        if (id == R.id.action_uninstall) {
+            //uninstall configuration of server
+            return true;
+        }
+
+        if (id == R.id.action_reboot) {
+            //send command reboot server
+            return true;
+        }
+
+        if (id == R.id.action_shutdown) {
+            //send command shutdown server
+            return true;
+        }
+
+        if (id == R.id.action_switch_ap) {
+            //when this option menu is enabled
+            //quit adhoc of server and use wifi access point
+
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

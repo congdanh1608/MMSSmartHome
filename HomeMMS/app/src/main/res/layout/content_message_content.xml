@@ -100,6 +100,11 @@
                 android:hint="@string/type_message"
                 android:singleLine="false" />
 
+            <VideoView
+                android:id="@+id/video_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

@@ -64,6 +64,13 @@ public class LoginActivity extends MainActivity {
         mForgotPassword = (TextView) findViewById(R.id.forgot_password);
         //Link to localhost to reset password
         mForgotPassword.setMovementMethod(LinkMovementMethod.getInstance());
+        mForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //reset password and send message with new password to admin
+
+            }
+        });
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
