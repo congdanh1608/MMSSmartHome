@@ -241,12 +241,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //check role user to show menu appropriate
-        /*if(myUser.getRole() == ContantsHomeMMS.UserRole.admin.name()) {
+        if(ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
             getMenuInflater().inflate(R.menu.menu_admin, menu);
         } else {
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.menu_main, menu);
-        }*/
+        }
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         //SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
