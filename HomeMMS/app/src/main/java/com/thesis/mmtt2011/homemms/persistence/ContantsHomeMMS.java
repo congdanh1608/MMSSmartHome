@@ -47,6 +47,9 @@ public class ContantsHomeMMS {
 
     public static final String loginKey = "LOGIN", loginSuccess = "LOGINSUCCESS", loginFail = "LOGINFAIL";
 
+    //Role of user
+    public static final String RoleKey = "ROLE";
+
     //Result change password
     public static final String ResultEditProfile = "EDITPROFILE", editSuccess = "EDITSUCCESS", editFail = "EDITFAIL";
 
@@ -57,6 +60,11 @@ public class ContantsHomeMMS {
     //Status of first load app
     public enum FirstStatus {
         REQUESTLOGIN, REGISTERED, NOTREGISTERED;
+    }
+
+    // Type of user
+    public enum UserRole {
+        user, admin;
     }
 
     public enum TypeFile{
@@ -88,4 +96,7 @@ public class ContantsHomeMMS {
     public static final String HP_NAME = "pifi";
     public static final String HP_PASS = "r@spberryfi";
     public static final String HP_SERVER_IP = "192.168.10.1";
+
+    //value temp
+    public static String ROLEOFMYUSER = null;
 }

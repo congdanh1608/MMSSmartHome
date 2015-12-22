@@ -170,6 +170,20 @@ public class JsonHelper {
         return null;
     }
 
+    public static String loadRoleOfUser(String msg) {
+        String role = null;
+        if (msg != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(msg);
+                role = jsonObj.isNull(ContantsHomeMMS.RoleKey) ? null : jsonObj.getString(ContantsHomeMMS.RoleKey);
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return role;
+    }
+
     public static List<User> loadUserDatabase(String msg) {
         List<User> userList = new ArrayList<User>();
         if (msg != null) {

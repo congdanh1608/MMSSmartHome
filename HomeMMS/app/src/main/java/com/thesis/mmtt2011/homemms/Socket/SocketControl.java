@@ -53,7 +53,7 @@ public class SocketControl {
                         case REGISTERED:
                             //Write preference
                             PreferencesHelper.writeToPreferencesBoolean(context, false, ContantsHomeMMS.FIRST_RUN_REQUEST_LOGIN);
-                            //if device was registered, server will send list myUser in database.
+                            //if device was registered, server will send list myUser in database and role of myUser
                             getListUserSaveToDatabase(msg);
                             //Check message wait send.
                             CheckMessageWaitSend();
@@ -358,6 +358,12 @@ public class SocketControl {
     }
 
     private void getListUserSaveToDatabase(String msg) {
+        //Check and set role.
+        String role = JsonHelper.loadRoleOfUser(msg);
+        if (role!=null || !role.equals("null")) {
+            ContantsHomeMMS.ROLEOFMYUSER = role;
+        }
+
         List<User> userList = JsonHelper.loadUserDatabase(msg);
         for (User u : userList) {
             if (homeMMSDatabaseHelper.getUser(context, u.getId()) != null) {

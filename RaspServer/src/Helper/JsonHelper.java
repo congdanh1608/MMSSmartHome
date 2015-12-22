@@ -101,7 +101,7 @@ public class JsonHelper {
 		return mID;
 	}	
 	
-	public static String createJsonLoginSuccess(){
+	public static String createJsonLoginSuccess(String userID){
 		List<User> users = new ArrayList<User>();
 		users = userModel.getAllUser();
 		
@@ -120,6 +120,8 @@ public class JsonHelper {
                  jsonArray.put(user);
 			}
 			jsonObj.put(ContantsHomeMMS.userDatabase, jsonArray);
+			
+			jsonObj.put(ContantsHomeMMS.RoleKey, userModel.getRoleOfUser(userID));
 			
 			jsonObj.put(ContantsHomeMMS.cmdKey, Command.LOGIN);
 			return jsonObj.toString();
@@ -166,7 +168,7 @@ public class JsonHelper {
 		return null;
 	}
 	
-	public static String createJsonRegisted(){
+	public static String createJsonRegisted(String userID){
 		List<User> users = new ArrayList<User>();
 		users = userModel.getAllUser();
 		
@@ -185,6 +187,8 @@ public class JsonHelper {
                  jsonArray.put(user);
 			}
 			jsonObj.put(ContantsHomeMMS.userDatabase, jsonArray);
+			
+			jsonObj.put(ContantsHomeMMS.RoleKey, userModel.getRoleOfUser(userID));
 			
 			jsonObj.put(ContantsHomeMMS.cmdKey, Command.HASREGISTER);
 			return jsonObj.toString();

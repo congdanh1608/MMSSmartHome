@@ -244,9 +244,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            if (MainActivity.myUser==null){
-                MainActivity.myUser = new User(utilNetwork.getMacAddress(), null, null, null
-                        , ContantsHomeMMS.UserStatus.online.name());
+            if (MainActivity.myUser == null){
+                MainActivity.myUser = new User(utilNetwork.getMacAddress(), null, null, null,
+                        ContantsHomeMMS.UserStatus.online.name());
             }
             try {
                 //Get name for new avatar

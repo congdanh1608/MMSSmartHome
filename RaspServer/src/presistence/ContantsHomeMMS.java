@@ -19,6 +19,9 @@ public class ContantsHomeMMS {
 	
 	//Message is New
 	public static final String isNewMsgKey = "NEWMSGKEY", isNewMsg =  "NEWMSG", isOldMsg = "OLDMSG";
+	
+	//Role of user
+	public static final String RoleKey = "ROLE";
 
 	// right
 	public enum Command {
@@ -28,6 +31,11 @@ public class ContantsHomeMMS {
 	// Status of first load app
 	public enum FirstStatus {
 		REQUESTLOGIN, REGISTERED, NOTREGISTERED;
+	}
+	
+	// Type of user
+	public enum UserRole {
+		user, admin;
 	}
 
 	public static final String loginKey = "LOGIN", loginSuccess = "LOGINSUCCESS", loginFail = "LOGINFAIL";
@@ -47,4 +55,9 @@ public class ContantsHomeMMS {
 	public enum UserStatus {
 		online, offline, standing;
 	}
+	
+	//Default username, password of Admin
+	public static final String nameAdmin = "admin", userAdmin = "admin", passAdmin = "admin";
+	
+	// Preferences
 }

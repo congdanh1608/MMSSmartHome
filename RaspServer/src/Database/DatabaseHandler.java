@@ -16,6 +16,7 @@ public class DatabaseHandler {
 	public final String NAMEDISPLAY = "nameDisplay";
 	public final String PASSWORD = "password";
 	public final String AVATAR = "avatar";
+	public final String ROLE_USER = "role";
 	public final String STATUS_USER = "status";
 	public final String MID = "mID";
 	public final String TITLE = "title";
@@ -68,9 +69,10 @@ public class DatabaseHandler {
 			stmt = conn.createStatement();
 			String CREATE_TABLE_USER = "CREATE TABLE " + TABLE_USER + "("
 					+ "userID VARCHAR(25) NOT NULL PRIMARY KEY,"
-					+ "nameDisplay VARCHAR(40), " 
+					+ "nameDisplay VARCHAR(50), " 
 					+ "password VARCHAR(50), "
-					+ "avatar VARCHAR(40), " 
+					+ "avatar VARCHAR(40), "
+					+ "role VARCHAR(10), " 
 					+ "status VARCHAR(10) " 
 					+ ")";
 			stmt.executeUpdate(CREATE_TABLE_USER);

@@ -67,7 +67,8 @@ public class SocketControl {
 				// Load user ID + pass from client.
 				userID = loadIDUser(msg);
 				firstRun = loadFirstRun(msg);
-				// Check user was registered?
+				// Check user was registered? check admin? if table user null ->
+				// create admin acc
 				// database to client.
 				ContantsHomeMMS.FirstStatus hasRegister = checkUserHasRegister(userID, firstRun);
 				// If user was registered, sever will ask registered and send
@@ -77,7 +78,7 @@ public class SocketControl {
 					// Update status of user.
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
 					System.out.println(userID + " online.");
-					sendAskWasRegitered();
+					sendAskWasRegitered(userID);
 
 					user = userModel.getUser(userID);
 
@@ -113,7 +114,7 @@ public class SocketControl {
 																// -> Response
 																// all msg +
 																// list user;
-					sendAskLoginSuccess();
+					sendAskLoginSuccess(userID);
 
 					// Update status of user.
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
@@ -134,7 +135,7 @@ public class SocketControl {
 				// create folder profile for new user.
 				UtilsMain.createFolder(ContantsHomeMMS.AppFolder + "/" + user.getId());
 				// After register successfull, send List user in database.
-				sendAskWasRegitered();
+				sendAskWasRegitered(user.getId());
 				System.out.println(user.getNameDisplay() + " login");
 				break;
 
@@ -261,16 +262,16 @@ public class SocketControl {
 					if (_user.getAvatar() != null) {
 						userModel.UpdateAvatarUser(_user.getId(), _user.getAvatar());
 					}
-					
+
 					if (oldPassword.equals(userModel.getUser(_user.getId()).getPassword())) {
 						// Old Password is exactly
 						userModel.UpdatePasswordUser(_user.getId(), _user.getPassword());
-						
-						//Server ask success to Client.
+
+						// Server ask success to Client.
 						sendAskChangeProfileSuccess();
 					} else {
 						// Old Password is wrong
-						//Server ask wrong pass to Client.
+						// Server ask wrong pass to Client.
 						sendAskChangeProfileFail();
 					}
 				}
@@ -661,6 +662,11 @@ public class SocketControl {
 	}
 
 	private ContantsHomeMMS.FirstStatus checkUserHasRegister(String userID, Boolean firstRun) {
+		// check and create admin acc if table user null
+		if (userModel.getAllUser().isEmpty()) {
+			userModel.addDefaultAdminAccount(userID);
+		}
+		// return status
 		if (userModel.getUser(userID) != null && !firstRun) { // User was
 																// registered.
 			return FirstStatus.REGISTERED;
@@ -671,8 +677,8 @@ public class SocketControl {
 			return FirstStatus.NOTREGISTERED; // User was not registered.s
 	}
 
-	protected void sendAskLoginSuccess() {
-		SendMsg(socket, JsonHelper.createJsonLoginSuccess());
+	protected void sendAskLoginSuccess(String userID) {
+		SendMsg(socket, JsonHelper.createJsonLoginSuccess(userID));
 		// Sent file avatar to Client.
 		getAllAvatarSendToClient();
 	}
@@ -681,8 +687,8 @@ public class SocketControl {
 		SendMsg(socket, JsonHelper.createJsonLoginFail());
 	}
 
-	protected void sendAskWasRegitered() {
-		SendMsg(socket, JsonHelper.createJsonRegisted());
+	protected void sendAskWasRegitered(String userID) {
+		SendMsg(socket, JsonHelper.createJsonRegisted(userID));
 
 		// Sent file avatar to Client.
 		getAllAvatarSendToClient();
@@ -699,11 +705,11 @@ public class SocketControl {
 	protected void sendAskAcceptSendFileAttach() {
 		SendMsg(socket, JsonHelper.createJsonAskAcceptSendFileAttach());
 	}
-	
+
 	protected void sendAskChangeProfileSuccess() {
 		SendMsg(socket, JsonHelper.createJsonChangeProfileSuccess());
 	}
-	
+
 	protected void sendAskChangeProfileFail() {
 		SendMsg(socket, JsonHelper.createJsonChangeProfileFail());
 	}
@@ -738,8 +744,10 @@ public class SocketControl {
 				bis.close();
 			}
 
-			Thread pushFile = new PushFile(com.thesis.UtilsMain.getIPAddressFromSocket(socket), objectFiles);
-			pushFile.start();
+			if (!objectFiles.isEmpty()) {
+				Thread pushFile = new PushFile(com.thesis.UtilsMain.getIPAddressFromSocket(socket), objectFiles);
+				pushFile.start();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -760,12 +768,18 @@ public class SocketControl {
 				fis.close();
 				bis.close();
 			}
+			if (!objectFiles.isEmpty()) {
+				Thread pushFile = new PushFile(com.thesis.UtilsMain.getIPAddressFromSocket(socket), objectFiles);
+				pushFile.start();
+			}
+		} catch (
 
-			Thread pushFile = new PushFile(com.thesis.UtilsMain.getIPAddressFromSocket(socket), objectFiles);
-			pushFile.start();
-		} catch (IOException e) {
+		IOException e)
+
+		{
 			e.printStackTrace();
 		}
+
 	}
 
 	private void deleteFileOfUser(String fileName) {

@@ -7,7 +7,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thesis.Encrypt;
+
 import Model.User;
+import presistence.ContantsHomeMMS;
 
 public class UserModel {
 
@@ -17,6 +20,12 @@ public class UserModel {
 		handler = new DatabaseHandler();
 	}
 
+	public void addDefaultAdminAccount(String macAdmin) {
+		User user = new User(macAdmin, ContantsHomeMMS.nameAdmin, Encrypt.md5(ContantsHomeMMS.passAdmin), null,
+				ContantsHomeMMS.UserRole.admin.name(), ContantsHomeMMS.UserStatus.online.name());
+		AddUser(user);
+	}
+
 	public void AddUser(User obj) {
 		Connection conn = null;
 		Statement stmt = null;
@@ -24,10 +33,10 @@ public class UserModel {
 			conn = MysqlConnect.getConnectMysql();
 			stmt = conn.createStatement();
 			String sql = "INSERT INTO " + handler.TABLE_USER + " (" + handler.USERID + ", " + handler.NAMEDISPLAY + ", "
-					+ handler.PASSWORD + ", " + handler.AVATAR + ", " + handler.STATUS_USER + ")" + " VALUES ('"
-					+ obj.getId() + "','" + obj.getNameDisplay() + "','" + obj.getPassword() + "','" + obj.getAvatar()
-					+ "','" + obj.getStatus() + "')";
-
+					+ handler.PASSWORD + ", " + handler.AVATAR + ", " + handler.ROLE_USER + ", " + handler.STATUS_USER
+					+ ")" + " VALUES ('" + obj.getId() + "','" + obj.getNameDisplay() + "','" + obj.getPassword()
+					+ "','" + obj.getAvatar() + "','" + obj.getRole() + "','" + obj.getStatus() + "')";
+			
 			stmt.executeUpdate(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -98,7 +107,7 @@ public class UserModel {
 			}
 		}
 	}
-	
+
 	public void UpdateStatusAllUser(String status) {
 		Connection conn = null;
 		Statement stmt = null;
@@ -246,7 +255,7 @@ public class UserModel {
 			while (rset.next()) {
 				user = new User(rset.getString(handler.USERID), rset.getString(handler.NAMEDISPLAY),
 						rset.getString(handler.PASSWORD), rset.getString(handler.AVATAR),
-						rset.getString(handler.STATUS_USER));
+						rset.getString(handler.ROLE_USER), rset.getString(handler.STATUS_USER));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -279,7 +288,7 @@ public class UserModel {
 			while (rset.next()) {
 				user = new User(rset.getString(handler.USERID), rset.getString(handler.NAMEDISPLAY),
 						rset.getString(handler.PASSWORD), rset.getString(handler.AVATAR),
-						rset.getString(handler.STATUS_USER));
+						rset.getString(handler.ROLE_USER), rset.getString(handler.STATUS_USER));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -312,7 +321,7 @@ public class UserModel {
 			while (rset.next()) {
 				user = new User(rset.getString(handler.USERID), rset.getString(handler.NAMEDISPLAY),
 						rset.getString(handler.PASSWORD), rset.getString(handler.AVATAR),
-						rset.getString(handler.STATUS_USER));
+						rset.getString(handler.ROLE_USER), rset.getString(handler.STATUS_USER));
 				users.add(user);
 			}
 		} catch (SQLException e) {
@@ -331,5 +340,36 @@ public class UserModel {
 			}
 		}
 		return users;
+	}
+
+	public String getRoleOfUser(String userID) {
+		Connection conn = null;
+		Statement stmt = null;
+		String role = null;
+		try {
+			conn = MysqlConnect.getConnectMysql();
+			stmt = conn.createStatement();
+			String sql = "SELECT " + handler.ROLE_USER + " FROM " + handler.TABLE_USER + " WHERE " + handler.USERID
+					+ "='" + userID + "'";
+			ResultSet rset = stmt.executeQuery(sql);
+			while (rset.next()) {
+				role = rset.getString(handler.ROLE_USER);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null)
+					conn.close();
+			} catch (SQLException se) {
+			}
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return role;
 	}
 }
