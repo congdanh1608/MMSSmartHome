@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.thesis.mmtt2011.homemms.Encrypt;
 import com.thesis.mmtt2011.homemms.R;
 
-public class LoginActivity extends MainActivity {
+public class LoginActivity extends AppCompatActivity{
 
     /**
      * A dummy authentication store containing known myUser names and passwords.
@@ -167,7 +167,7 @@ public class LoginActivity extends MainActivity {
                 MainActivity.myUser.setId(mMACAddress);
                 MainActivity.myUser.setPassword(mPassword);
 
-                boolean b = client.SendLoginInfoOfClient();
+                boolean b = MainActivity.client.SendLoginInfoOfClient();
                 Log.d("login", b + "");
 
 //                Thread.sleep(1000);
