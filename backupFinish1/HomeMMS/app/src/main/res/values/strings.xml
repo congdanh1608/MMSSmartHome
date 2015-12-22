@@ -1,0 +1,63 @@
+<resources>
+    <string name="app_name">Home MMS</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_search">Search</string>
+    <string name="search_hint">Search messages</string>
+    <string name="hello">Hello</string>
+    <string name="message_title">Title</string>
+    <string name="message_content">Content</string>
+    <string name="message_timestamp">Timestamp</string>
+    <string name="username">User name</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="title_activity_compose_message">Compose Message</string>
+    <string name="title_activity_scan_devices">Scan Devices</string>
+    <string name="ipAddress">0.0.0.0</string>
+    <string name="macAddress">00:00:00:00:00:00</string>
+    <string name="action_scan_devices">Scan devices</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_install_config">Install configuration</string>
+    <string name="forgot_password"><a href="http://tinhte.vn">Forgot password?</a></string>
+    <string name="retype_password">Retype password</string>
+    <string name="name">Name</string>
+    <string name="action_register">Register</string>
+    <string name="set_avatar">Set avatar</string>
+    <string name="error_notmatch_password">Password does not match</string>
+    <string name="type_message">Type a message...</string>
+    <string name="title_activity_message_content">Message Content</string>
+    <string name="welcome">Welcome to Home MMS!</string>
+    <string name="error_incorrect_ip_address">This IP address is incorrect</string>
+    <string name="error_not_found_server">Cannot find the Server.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_desciption">Connect family members by send and receive multi media messages</string>
+    <string name="float_take_photo">Take a photo</string>
+    <string name="float_new_message">New message</string>
+    <string name="float_new_video">New video</string>
+    <string name="float_new_record">New record</string>
+    <string name="select_contact">Send to</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="contact_name">contact_name</string>
+    <string name="install_config">Install configuration?</string>
+    <string name="install_alert_message">Configuration will be install on this device.</string>
+    <string name="install">Install</string>
+    <string name="search_settings">Search messages</string>
+    <string name="choose_contact">Receivers</string>
+    <string name="config_network">Setting your network</string>
+    <string name="ssid_wifi">SSID</string>
+    <string name="title_activity_user_info">Profile</string>
+    <string name="change_avatar">Change avatar</string>
+    <string name="change_password">Change password</string>
+</resources>
