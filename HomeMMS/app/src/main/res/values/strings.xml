@@ -66,4 +66,5 @@
     <string name="action_switchAP">Switch AP</string>
     <string name="action_reconnect">Reconnect</string>
     <string name="delete">Delete</string>
+    <string name="time_default">00:00</string>
 </resources>

@@ -31,7 +31,6 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
     public DeviceAdapter(List<Device> _devices, Activity activity) {
         devices = _devices;
         this.activity = activity;
-
         utilsMain = new UtilsMain(activity);
     }
 

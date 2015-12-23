@@ -3,24 +3,40 @@ package com.thesis.mmtt2011.homemms.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.UtilsMain;
+import com.thesis.mmtt2011.homemms.adapter.ImageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 import com.thesis.mmtt2011.homemms.persistence.MessageTable;
+import com.thesis.mmtt2011.homemms.persistence.UtilsPersis;
 
-public class MessageContentActivity extends MainActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+import java.io.IOException;
+import java.util.List;
+
+public class MessageContentActivity extends MainActivity implements LoaderManager.LoaderCallbacks<Cursor>,
+        MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
+
+    static final String PATH_FOLDER_USER = ContantsHomeMMS.myUserFolder + MainActivity.myUser.getId() + "/";
 
     public static final String TAG = "MessageContentActivity";
 
@@ -28,9 +44,26 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
 
     private Message mMessage;
 
+    private List<String> attachImages;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
     private TextView mTitleView;
     private TextView mContentView;
     private TextView mTimestamp;
+    private VideoView mVideoView;
+
+    //implement audio
+    ImageButton btnPlay;
+    SeekBar audioProgressBar;
+    TextView audioTotalDuration;
+
+    MediaPlayer mediaPlayer;
+    private Handler mHandler = new Handler();
+    //dumpmy content
+    String audioName = "/storage/extSdCard/Music/Ryuukou-HoaTau-3089028.mp3";
 
     public static Intent getStartIntent(Context context, Message message) {
         Intent starter = new Intent(context, MessageContentActivity.class);
@@ -60,23 +93,53 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             getSupportLoaderManager().initLoader(0, null, this);
         }
 
-        //get sender to show here
-
-        //get status of message here
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        // get images devices
+        mRecyclerView = (RecyclerView) findViewById(R.id.device_recycler_view);
+        //load list image attach path were downloaded on android
+        getListImageAttach();
+        mAdapter = new ImageAdapter(this, attachImages);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        //audio
+        audioProgressBar = (SeekBar) findViewById(R.id.seekbar);
+        audioProgressBar.setOnSeekBarChangeListener(this);
+        audioTotalDuration = (TextView) findViewById(R.id.tv_total_duration);
+        btnPlay = (ImageButton) findViewById(R.id.play_button);
+        btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                if (mediaPlayer.isPlaying()) {
+                    if (mediaPlayer != null) {
+                        mediaPlayer.pause();
+                        btnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
+                    } else {
+                        playAudio(audioName);
+                    }
+                } else {
+                    if (mediaPlayer != null) {
+                        mediaPlayer.start();
+                        btnPlay.setImageResource(R.drawable.ic_pause_circle_outline_white_36dp);
+                    }
+                }
             }
-        });*/
+        });
+
+        //load video
+        mVideoView = (VideoView) findViewById(R.id.video_content);
+        //load video content
+
+        //
         if (MainActivity.isConnected) {
             if (checkMessageHasAttach(mMessage)) {
                 client.SendRequestFileAttach(mMessage);
             }
         } else UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
+    }
+
+    public void getListImageAttach() {
+        //get image attach AsyncTask here
     }
 
     @Override
@@ -131,5 +194,74 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        mHandler.removeCallbacks(mUpdateTimeTask);
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        mHandler.removeCallbacks(mUpdateTimeTask);
+        int totalDuration = mediaPlayer.getDuration();
+        int currentPosition = UtilsPersis.progressToTimer(seekBar.getProgress(), totalDuration);
+
+        //forward or backward to certain seconds
+        mediaPlayer.seekTo(currentPosition);
+        //update timer progress again
+        updateProgressBar();
+    }
+
+    public void playAudio(String audioName) {
+        try {
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(audioName);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+            audioProgressBar.setProgress(0);
+            audioProgressBar.setMax(100);
+            updateProgressBar();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //update timer on seekbar
+    private void updateProgressBar() {
+        mHandler.postDelayed(mUpdateTimeTask, 100);
+    }
+
+    //Background Runnable thread
+    private Runnable mUpdateTimeTask = new Runnable() {
+        @Override
+        public void run() {
+            long totalDuration = mediaPlayer.getDuration();
+            long currentDuration = mediaPlayer.getCurrentPosition();
+            int progress = (int) UtilsPersis.getProgressPercentage(currentDuration, totalDuration);
+
+            // Displaying Total Duration time
+            audioTotalDuration.setText("" + UtilsPersis.milliSecondsToTimer(totalDuration));
+
+            audioProgressBar.setProgress(progress);
+
+            mHandler.postDelayed(this, 100);
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mediaPlayer.release();
     }
 }
