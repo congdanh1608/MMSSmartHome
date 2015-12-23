@@ -341,6 +341,20 @@ public class Client {
         return false;
     }
 
+    //Send mesage request forget password to Server.
+    public boolean SendRequestForgetPasswordServer(String userID) {
+        if (socketB.isConnected()) {
+            try {
+                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
+                printWriter.println(socketControl.createRequestForgetPasswordServer(userID));
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else return false;
+        return false;
+    }
+
     public String getMsg() {
         return msgRecieve;
     }

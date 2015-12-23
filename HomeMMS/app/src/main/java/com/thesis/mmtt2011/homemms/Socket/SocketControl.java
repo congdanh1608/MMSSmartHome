@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
+import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
 import com.thesis.mmtt2011.homemms.fragment.InboxFragment;
 import com.thesis.mmtt2011.homemms.fragment.SentFragment;
 import com.thesis.mmtt2011.homemms.helper.JsonHelper;
@@ -138,7 +139,7 @@ public class SocketControl {
                     break;
 
                 case RECIEVEFILEATTACH:
-                    RecieveFile.recieveFileFromServer();
+                    new MessageContentActivity.ReceiveFile().execute();
                     break;
 
                 case PROFILEEDIT:
@@ -339,6 +340,10 @@ public class SocketControl {
 
     protected String createRequestServerToNormailState() {
         return JsonHelper.createJsonRequestServerToNormalState();
+    }
+
+    protected String createRequestForgetPasswordServer(String userID) {
+        return JsonHelper.createJsonRequestForgetPasswordServer(userID);
     }
 
     private Message getRecieveInfo(String msg) {

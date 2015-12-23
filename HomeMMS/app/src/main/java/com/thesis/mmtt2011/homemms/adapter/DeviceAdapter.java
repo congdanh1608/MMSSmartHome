@@ -57,13 +57,13 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         protected TextView tvIPAddress;
         protected TextView tvMACAddress;
         protected ImageView imvDevice;
-        private  Device mDevice;
+        private Device mDevice;
 
         public DeviceViewHolder(View deviceView) {
             super(deviceView);
-            tvIPAddress = (TextView)deviceView.findViewById(R.id.ipAddress);
-            tvMACAddress = (TextView)deviceView.findViewById(R.id.macAddress);
-            imvDevice = (ImageView)deviceView.findViewById(R.id.iconDevice);
+            tvIPAddress = (TextView) deviceView.findViewById(R.id.ipAddress);
+            tvMACAddress = (TextView) deviceView.findViewById(R.id.macAddress);
+            imvDevice = (ImageView) deviceView.findViewById(R.id.iconDevice);
             deviceView.setOnClickListener(this);
         }
 
@@ -73,7 +73,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
             tvIPAddress.setText(mDevice.getIPAddress());
 //            tvMACAddress.setText(mDevice.getMacAddress());
             tvMACAddress.setText(mDevice.getDeviceName());
-            switch (device.getDeviceType()){
+            switch (device.getDeviceType()) {
                 case 0:
                     imvDevice.setImageResource(R.drawable.ic_devices_white_48dp);
                     break;
@@ -92,7 +92,9 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         public void onClick(View v) {
             if (mDevice != null) {
                 //check and create Pi client if it was Pi.
-                if (UtilsSSH.CheckIsRaspPiDefault(mDevice)){
+                RaspberryPi raspberryPi = new RaspberryPi(mDevice.getDeviceName(), mDevice.getIPAddress(), mDevice.getMacAddress());
+                int check = UtilsSSH.CheckRaspPiConfigured(raspberryPi);
+                if (check == 0) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                     builder.setTitle(R.string.install_config);
                     builder.setMessage(R.string.install_alert_message)
@@ -111,8 +113,9 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
                             });
                     AlertDialog alertDialog = builder.create();
                     alertDialog.show();
-                }
-                else {
+                } else if (check == 1) {
+                    UtilsMain.showMessage(activity, "Raspberry Pi was installed!");
+                } else if (check == -1) {
                     utilsMain.ShowToast("It's not Rasp Pi Default");
                 }
             }

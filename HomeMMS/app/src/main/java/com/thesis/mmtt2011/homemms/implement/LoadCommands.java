@@ -55,6 +55,12 @@ public class LoadCommands {
         return listOfCommands;
     }
 
+    public static ArrayList<String> addCommandsShutdown() {
+        ArrayList<String> listOfCommands = new ArrayList<String>();
+        listOfCommands.add("sudo shutdown -h now\n");
+        return listOfCommands;
+    }
+
     public static String loadCommandsCreateFolder(String filePath, RaspberryPi raspberryPi) {
         String path = "/home/" + raspberryPi.getUsername() + filePath;
         return "sudo mkdir " + path + " && sudo chmod 777 " + path + " && echo EndCommands";
@@ -65,6 +71,7 @@ public class LoadCommands {
         //Restore file backup + remove file.
         listOfCommands.add("sudo cp bak/interfaces /etc/network/ && sudo cp bak/wpa_supplicant.conf /etc/wpa_supplicant/ && sudo cp bak/rc.local /etc/rc.local && echo EndCommands");
         listOfCommands.add("sudo rm -rf bak deb shell start wifi_config wifi_router configrasppi.zip RaspServer.jar && sudo rm -rf /home/" + raspberryPi.getUsername() +  "/.config/autostart && echo EndCommands");
+        listOfCommands.add("sudo reboot && echo EndCommands");
         // sudo rm /usr/sbin/hostapd & sudo apt-get -y purge isc-dhcp-server
         return listOfCommands;
     }

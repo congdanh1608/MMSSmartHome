@@ -1,15 +1,19 @@
 package com.thesis.mmtt2011.homemms.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -26,6 +30,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.thesis.mmtt2011.homemms.Network.Discover;
+import com.thesis.mmtt2011.homemms.Network.DiscoveryThread;
 import com.thesis.mmtt2011.homemms.Network.UtilsNetwork;
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.SSH.PushFileAsyncTask;
@@ -35,6 +41,9 @@ import com.thesis.mmtt2011.homemms.Socket.Client;
 import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.adapter.ViewPagerAdapter;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
+import com.thesis.mmtt2011.homemms.implement.InstallRaspAsyncTask;
+import com.thesis.mmtt2011.homemms.implement.LoadCommands;
+import com.thesis.mmtt2011.homemms.implement.UtilsImple;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.RaspberryPi;
 import com.thesis.mmtt2011.homemms.model.User;
@@ -62,14 +71,14 @@ public class MainActivity extends AppCompatActivity {
     public static Client client;
     private static final int port = 2222;
     public static User myUser;
-    private UtilsNetwork utilsNetworkNetwork;
+    private UtilsNetwork utilsNetwork;
     private static UtilsMain utilsMain;
     //Demo info
     public static RaspberryPi rasp;
 
     public static String mFilePathAudio = null, mFilePathImage = null, mFilePathVideo = null;
 
-    private static Activity mActivity;
+    protected static Activity mActivity;
     private static HomeMMSDatabaseHelper homeMMSDatabaseHelper;
 
     public static boolean isConnected = false;        //Client is connecting to Server?
@@ -83,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         //create UtilsMain.
-        utilsNetworkNetwork = new UtilsNetwork(this);
+        utilsNetwork = new UtilsNetwork(this);
         utilsMain = new UtilsMain(this);
 
         mActivity = this;
@@ -92,11 +101,11 @@ public class MainActivity extends AppCompatActivity {
         //get my User info Vì chưa biết user đã có đăng ký hay chưa?
         //Nếu đã dk rồi thì sẽ có full info myUser.
         //Nếu chưa sẽ chỉ có ID (Mac) trong info myUser.;
-        User user = HomeMMSDatabaseHelper.getUser(getBaseContext(), utilsNetworkNetwork.getMacAddress());
+        User user = HomeMMSDatabaseHelper.getUser(getBaseContext(), utilsNetwork.getMacAddress());
         if (user != null) {
             myUser = user;
         } else {
-            myUser = new User(utilsNetworkNetwork.getMacAddress(), null, null, null
+            myUser = new User(utilsNetwork.getMacAddress(), null, null, null
                     , ContantsHomeMMS.UserStatus.online.name());
 //            long longid = HomeMMSDatabaseHelper.createUser(getBaseContext(), myUser);
 //            Log.i("HomeMMS", String.valueOf(longid));
@@ -240,9 +249,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        //When?
+        if (!PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL)) {
+            // server is ad-hoc.
+        }
         //check role user to show menu appropriate
-        if(ContantsHomeMMS.ROLEOFMYUSER != null &&
-                ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
+        if (ContantsHomeMMS.ROLEOFMYUSER != null && ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
             menu.clear();
             getMenuInflater().inflate(R.menu.menu_admin, menu);
         }
@@ -294,28 +306,112 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_reconnect) {
             //reconnect when server change IP
+            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            builder.setMessage("Do you want reconnect?");
+            builder.setTitle("Reconnect")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Thread thread = new Thread(DiscoveryThread.getInstance(mActivity));
+                            thread.start();
+                            new ServerAutoConnectTask().execute();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
             return true;
         }
 
         if (id == R.id.action_uninstall) {
             //uninstall configuration of server
+            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            builder.setMessage("Do you want uninstall?");
+            builder.setTitle("Uninstall")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (rasp.getConnection()==null) {
+                                UtilsSSH.connectSSH(rasp);
+                            }
+                            UtilsImple.excCommand(rasp, LoadCommands.addCommandsRemoveInstall(rasp));
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
             return true;
         }
 
         if (id == R.id.action_reboot) {
             //send command reboot server
+            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            builder.setMessage("Do you want reboot?");
+            builder.setTitle("Reboot")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (rasp.getConnection()==null) {
+                                UtilsSSH.connectSSH(rasp);
+                            }
+                            UtilsImple.excCommand(rasp, LoadCommands.addCommandsReboot());
+                            new WaitServerReboot().execute();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
             return true;
         }
 
         if (id == R.id.action_shutdown) {
             //send command shutdown server
+            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            builder.setMessage("Do you want shutdown?");
+            builder.setTitle("Shutdown")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (rasp.getConnection()==null) {
+                                UtilsSSH.connectSSH(rasp);
+                            }
+                            UtilsImple.excCommand(rasp, LoadCommands.addCommandsShutdown());
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
             return true;
         }
 
         if (id == R.id.action_switch_ap) {
             //when this option menu is enabled
             //quit adhoc of server and use wifi access point
-
+            //Change state client to normal
+            PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
+            //Request Server to normal
+            client.SendRequestServerToNormalState();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -490,7 +586,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static void createClient() {
         //check state Server is Router --> set IP Address rasp again.
-        if (!PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL)){
+        if (!PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL)) {
             rasp.setIPAddress(ContantsHomeMMS.HP_SERVER_IP);
         }
 
@@ -571,5 +667,118 @@ public class MainActivity extends AppCompatActivity {
     private void gotoComposeMessageActivity() {
         Intent intent = new Intent(MainActivity.this, ComposeMessageActivity.class);
         startActivity(intent);
+    }
+
+    public class ServerAutoConnectTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                //Simulate network access.
+                Thread.sleep(2000);
+
+                String ipServer = MainActivity.rasp.getIPAddress();
+                if (ipServer != null) {
+                    MainActivity.rasp.setMacAddress(Discover.getMacFromArpCache(ipServer));
+                    MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utilsNetwork.getnmbLookupLocation()));
+
+                    //Save to Preferences
+                    GetAndSaveInfoToPrefer();
+                }
+                else {
+                    return false;
+                }
+            } catch (InterruptedException e) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+           if (success) {
+                //finish activity, go back to MainActivity
+               UtilsMain.showMessage(mActivity, "Server found!");
+               mActivity.finish();
+            } else {
+                UtilsMain.showMessage(mActivity, "Server not found. Try again!");
+            }
+        }
+    }
+
+    public class WaitServerReboot extends AsyncTask<Void, Void, Void>{
+
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(mActivity);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("Server is rebooting. Please waiting...");
+            progressDialog.setTitle("Server is rebooting.");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            while (MainActivity.rasp.getIPAddress()==null){
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //Try broadcast find the server.
+                BroadcastFindServer(mActivity);
+                Log.d("broadcast", "try find the server");
+
+                String ipServer = MainActivity.rasp.getIPAddress();
+                if (ipServer != null) {
+                    MainActivity.rasp.setMacAddress(Discover.getMacFromArpCache(ipServer));
+                    MainActivity.rasp.setDeviceName(Discover.getHostNameNmblookup(ipServer, utilsNetwork.getnmbLookupLocation()));
+
+                    //Save to Preferences
+                    GetAndSaveInfoToPrefer();
+                    //Break the loop.
+                    Log.d("broadcast", "Go to MainActivity");
+                    Intent intent = new Intent(mActivity, MainActivity.class);
+                    mActivity.startActivity(intent);
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+        }
+    }
+
+    private static void BroadcastFindServer(Activity activity) {
+        Thread thread = new Thread(DiscoveryThread.getInstance(activity));
+        thread.start();
+    }
+
+    private void GetAndSaveInfoToPrefer(){
+        //Save info of Server to Preferences
+        PreferencesHelper.writeToPreferencesString(mActivity, MainActivity.rasp.getIPAddress(), ContantsHomeMMS.SERVER_IP);
+        PreferencesHelper.writeToPreferencesString(mActivity, MainActivity.rasp.getMacAddress(), ContantsHomeMMS.SERVER_MAC);
+        PreferencesHelper.writeToPreferencesString(mActivity, MainActivity.rasp.getDeviceName(), ContantsHomeMMS.SERVER_NAME);
+
+        //Get Mac addrees and Name of access point, save in Preferences.
+        String MacAddressOfAP = utilsNetwork.getMacAddressOfAP();
+        String NameOfAP = utilsNetwork.getSSIDOfAP();
+        if (MacAddressOfAP != null) {
+            PreferencesHelper.writeToPreferencesString(mActivity, MacAddressOfAP, ContantsHomeMMS.AP_MACADDRESS);
+        }
+        if (NameOfAP != null) {
+            PreferencesHelper.writeToPreferencesString(mActivity, NameOfAP, ContantsHomeMMS.AP_NAME);
+        }
+        //Save First run app.
+        PreferencesHelper.writeToPreferences(mActivity, false);
     }
 }

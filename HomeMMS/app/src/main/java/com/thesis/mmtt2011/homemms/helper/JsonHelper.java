@@ -265,4 +265,17 @@ public class JsonHelper {
         }
         return null;
     }
+
+    //create String (Json) message request forget password to Server.
+    public static String createJsonRequestForgetPasswordServer(String userID) {
+        try {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put(ContantsHomeMMS.IDUserKey, userID);
+            jsonObj.put(ContantsHomeMMS.cmdKey, ContantsHomeMMS.Command.FORGETPW);
+            return jsonObj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

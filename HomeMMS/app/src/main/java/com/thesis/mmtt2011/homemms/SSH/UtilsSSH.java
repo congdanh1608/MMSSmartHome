@@ -87,22 +87,22 @@ public class UtilsSSH {
         return false;
     }
 
-    public static int CheckIsRaspPiConfigured(RaspberryPi rasp) {
+    public static int CheckRaspPiConfigured(RaspberryPi rasp) {
         Connection connection = new Connection(rasp.getIPAddress());
         try {
             connection.connect(null, 3000, 3000);
             if (connection.authenticateWithPassword(rasp.getUsername(), rasp.getPassword())) {
                 String s = "ls /home/" + rasp.getUsername();
                 String result = excCommandStringWithResult(connection, s);
-                if (result != null && result.contains("configrasppi")) {
+                if (result != null && result.contains("RaspServer.jar")) {
                     return 1; // It is Rasp was configured.
                 }
-                return 2; // It is Rasp was not configured.
+                return 0; // It is Rasp was not configured.
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0; //It is not Rasp
+        return -1; //It is not Rasp
     }
 
     public static String excCommandStringWithResult(Connection connection, String string) {

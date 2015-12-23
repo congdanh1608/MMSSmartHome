@@ -1,10 +1,12 @@
 package com.thesis.mmtt2011.homemms.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
@@ -22,16 +24,24 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.Socket.RecieveFile;
 import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.adapter.ImageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
+import com.thesis.mmtt2011.homemms.model.ObjectFile;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 import com.thesis.mmtt2011.homemms.persistence.MessageTable;
 import com.thesis.mmtt2011.homemms.persistence.UtilsPersis;
 
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
+
 
 public class MessageContentActivity extends MainActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
@@ -194,6 +204,63 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public static class ReceiveFile extends AsyncTask<Void, Void, Void> {
+        public final static int SOCKET_PORT = 6666;
+        public final static String SERVER = MainActivity.rasp.getIPAddress();
+        public static Socket socket;
+        public ProgressDialog pd;
+
+        @Override
+        protected void onPreExecute() {
+            pd = new ProgressDialog(mActivity);
+            pd.setTitle("Downloading");
+            pd.setMessage("Downloading attach file");
+            pd.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                //Server low down, client delay 1s to Server open port listening.
+                Thread.sleep(1000);
+                socket = new Socket(SERVER, SOCKET_PORT);
+
+                System.out.println("Client: Just connected to " + socket.getRemoteSocketAddress());
+
+                InputStream inFromServer = socket.getInputStream();
+                DataInputStream in = new DataInputStream(inFromServer);
+
+                //Read Object
+                ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                ArrayList<ObjectFile> objectFiles = (ArrayList<ObjectFile>) objectInputStream.readObject();
+
+                //Read File Object
+                RecieveFile.readObjectFile(objectFiles);
+
+                socket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e);
+            } finally {
+                try {
+                    if (socket != null) socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            pd.dismiss();
+            super.onPostExecute(aVoid);
+        }
     }
 
     @Override

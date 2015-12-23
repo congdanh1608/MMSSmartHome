@@ -28,9 +28,9 @@ import ch.ethz.ssh2.Session;
  */
 public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
     private UtilsMain utilsMain;
-    private UtilsNetwork utilsNetwork;
+    private static UtilsNetwork utilsNetwork;
     ProgressDialog pd;
-    Activity activity;
+    private Activity activity;
     RaspberryPi rasp;
     boolean isPublicWifi = false;
     String WifiSSID, WifiPassword;
@@ -172,7 +172,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
 
     }
 
-    public Dialog createDialogReboot(Activity activity) {
+    public Dialog createDialogReboot(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage("Do you want reboot?");
         builder.setTitle("Reboot")
@@ -196,6 +196,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
     public class WaitServerReboot extends AsyncTask<Void, Void, Void>{
 
         ProgressDialog progressDialog;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -216,7 +217,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
                     e.printStackTrace();
                 }
                 //Try broadcast find the server.
-                BroadcastFindServer();
+                BroadcastFindServer(activity);
                 Log.d("broadcast", "try find the server");
 
                 String ipServer = MainActivity.rasp.getIPAddress();
@@ -243,7 +244,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
-    private void BroadcastFindServer() {
+    private void BroadcastFindServer(Activity activity) {
         Thread thread = new Thread(DiscoveryThread.getInstance(activity));
         thread.start();
     }

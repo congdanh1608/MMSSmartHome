@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -15,9 +16,11 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.thesis.mmtt2011.homemms.Encrypt;
+import com.thesis.mmtt2011.homemms.Network.UtilsNetwork;
 import com.thesis.mmtt2011.homemms.R;
 
 public class LoginActivity extends AppCompatActivity{
@@ -42,6 +45,8 @@ public class LoginActivity extends AppCompatActivity{
     private View mProgressView;
     private View mLoginFormView;
     private TextView mForgotPassword;
+    private RelativeLayout activity_login;
+    private UtilsNetwork utilsNetwork;
 
     //Group in class networkUils
     public String getMacAddress() {
@@ -57,6 +62,10 @@ public class LoginActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        activity_login = (RelativeLayout) this.findViewById(R.id.activity_login);
+
+        utilsNetwork = new UtilsNetwork(this);
+
         //Set up the login form
         mMacAddressView = (TextView) findViewById(R.id.mac_address);
         mMacAddressView.setText(getMacAddress());
@@ -68,7 +77,9 @@ public class LoginActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 //reset password and send message with new password to admin
-
+                MainActivity.client.SendRequestForgetPasswordServer(utilsNetwork.getMacAddress());
+                Snackbar.make(activity_login, "New password sent to Admin.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
 
