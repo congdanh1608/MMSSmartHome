@@ -391,6 +391,7 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //mediaPlayer.release();
+        if(mediaPlayer!=null)
+            mediaPlayer.release();
     }
 }

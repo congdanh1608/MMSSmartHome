@@ -7,12 +7,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,20 +25,26 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.MediaController;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.thesis.mmtt2011.homemms.R;
 import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.adapter.ContactAdapter;
+import com.thesis.mmtt2011.homemms.adapter.ImageAdapter;
 import com.thesis.mmtt2011.homemms.fragment.SentFragment;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
+import com.thesis.mmtt2011.homemms.persistence.UtilsPersis;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,7 +53,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComposeMessageActivity extends MainActivity {
+public class ComposeMessageActivity extends MainActivity implements MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
     private EditText mMessageTitleView;
     private EditText mMessageContentView;
@@ -64,6 +74,25 @@ public class ComposeMessageActivity extends MainActivity {
     ContactAdapter mAdapter;
     ArrayList<User> contacts = new ArrayList<User>();
     ArrayList<User> selectedContacts = new ArrayList<>();
+
+    static ArrayList<String> attachImages = new ArrayList<>();
+    static RecyclerView mRecyclerView;
+    static RecyclerView.Adapter mImageAdapter;
+    static RecyclerView.LayoutManager mLayoutManager;
+
+    static View attatchFileView;
+    static VideoView mVideoView;
+    static View playAudioView;
+    ImageButton btnPlay;
+    SeekBar audioProgressBar;
+    TextView audioTotalDuration;
+    Button btnPlayVideo;
+    static View videoView;
+
+    MediaPlayer mediaPlayer;
+    private Handler mHandler = new Handler();
+    //dumpmy content audioName = "/storage/extSdCard/Music/Ryuukou-HoaTau-3089028.mp3"
+    static String audioName = "/storage/extSdCard/Music/Ryuukou-HoaTau-3089028.mp3";
 
     // du lieu list contact
     public void initContacts() {
@@ -90,6 +119,64 @@ public class ComposeMessageActivity extends MainActivity {
 
         mProgressView = findViewById(R.id.compose_message_progress);
         mComposeMessageFormView = findViewById(R.id.compose_message_form);
+
+        attatchFileView = findViewById(R.id.attach_content_view);
+        // get images devices
+        mRecyclerView = (RecyclerView) findViewById(R.id.image_recycler_view);
+        //dummy content
+        attachImages.add(0, "/storage/emulated/0/Snapseed/snapseed-14.jpeg");
+        attachImages.add(0, "/storage/emulated/0/HOMEMMS/34:4d:f7:55:50:18/20154523174531.jpg");
+
+        mImageAdapter = new ImageAdapter(this, attachImages);
+        mRecyclerView.setAdapter(mImageAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        //load list image attach path were downloaded on android
+
+        audioProgressBar = (SeekBar) findViewById(R.id.seekbar);
+        audioProgressBar.setOnSeekBarChangeListener(this);
+        audioTotalDuration = (TextView) findViewById(R.id.tv_total_duration);
+        btnPlay = (ImageButton) findViewById(R.id.play_button);
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mediaPlayer != null) {
+                    if (mediaPlayer.isPlaying()) {
+                        if (mediaPlayer != null) {
+                            mediaPlayer.pause();
+                            btnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
+                        }
+                    } else if (mediaPlayer != null) {
+                        mediaPlayer.start();
+                        btnPlay.setImageResource(R.drawable.ic_pause_circle_outline_white_36dp);
+                    }
+                } else {
+                    //audio
+                    mediaPlayer = new MediaPlayer();
+                    playAudio(audioName);
+                    btnPlay.setImageResource(R.drawable.ic_pause_circle_outline_white_36dp);
+                }
+            }
+        });
+        playAudioView = findViewById(R.id.play_audio_view);
+        //load video
+        videoView = findViewById(R.id.video_view);
+        btnPlayVideo = (Button) findViewById(R.id.bt_play_video);
+        btnPlayVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mediaPlayer != null && mediaPlayer.isPlaying()) {
+                    mediaPlayer.pause();
+                    btnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
+                }
+                //mVideoView.setVideoPath("/storage/extSdCard/Videos/minion.mp4");
+                mVideoView.setMediaController(new MediaController(ComposeMessageActivity.this));
+                mVideoView.start();
+                mVideoView.setVisibility(View.VISIBLE);
+            }
+        });
+        mVideoView = (VideoView) findViewById(R.id.video_content);
 
         FloatingActionButton fabSendMsg = (FloatingActionButton) findViewById(R.id.fabSendMsg);
 
@@ -417,5 +504,75 @@ public class ComposeMessageActivity extends MainActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        btnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        mHandler.removeCallbacks(mUpdateTimeTask);
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        mHandler.removeCallbacks(mUpdateTimeTask);
+        int totalDuration = mediaPlayer.getDuration();
+        int currentPosition = UtilsPersis.progressToTimer(seekBar.getProgress(), totalDuration);
+
+        //forward or backward to certain seconds
+        mediaPlayer.seekTo(currentPosition);
+        //update timer progress again
+        updateProgressBar();
+    }
+
+    public void playAudio(String audioName) {
+        try {
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(audioName);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+            audioProgressBar.setProgress(0);
+            audioProgressBar.setMax(100);
+            updateProgressBar();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //update timer on seekbar
+    private void updateProgressBar() {
+        mHandler.postDelayed(mUpdateTimeTask, 100);
+    }
+
+    //Background Runnable thread
+    private Runnable mUpdateTimeTask = new Runnable() {
+        @Override
+        public void run() {
+            long totalDuration = mediaPlayer.getDuration();
+            long currentDuration = mediaPlayer.getCurrentPosition();
+            int progress = (int) UtilsPersis.getProgressPercentage(currentDuration, totalDuration);
+
+            // Displaying Total Duration time
+            audioTotalDuration.setText("" + UtilsPersis.milliSecondsToTimer(totalDuration));
+
+            audioProgressBar.setProgress(progress);
+
+            mHandler.postDelayed(this, 100);
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mediaPlayer!=null)
+            mediaPlayer.release();
     }
 }
