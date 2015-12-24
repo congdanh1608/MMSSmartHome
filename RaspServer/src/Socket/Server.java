@@ -181,7 +181,7 @@ public class Server {
 			}
 		}
 
-		private void CheckNewMessageForThreadClient() {
+		public void CheckNewMessageForThreadClient() {
 			if (clients != null) {
 				for (ClientThread_ client : clients) {
 					if (socketControl.checkUserIsReceive(client.socketControl.user.getId())) {

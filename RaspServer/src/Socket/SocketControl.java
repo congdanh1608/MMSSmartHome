@@ -13,6 +13,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.thesis.Encrypt;
 import com.thesis.ServerGUI;
 import com.thesis.UtilsMain;
 import com.thesis.mmtt2011.homemms.model.ObjectFile;
@@ -118,7 +119,7 @@ public class SocketControl {
 
 					// Update status of user.
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
-					System.out.println(user.getId() + " online.");
+					System.out.println(userID + " online.");
 
 					user = userModel.getUser(userID);
 
@@ -276,6 +277,17 @@ public class SocketControl {
 					}
 				}
 				break;
+				
+			case FORGETPW:
+				userID = loadIDUser(msg);
+				if (userID!=null){
+					//reset random password for user
+					//create and save a message contain pass of user request ti database.
+					//call function in all Thread client to check New message.
+					User admin = userModel.getUserWithRole(ContantsHomeMMS.UserRole.admin.name());
+					sendRestorePasswordToAdmin(userID, admin);
+				}
+				break;
 
 			case RESTORENORMAL:
 				Thread thread = new RestoreRaspNormal();
@@ -353,29 +365,29 @@ public class SocketControl {
 						createRecieverMessage(createMessageJson(messagesNeedSend.get(i), ContantsHomeMMS.isNewMsg)));
 				// Check if mms has file attach then send it to
 				// client.
-				if (checkHasAttachFile(messagesNeedSend.get(i))) {
+//				if (checkHasAttachFile(messagesNeedSend.get(i))) {
 					// ArrayList<String> nameFiles = new ArrayList<String>();
-					String tempA = messagesNeedSend.get(i).getContentAudio();
-					String tempP = messagesNeedSend.get(i).getContentImage();
-					String tempV = messagesNeedSend.get(i).getContentVideo();
-					if (tempA != null && !tempA.equals("") && !tempA.equals("null")) {
-						System.out.println("Sent " + tempA);
+//					String tempA = messagesNeedSend.get(i).getContentAudio();
+//					String tempP = messagesNeedSend.get(i).getContentImage();
+//					String tempV = messagesNeedSend.get(i).getContentVideo();
+//					if (tempA != null && !tempA.equals("") && !tempA.equals("null")) {
+//						System.out.println("Sent " + tempA);
 						// nameFiles.add(tempA);
 						// PushFile.sendFileToClient(tempA);
-					}
-					if (tempP != null && !tempP.equals("") && !tempP.equals("null")) {
-						System.out.println("Sent " + tempP);
+//					}
+//					if (tempP != null && !tempP.equals("") && !tempP.equals("null")) {
+//						System.out.println("Sent " + tempP);
 						// nameFiles.add(tempP);
 						// PushFile.sendFileToClient(tempP);
-					}
-					if (tempV != null && !tempV.equals("") && !tempV.equals("null")) {
-						System.out.println("Sent " + tempV);
+//					}
+//					if (tempV != null && !tempV.equals("") && !tempV.equals("null")) {
+//						System.out.println("Sent " + tempV);
 						// nameFiles.add(tempV);
 						// PushFile.sendFileToClient(tempV);
-					}
+//					}
 					// pushListFileAttachToClient(nameFiles,
 					// messagesNeedSend.get(i).getSender());
-				}
+//				}
 
 				// Update status of Message was sent.
 				messageModel.UpdateStatusMessage(messagesNeedSend.get(i).getmId(),
@@ -665,6 +677,7 @@ public class SocketControl {
 		// check and create admin acc if table user null
 		if (userModel.getAllUser().isEmpty()) {
 			userModel.addDefaultAdminAccount(userID);
+			UtilsMain.createFolder(ContantsHomeMMS.AppFolder + "/" + userID);
 		}
 		// return status
 		if (userModel.getUser(userID) != null && !firstRun) { // User was
@@ -681,6 +694,28 @@ public class SocketControl {
 		SendMsg(socket, JsonHelper.createJsonLoginSuccess(userID));
 		// Sent file avatar to Client.
 		getAllAvatarSendToClient();
+	}
+	
+	protected void sendRestorePasswordToAdmin(String userID, User admin) {
+		//reset random password.
+		String pw = UtilsMain.randomPassword();
+		userModel.UpdatePasswordUser(userID, Encrypt.md5(pw));
+		
+		//create a message and save
+		List<User> listReceiver = new ArrayList<User>();
+		listReceiver.add(admin);
+		User user = userModel.getUser(userID);
+		String content = user.getNameDisplay() + "\n" + user.getId() + "\n" + pw;
+		Message m = new Message(UtilsMain.createMessageID(admin.getId()), 
+				admin, listReceiver, 
+				"Reset Password", content,
+				null, null, null, ContantsHomeMMS.MessageStatus.sending.name(),
+				UtilsMain.getCurrentTime());
+		messageModel.AddMessage(m);
+		
+		//check new message for all thread.
+		message = m;		//message will use check id sender.
+		ct.CheckNewMessageForThreadClient();
 	}
 
 	protected void sendAskLoginFail() {

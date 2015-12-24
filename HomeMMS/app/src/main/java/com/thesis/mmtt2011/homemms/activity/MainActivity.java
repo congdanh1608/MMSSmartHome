@@ -136,6 +136,9 @@ public class MainActivity extends AppCompatActivity {
         fabNewMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //clear old path
+                clearOldPath();
+                //
                 Snackbar.make(view, "Hit new message", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Intent intent = new Intent(MainActivity.this, ComposeMessageActivity.class);
@@ -151,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 /*Implement compose photo message;*/
 
-                //Test
-//                PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
+                //clear old path
+                clearOldPath();
 
                 mFilePathImage = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
                         + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
@@ -168,8 +171,8 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Hit new message record", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-                //Test
-//                client.SendRequestServerToNormalState();
+                //clear old path
+                clearOldPath();
 
                 mFilePathAudio = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
                         + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
@@ -184,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Hit new message video", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                  /*Implement compose video message;*/
+
+                //clear old path
+                clearOldPath();
+
                 mFilePathVideo = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
                         + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Video);
                 utilsMain.startRecordingV(mFilePathVideo);
@@ -213,6 +220,13 @@ public class MainActivity extends AppCompatActivity {
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
+    }
+
+    //clear old path
+    private void clearOldPath(){
+        mFilePathVideo = null;
+        mFilePathImage = null;
+        mFilePathAudio = null;
     }
 
     @Override
@@ -366,7 +380,6 @@ public class MainActivity extends AppCompatActivity {
                                 UtilsSSH.connectSSH(rasp);
                             }
                             UtilsImple.excCommand(rasp, LoadCommands.addCommandsReboot());
-                            new WaitServerReboot().execute();
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -699,7 +712,6 @@ public class MainActivity extends AppCompatActivity {
            if (success) {
                 //finish activity, go back to MainActivity
                UtilsMain.showMessage(mActivity, "Server found!");
-               mActivity.finish();
             } else {
                 UtilsMain.showMessage(mActivity, "Server not found. Try again!");
             }

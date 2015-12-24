@@ -3,6 +3,7 @@ package com.thesis.mmtt2011.homemms.Socket;
 import android.content.Context;
 import android.util.Log;
 
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
 import com.thesis.mmtt2011.homemms.fragment.InboxFragment;
@@ -113,7 +114,7 @@ public class SocketControl {
                         //Save message to database.
                         homeMMSDatabaseHelper.createMessage(context, messageReceive);
 
-                        Log.d("Received", "Updated new message to Inbox");
+                        Log.d("Received", "Updated new message to Inbox/SendBox");
 
                         //Receive file attach
 //                        String tempA = messageReceive.getContentAudio();
@@ -130,10 +131,19 @@ public class SocketControl {
 //                        }
 
                         //Update message to Inbox or SentBox
-                        if (messageReceive.getSender().getId().equals(myUser.getId())) {
+                        //Message reset pw
+                        if (messageReceive.getSender().getId().equals(myUser.getId()) && messageReceive.getReceiver().contains(myUser.getId())){
+                            InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
+                        }
+                        else if (messageReceive.getSender().getId().equals(myUser.getId())) {
                             SentFragment.UpdateNewMessageSent(messageReceive.getId());
                         } else {
                             InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
+                        }
+
+                        //Create notify have a new message.
+                        if (!messageReceive.getSender().getId().equals(myUser.getId()) && messageReceive.getStatus().equals(MessageStatus.received.name())){
+                            UtilsMain.generateNotification(context, "Receive a message from " +messageReceive.getSender().getNameDisplay());
                         }
                     }
                     break;
@@ -347,7 +357,7 @@ public class SocketControl {
     }
 
     private Message getRecieveInfo(String msg) {
-        return JsonHelper.loadNote(msg, context);
+        return JsonHelper.loadMessage(msg, context);
     }
 
     private boolean getLoginSuccess(String msg) {

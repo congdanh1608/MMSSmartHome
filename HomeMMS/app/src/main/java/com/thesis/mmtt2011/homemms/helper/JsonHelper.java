@@ -67,7 +67,7 @@ public class JsonHelper {
         return new int[0];
     }
 
-    public static Message loadNote(String msg, Context context) {
+    public static Message loadMessage(String msg, Context context) {
         Message message = new Message();
         if (msg != null) {
             try {

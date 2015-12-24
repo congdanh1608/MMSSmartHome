@@ -16,13 +16,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 import java.util.TimeZone;
 
 public class UtilsMain {
 	static byte[] appClientData;
 
-	public static void copyFile(InputStream in, OutputStream out)
-			throws IOException {
+	public static void copyFile(InputStream in, OutputStream out) throws IOException {
 		byte[] buffer = new byte[1024];
 		int read;
 		while ((read = in.read(buffer)) != -1) {
@@ -38,8 +38,7 @@ public class UtilsMain {
 				file.createNewFile();
 			}
 			fos = new FileOutputStream(file, false);
-			Writer writer = new BufferedWriter(new OutputStreamWriter(fos,
-					"utf-8"));
+			Writer writer = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"));
 			writer.write(content);
 			writer.flush();
 			writer.close();
@@ -49,28 +48,29 @@ public class UtilsMain {
 			e.printStackTrace();
 		}
 	}
-	
-	 public static Boolean createFolder(String dir) {
-	        File folder = new File(dir);
-	        if (folder.exists()){
-	            return true;
-	        }
-	        else {
-	            try {
-	                folder.mkdirs();
-	                return true;
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	                return false;
-	            }
-	        }
-	    }
 
-	    public static boolean checkFilsIsExits(String filePath){
-	        File file = new File(filePath);
-	        if (file.exists()) return true;
-	        else return false;
-	    }
+	public static Boolean createFolder(String dir) {
+		File folder = new File(dir);
+		if (folder.exists()) {
+			return true;
+		} else {
+			try {
+				folder.mkdirs();
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+	}
+
+	public static boolean checkFilsIsExits(String filePath) {
+		File file = new File(filePath);
+		if (file.exists())
+			return true;
+		else
+			return false;
+	}
 
 	public static String readFile(String path) {
 		String s = "";
@@ -98,6 +98,23 @@ public class UtilsMain {
 		return s;
 	}
 
+	public static String createMessageID(String mac) {
+		String mID = null;
+		if (mac != null && !mac.equals("")) {
+			mID = mac.substring(9, 10) + mac.substring(12, 13) + mac.substring(15, 16) + getCurrentTimeHms();
+		}
+		return mID;
+	}
+
+	public static String getCurrentTimeHms() {
+		String time = null;
+		DateFormat dateFormat = new SimpleDateFormat("yyyymmddHHmmss");
+		dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+		Date date = new Date();
+		time = dateFormat.format(date); // 20151030075959
+		return time;
+	}
+
 	public static String getCurrentTime() {
 		String time = null;
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -106,12 +123,22 @@ public class UtilsMain {
 		time = dateFormat.format(date); // 20151030_075959
 		return time;
 	}
-	
-	public static String getIPAddressFromSocket(Socket socket){
+
+	public static String getIPAddressFromSocket(Socket socket) {
 		String ip = null;
 		String ip_temp = socket.getRemoteSocketAddress().toString();
 		ip = ip_temp.substring(1, ip_temp.lastIndexOf(":"));
 		return ip;
 	}
-	
+
+	public static String randomPassword() {
+		Random rand = new Random();
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < 5; i++) {
+			char c = (char) (rand.nextInt(26) + 'a');
+			builder.append(c);
+		}
+		return builder.toString();
+	}
+
 }

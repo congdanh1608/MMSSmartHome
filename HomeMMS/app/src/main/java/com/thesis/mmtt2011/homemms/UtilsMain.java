@@ -2,6 +2,9 @@ package com.thesis.mmtt2011.homemms;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,12 +19,14 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.Network.UtilsNetwork;
 import com.thesis.mmtt2011.homemms.activity.ComposeMessageActivity;
+import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
@@ -431,5 +436,28 @@ public class UtilsMain {
         File file = new File(pathFile);
         if (file.exists()) return true;
         else return false;
+    }
+
+    //Create a notify show in taskbar.
+    public static void generateNotification(Context context, String message) {
+        int icon = R.drawable.ic_homemms;
+        long when = System.currentTimeMillis();
+        NotificationManager notificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = new Notification(icon, message, when);
+
+        String title = context.getString(R.string.app_name);
+
+        Intent notificationIntent = new Intent(context, MainActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent intent =
+                PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        notification.setLatestEventInfo(context, title, message, intent);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        notificationManager.notify(0, notification);
     }
 }

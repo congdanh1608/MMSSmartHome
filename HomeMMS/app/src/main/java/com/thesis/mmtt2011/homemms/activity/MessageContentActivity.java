@@ -185,11 +185,13 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
         //
 
         if (MainActivity.isConnected) {
+            //check need download attach file.
             if (checkMessageHasAttach(mMessage)) {
                 client.SendRequestFileAttach(mMessage);
+            }else {
+                loadAttachFiles();
             }
         } else {
-            loadAttachFiles();
             UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
         }
     }
@@ -216,15 +218,17 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
     }
 
     private boolean checkMessageHasAttach(Message message) { //true - down, false - not down
-        String myPath = ContantsHomeMMS.AppFolder + "/" + myUser.getId() + "/";
-        if (message.getContentAudio() != null && !UtilsMain.checkFileIsExits(myPath + message.getContentAudio())) {
-            return true;
-        }
-        if (message.getContentVideo() != null && !UtilsMain.checkFileIsExits(myPath + message.getContentVideo())) {
-            return true;
-        }
-        if (message.getContentImage() != null && !UtilsMain.checkFileIsExits(myPath + message.getContentImage())) {
-            return true;
+        if (!message.getContentImage().equals("null") || !message.getContentVideo().equals("null") || !message.getContentAudio().equals("null")) {
+            String myPath = ContantsHomeMMS.AppFolder + "/" + myUser.getId() + "/";
+            if (!message.getContentAudio().equals("null") && !UtilsMain.checkFileIsExits(myPath + message.getContentAudio())) {
+                return true;
+            }
+            if (!message.getContentVideo().equals("null") && !UtilsMain.checkFileIsExits(myPath + message.getContentVideo())) {
+                return true;
+            }
+            if (!message.getContentImage().equals("null") && !UtilsMain.checkFileIsExits(myPath + message.getContentImage())) {
+                return true;
+            }
         }
         return false;
     }
@@ -241,7 +245,8 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
 
         if (id == R.id.action_delete) {
             //implement delete message here
-
+            MainActivity.client.SendRequestDeleteMessage(HomeMMSDatabaseHelper.getMessage(this, mMessage.getId()));
+            HomeMMSDatabaseHelper.deleteMessage(this, mMessage.getId());
             return true;
         }
 
