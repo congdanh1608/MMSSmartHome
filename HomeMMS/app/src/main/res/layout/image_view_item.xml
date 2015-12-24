@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/imageview_content"
+    android:id="@+id/image_card_view"
     android:layout_width="128dp"
     android:layout_height="128dp"
-    android:src="@drawable/ic_homemms">
+    android:layout_gravity="center"
+    android:clickable="true"
+    android:focusable="true"
+    android:elevation="2dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
-</ImageView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/imageview_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_homemms"></ImageView>
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

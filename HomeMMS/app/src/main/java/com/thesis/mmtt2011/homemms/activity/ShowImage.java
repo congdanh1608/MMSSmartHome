@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -20,7 +21,7 @@ public class ShowImage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_image);
-        ImageView imageView = (ImageView) findViewById(R.id.img_attach);
+        imageView = (ImageView) findViewById(R.id.img_attach);
         Intent intent = getIntent();
         String path = intent.getStringExtra(IMAGE_PATH);
         showImage(path);
@@ -30,8 +31,7 @@ public class ShowImage extends AppCompatActivity {
     private void showImage(String imagePath) {
         File imgFile = new File(imagePath);
         if (imgFile.exists()) {
-            Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            imageView.setImageBitmap(bmp);
+            imageView.setImageURI(Uri.fromFile(imgFile));
         }
     }
 }

@@ -22,7 +22,7 @@
 
     <style name="FloatMenuLabelStyle">
         <item name="android:background">@drawable/fab_label_background</item>
-        <item name="android:textColor">#000000</item>
+        <item name="android:textColor">#FFFFFF</item>
     </style>
 
 </resources>

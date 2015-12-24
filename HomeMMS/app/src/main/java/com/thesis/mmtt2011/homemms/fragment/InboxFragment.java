@@ -157,7 +157,6 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
                     mAdapter.removeMessages(mAdapter.getSelectedItems());
                     mode.finish();
                     return true;
-
                 default:
                     return false;
             }

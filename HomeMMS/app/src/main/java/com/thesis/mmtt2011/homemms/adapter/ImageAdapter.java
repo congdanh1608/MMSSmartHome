@@ -16,6 +16,7 @@ import com.thesis.mmtt2011.homemms.activity.ShowImage;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     List<String> imagesContent;
     static Context context;
 
-    public ImageAdapter(Context context, List<String> images){
+    public ImageAdapter(Context context, ArrayList<String> images){
         this.context = context;
         imagesContent = images;
     }
@@ -69,6 +70,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 imageView.setImageBitmap(bmp);
             }
         }
+
         @Override
         public void onClick(View v) {
             //show image full content

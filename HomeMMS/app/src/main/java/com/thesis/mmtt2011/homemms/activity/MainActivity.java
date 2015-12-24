@@ -41,7 +41,6 @@ import com.thesis.mmtt2011.homemms.Socket.Client;
 import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.adapter.ViewPagerAdapter;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
-import com.thesis.mmtt2011.homemms.implement.InstallRaspAsyncTask;
 import com.thesis.mmtt2011.homemms.implement.LoadCommands;
 import com.thesis.mmtt2011.homemms.implement.UtilsImple;
 import com.thesis.mmtt2011.homemms.model.Message;

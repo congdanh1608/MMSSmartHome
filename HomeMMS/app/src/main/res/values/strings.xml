@@ -40,7 +40,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="app_desciption">Connect family members by send and receive multi media messages</string>
+    <string name="app_desciption">Connecting family members by sending and receiving multi media messages</string>
     <string name="float_take_photo">Take a photo</string>
     <string name="float_new_message">New message</string>
     <string name="float_new_video">New video</string>

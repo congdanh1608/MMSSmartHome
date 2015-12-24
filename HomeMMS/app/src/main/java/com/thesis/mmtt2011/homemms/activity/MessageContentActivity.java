@@ -18,7 +18,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -40,40 +43,41 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
-
 
 public class MessageContentActivity extends MainActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
-    static final String PATH_FOLDER_USER = ContantsHomeMMS.myUserFolder + MainActivity.myUser.getId() + "/";
+    static final String PATH_FOLDER_USER = ContantsHomeMMS.myUserFolder;
 
     public static final String TAG = "MessageContentActivity";
 
     private Uri mUri;
 
-    private Message mMessage;
+    private static Message mMessage;
 
-    private List<String> attachImages;
+    static ArrayList<String> attachImages = new ArrayList<>();
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    static RecyclerView mRecyclerView;
+    static RecyclerView.Adapter mImageAdapter;
+    static RecyclerView.LayoutManager mLayoutManager;
 
+    static View attatchFileView;
     private TextView mTitleView;
     private TextView mContentView;
     private TextView mTimestamp;
-    private VideoView mVideoView;
-
+    static VideoView mVideoView;
+    static View playAudioView;
     //implement audio
     ImageButton btnPlay;
     SeekBar audioProgressBar;
     TextView audioTotalDuration;
+    Button btnPlayVideo;
+    static View videoView;
 
     MediaPlayer mediaPlayer;
     private Handler mHandler = new Handler();
-    //dumpmy content
-    String audioName = "/storage/extSdCard/Music/Ryuukou-HoaTau-3089028.mp3";
+    //dumpmy content audioName = "/storage/extSdCard/Music/Ryuukou-HoaTau-3089028.mp3"
+    static String audioName = "";
 
     public static Intent getStartIntent(Context context, Message message) {
         Intent starter = new Intent(context, MessageContentActivity.class);
@@ -103,16 +107,20 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             getSupportLoaderManager().initLoader(0, null, this);
         }
 
+        attatchFileView = findViewById(R.id.attach_content_view);
         // get images devices
-        mRecyclerView = (RecyclerView) findViewById(R.id.device_recycler_view);
-        //load list image attach path were downloaded on android
-        getListImageAttach();
-        mAdapter = new ImageAdapter(this, attachImages);
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView = (RecyclerView) findViewById(R.id.image_recycler_view);
+        //dummy content
+        /*attachImages.add(0, "/storage/emulated/0/Snapseed/snapseed-14.jpeg");
+        attachImages.add(0, "/storage/emulated/0/HOMEMMS/34:4d:f7:55:50:18/20154523174531.jpg");*/
+
+        mImageAdapter = new ImageAdapter(this, attachImages);
+        mRecyclerView.setAdapter(mImageAdapter);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        //audio
+        //load list image attach path were downloaded on android
+
         audioProgressBar = (SeekBar) findViewById(R.id.seekbar);
         audioProgressBar.setOnSeekBarChangeListener(this);
         audioTotalDuration = (TextView) findViewById(R.id.tv_total_duration);
@@ -120,36 +128,70 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mediaPlayer.isPlaying()) {
-                    if (mediaPlayer != null) {
-                        mediaPlayer.pause();
-                        btnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
-                    } else {
-                        playAudio(audioName);
-                    }
-                } else {
-                    if (mediaPlayer != null) {
+                if (mediaPlayer != null) {
+                    if (mediaPlayer.isPlaying()) {
+                        if (mediaPlayer != null) {
+                            mediaPlayer.pause();
+                            btnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
+                        }
+                    } else if (mediaPlayer != null) {
                         mediaPlayer.start();
                         btnPlay.setImageResource(R.drawable.ic_pause_circle_outline_white_36dp);
                     }
+                } else {
+                    //audio
+                    mediaPlayer = new MediaPlayer();
+                    playAudio(audioName);
+                    btnPlay.setImageResource(R.drawable.ic_pause_circle_outline_white_36dp);
                 }
             }
         });
-
+        playAudioView = findViewById(R.id.play_audio_view);
         //load video
+        videoView = findViewById(R.id.video_view);
+        btnPlayVideo = (Button) findViewById(R.id.bt_play_video);
+        btnPlayVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mediaPlayer != null && mediaPlayer.isPlaying()) {
+                    mediaPlayer.pause();
+                    btnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
+                }
+                //mVideoView.setVideoPath("/storage/extSdCard/Videos/minion.mp4");
+                mVideoView.setMediaController(new MediaController(MessageContentActivity.this));
+                mVideoView.start();
+                mVideoView.setVisibility(View.VISIBLE);
+            }
+        });
         mVideoView = (VideoView) findViewById(R.id.video_content);
-        //load video content
-
+        //dummy content load video content
+        //String videoURL = "http://vredir.nixcdn.com/b27ff3dfe95c3fa6dfddf9775c06006e/567b8697/PreNCT10/Daddy-PSYCL2NE1-4230218_360.mp4";
+        /*try {
+            MediaController mediaController = new MediaController(this);
+            mediaController.setAnchorView(mVideoView);
+            mVideoView.setMediaController(mediaController);
+            Uri uriMedia = Uri.parse(videoURL);
+            mVideoView.setVideoURI(uriMedia);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mVideoView.requestFocus();
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mVideoView.start();
+            }
+        });*/
         //
+
         if (MainActivity.isConnected) {
             if (checkMessageHasAttach(mMessage)) {
                 client.SendRequestFileAttach(mMessage);
             }
-        } else UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
-    }
-
-    public void getListImageAttach() {
-        //get image attach AsyncTask here
+        } else {
+            loadAttachFiles();
+            UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
+        }
     }
 
     @Override
@@ -258,6 +300,8 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            //load attach file
+            loadAttachFiles();
             pd.dismiss();
             super.onPostExecute(aVoid);
         }
@@ -265,7 +309,7 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-
+        btnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
     }
 
     @Override
@@ -326,9 +370,27 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
         }
     };
 
+    public static void loadAttachFiles() {
+        if(!mMessage.getContentImage().equals("null")) {
+            attachImages.clear();
+            attachImages.add(0, PATH_FOLDER_USER + mMessage.getSender().getId() + "/" + mMessage.getContentImage());
+            mImageAdapter.notifyDataSetChanged();
+        }
+        if(!mMessage.getContentAudio().equals("null")) {
+            audioName = PATH_FOLDER_USER + mMessage.getContentAudio();
+            playAudioView.setVisibility(View.VISIBLE);
+        }
+
+        if(!mMessage.getContentVideo().equals("null")) {
+            mVideoView.setVideoPath(PATH_FOLDER_USER + mMessage.getContentVideo());
+            videoView.setVisibility(View.VISIBLE);
+        }
+        attatchFileView.setVisibility(View.VISIBLE);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mediaPlayer.release();
+        //mediaPlayer.release();
     }
 }
