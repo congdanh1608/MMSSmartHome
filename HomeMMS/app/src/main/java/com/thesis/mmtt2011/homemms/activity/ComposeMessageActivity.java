@@ -572,7 +572,9 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mediaPlayer!=null)
-            mediaPlayer.release();
+        if(mediaPlayer != null) {
+            mediaPlayer.stop();
+            //mediaPlayer.release();
+        }
     }
 }
