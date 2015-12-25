@@ -68,7 +68,7 @@ public class LoadCommands {
 
     public static ArrayList<String> addCommandsRemoveInstall(RaspberryPi raspberryPi) {
         ArrayList<String> listOfCommands = new ArrayList<String>();
-        listOfCommands.add("sudo sh remove.sh");
+        listOfCommands.add("sudo shell/remove.sh");
         //Restore file backup + remove file.
 //        listOfCommands.add("sudo cp bak/interfaces /etc/network/ && sudo cp bak/wpa_supplicant.conf /etc/wpa_supplicant/ && sudo cp bak/rc.local /etc/rc.local && echo EndCommands");
 //        listOfCommands.add("sudo rm -rf bak deb shell start wifi_config wifi_router configrasppi.zip RaspServer.jar && sudo rm -rf /home/" + raspberryPi.getUsername() +  "/.config/autostart && echo EndCommands");

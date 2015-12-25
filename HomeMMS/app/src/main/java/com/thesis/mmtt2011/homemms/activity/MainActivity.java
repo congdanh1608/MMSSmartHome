@@ -354,6 +354,11 @@ public class MainActivity extends AppCompatActivity {
                                 UtilsSSH.connectSSH(rasp);
                             }
                             UtilsImple.excCommand(rasp, LoadCommands.addCommandsRemoveInstall(rasp));
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             finish();
                         }
                     })
