@@ -1,6 +1,7 @@
 package com.thesis.mmtt2011.homemms.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -55,6 +56,8 @@ import java.util.List;
 
 public class ComposeMessageActivity extends MainActivity implements MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
+    public static final String TAG = "ComposeMessageActivity";
+
     private EditText mMessageTitleView;
     private EditText mMessageContentView;
     private View mProgressView;
@@ -95,6 +98,13 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
     private Handler mHandler = new Handler();
     //dumpmy content audioName = "/storage/extSdCard/Music/Ryuukou-HoaTau-3089028.mp3"
     static String audioName = "/storage/extSdCard/Music/Ryuukou-HoaTau-3089028.mp3";
+
+    //get draftmessges id to load message draft
+    public static Intent getStartIntent(Context context, Message message) {
+        Intent starter = new Intent(context, ComposeMessageActivity.class);
+        starter.putExtra(ComposeMessageActivity.TAG, message.getId());
+        return starter;
+    }
 
     // du lieu list contact
     public void initContacts() {
@@ -182,6 +192,9 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
 
         FloatingActionButton fabSendMsg = (FloatingActionButton) findViewById(R.id.fabSendMsg);
 
+        Intent intent = getIntent();
+        loadMessageDraft(intent);
+
         initContacts();
         mAdapter = new ContactAdapter(ComposeMessageActivity.this, contacts, selectedContacts);
         add_contact.setOnClickListener(new View.OnClickListener() {
@@ -197,15 +210,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                             public void onClick(DialogInterface dialog, int which) {
                                 //do something with selectedContact
                                 mAdapter.notifyDataSetChanged();
-                                StringBuilder contactList = new StringBuilder();
-                                for (int i = 0; i < selectedContacts.size(); i++) {
-                                    User user = selectedContacts.get(i);
-                                    contactList.append(user.getNameDisplay());
-                                    if (i < selectedContacts.size() - 1) {
-                                        contactList.append(", ");
-                                    }
-                                }
-                                contact_list.setText(contactList.toString());
+                                contact_list.setText(showListSelectedContact());
                             }
                         });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -371,6 +376,32 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
         }
     }
 
+    private void loadMessageDraft(Intent intent) {
+        if (intent.hasExtra(TAG)) {
+            String messageId = intent.getStringExtra(TAG);
+            Message draftMessage = new Message();
+            draftMessage = HomeMMSDatabaseHelper.getMessage(this, messageId);
+            mMessageTitleView.setText(draftMessage.getTitle());
+            mMessageContentView.setText(draftMessage.getContentText());
+            selectedContacts.addAll(draftMessage.getReceiver());
+            contact_list.setText(showListSelectedContact());
+            //
+
+            //get attach files
+        }
+    }
+
+    private String showListSelectedContact() {
+        StringBuilder contactList = new StringBuilder();
+        for (int i = 0; i < selectedContacts.size(); i++) {
+            User user = selectedContacts.get(i);
+            contactList.append(user.getNameDisplay());
+            if (i < selectedContacts.size() - 1) {
+                contactList.append(", ");
+            }
+        }
+        return contactList.toString();
+    }
     //Create a message.
     private Message createAMessageDraft(List<User> receivers) {
         Message message = new Message();
@@ -603,9 +634,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
 
             // Displaying Total Duration time
             audioTotalDuration.setText("" + UtilsPersis.milliSecondsToTimer(totalDuration));
-
             audioProgressBar.setProgress(progress);
-
             mHandler.postDelayed(this, 100);
         }
     };

@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity{
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    private TextView mForgotPassword;
+    private Button mForgotPassword;
     private RelativeLayout activity_login;
     private UtilsNetwork utilsNetwork;
 
@@ -70,9 +70,9 @@ public class LoginActivity extends AppCompatActivity{
         mMacAddressView = (TextView) findViewById(R.id.mac_address);
         mMacAddressView.setText(getMacAddress());
 
-        mForgotPassword = (TextView) findViewById(R.id.forgot_password);
+        mForgotPassword = (Button) findViewById(R.id.forgot_password);
         //Link to localhost to reset password
-        mForgotPassword.setMovementMethod(LinkMovementMethod.getInstance());
+        //mForgotPassword.setMovementMethod(LinkMovementMethod.getInstance());
         mForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,6 +154,11 @@ public class LoginActivity extends AppCompatActivity{
 
     private boolean isPasswordValid(String password) {
         return password.length() >= MIN_LENGTH_PASSWORD;
+    }
+
+    @Override
+    public void onBackPressed() {
+        this.moveTaskToBack(true);
     }
 
     /**

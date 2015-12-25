@@ -17,11 +17,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.R;
-import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
 import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
 import com.thesis.mmtt2011.homemms.model.Message;
-import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 import com.thesis.mmtt2011.homemms.persistence.MessageTable;
@@ -47,7 +45,8 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
     //Khoi tao danh sach cach message mau
     public void initListMessage() {
         sentMessages = new ArrayList<>();
-        sentMessages = HomeMMSDatabaseHelper.getAllMessagesBy(getActivity(), MessageTable.COLUMN_SENDER, MainActivity.myUser.getId());
+        sentMessages = HomeMMSDatabaseHelper.getAllMessagesBy(getActivity(),
+                MessageTable.COLUMN_STATUS, ContantsHomeMMS.MessageStatus.sent.name());
         /*List<User> receivers = new ArrayList<>();
         User receiver = new User("00:00:00:00:00:00", "Name Display", "password", "link avatar", "offline");
         receivers.add(receiver);

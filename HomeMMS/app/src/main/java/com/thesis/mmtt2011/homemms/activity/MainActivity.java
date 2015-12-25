@@ -59,12 +59,12 @@ public class MainActivity extends AppCompatActivity {
     ViewPager pager;
     ViewPagerAdapter adapter;
     SlidingTabLayout tabs;
-    CharSequence Titles[] = {"Message", "Sent"};
+    CharSequence Titles[] = {"Message", "Sent", "Draft"};
     int[] tabIcons = {
             R.drawable.ic_inbox_white_48dp,
             R.drawable.ic_send_white_48dp,
     };
-    final int NumbOfTabs = 2;
+    final int NumbOfTabs = 3;
     SearchView searchView;
 
     public static Client client;
@@ -792,4 +792,9 @@ public class MainActivity extends AppCompatActivity {
         //Save First run app.
         PreferencesHelper.writeToPreferences(mActivity, false);
     }
+
+    /*@Override
+    public void onBackPressed() {
+        this.moveTaskToBack(true);
+    }*/
 }

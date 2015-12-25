@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.thesis.mmtt2011.homemms.fragment.DraftFragment;
 import com.thesis.mmtt2011.homemms.fragment.InboxFragment;
 import com.thesis.mmtt2011.homemms.fragment.SentFragment;
 
@@ -36,9 +37,9 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 SentFragment tabSent = new SentFragment();
                 return tabSent;
-            /*case 2:
-                FragmentTab3 tab3 = new FragmentTab3();
-                return tab3;*/
+            case 2:
+                DraftFragment tabDraft = new DraftFragment();
+                return tabDraft;
             default:
                 return null;
         }
