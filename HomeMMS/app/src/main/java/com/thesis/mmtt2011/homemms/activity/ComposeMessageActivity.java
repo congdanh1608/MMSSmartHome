@@ -72,7 +72,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
 
     private UtilsMain utilsMain;
 
-    private String mFileNameAudio = null, mFileNameImage = null, mFileNameVideo = null;
+    private String mFileNameAudio = "null", mFileNameImage = "null", mFileNameVideo = "null";
 
     private boolean tabSentButton = false;
 
@@ -138,8 +138,8 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
         // get images devices
         mRecyclerView = (RecyclerView) findViewById(R.id.image_recycler_view);
         //dummy content
-        attachImages.add(0, "/storage/emulated/0/Snapseed/snapseed-14.jpeg");
-        attachImages.add(0, "/storage/emulated/0/HOMEMMS/34:4d:f7:55:50:18/20154523174531.jpg");
+        //attachImages.add(0, "/storage/emulated/0/Snapseed/snapseed-14.jpeg");
+        //attachImages.add(0, "/storage/emulated/0/HOMEMMS/34:4d:f7:55:50:18/20154523174531.jpg");
 
         mImageAdapter = new ImageAdapter(this, attachImages);
         mRecyclerView.setAdapter(mImageAdapter);

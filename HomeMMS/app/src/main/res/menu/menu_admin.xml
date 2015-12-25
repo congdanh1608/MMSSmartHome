@@ -5,53 +5,58 @@
     <item android:id="@+id/action_search"
         android:title="@string/action_search"
         android:icon="@drawable/abc_ic_search_api_mtrl_alpha"
-        android:orderInCategory="100"
+        android:orderInCategory="1"
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
     <item android:id="@+id/action_refresh"
         android:title="@string/action_refresh"
         android:icon="@android:drawable/stat_notify_sync_noanim"
-        android:orderInCategory="200"
+        android:orderInCategory="2"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_scan_devices"
-        android:orderInCategory="300"
+        android:orderInCategory="3"
         android:title="@string/action_scan_devices"
         app:showAsAction="never" />
 
     <item android:id="@+id/action_user_info"
         android:title="Profile"
-        android:orderInCategory="400"/>
+        android:orderInCategory="4"/>
     <item
         android:id="@+id/action_uninstall"
-        android:orderInCategory="500"
+        android:orderInCategory="5"
         android:title="@string/action_uninstall"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_reboot"
-        android:orderInCategory="600"
+        android:orderInCategory="6"
         android:title="@string/action_reboot"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_shutdown"
-        android:orderInCategory="700"
+        android:orderInCategory="7"
         android:title="@string/action_shutdown"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_switch_ap"
-        android:orderInCategory="800"
+        android:orderInCategory="8"
         android:title="@string/action_switchAP"
-        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_reconnect"
+        android:orderInCategory="9"
+        android:title="@string/action_reconnect"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="900"
+        android:orderInCategory="10"
         android:title="@string/action_settings"
         app:showAsAction="never" />
 

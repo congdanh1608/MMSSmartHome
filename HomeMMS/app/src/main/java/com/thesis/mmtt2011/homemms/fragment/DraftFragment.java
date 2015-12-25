@@ -76,6 +76,12 @@ public class DraftFragment extends Fragment implements MessageAdapter.MessageVie
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     public void onItemClicked(int position) {
         if (actionMode != null) {
             toggleSelection(position);

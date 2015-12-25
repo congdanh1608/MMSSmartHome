@@ -48,7 +48,9 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
     }
 
     public void removeMessage(int position) {
-        MainActivity.client.SendRequestDeleteMessage(HomeMMSDatabaseHelper.getMessage(context, messages.get(position).getId()));
+        if (!messages.get(position).getStatus().equals(ContantsHomeMMS.MessageStatus.draft.name())) {
+            MainActivity.client.SendRequestDeleteMessage(HomeMMSDatabaseHelper.getMessage(context, messages.get(position).getId()));
+        }
         HomeMMSDatabaseHelper.deleteMessage(context, messages.get(position).getId());
         messages.remove(position);
         notifyItemRemoved(position);
