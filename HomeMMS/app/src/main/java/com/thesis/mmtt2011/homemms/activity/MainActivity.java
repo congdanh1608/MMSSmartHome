@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                 mFilePathImage = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
                         + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
                 PreferencesHelper.writeToPreferencesString(getBaseContext(), mFilePathImage, ContantsHomeMMS.ImagePref);
-                utilsMain.openImageIntent(mFilePathImage);
+                utilsMain.openImageIntent(MainActivity.this, mFilePathImage);
             }
         });
 
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
                 mFilePathAudio = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
                         + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
-                utilsMain.startRecordingAudio(mFilePathAudio);
+                utilsMain.startRecordingAudio(MainActivity.this, mFilePathAudio);
             }
         });
 
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
                 mFilePathVideo = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
                         + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Video);
-                utilsMain.startRecordingV(mFilePathVideo);
+                utilsMain.startRecordingV(MainActivity.this, mFilePathVideo);
             }
         });
 
@@ -445,6 +445,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         Log.d("result", "onResult");
         switch (requestCode) {
             case ContantsHomeMMS.CAMERA_CAPTURE_IMAGE_REQUEST_CODE:
@@ -489,6 +490,11 @@ public class MainActivity extends AppCompatActivity {
                                     case ExifInterface.ORIENTATION_ROTATE_180:
                                         matrix = new Matrix();
                                         matrix.postRotate(180);
+                                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                        break;
+                                    case ExifInterface.ORIENTATION_ROTATE_270:
+                                        matrix = new Matrix();
+                                        matrix.postRotate(270);
                                         bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                                         break;
                                     default:
@@ -572,7 +578,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case ContantsHomeMMS.LOGIN_REQUEST_CODE:
-//                Log.d("result", "LOGIN_REQUEST_CODE");
+                Log.d("result", "LOGIN_REQUEST_CODE");
 //                Log.d("result", resultCode + "");
 //                if (resultCode == RESULT_OK) {
 //                    boolean b = client.SendLoginInfoOfClient();
@@ -582,7 +588,7 @@ public class MainActivity extends AppCompatActivity {
             case ContantsHomeMMS.REGISTER_REQUEST_CODE:
                 Log.d("result", "REGISTER_REQUEST_CODE");
                 if (resultCode == RESULT_OK) {
-                    client.SendMessageInfoOfClient();
+                    client.SendRegisterInfoOfClient();
                     String avatarFile = ContantsHomeMMS.myUserFolder + myUser.getId() + "/" + myUser.getAvatar();
                     if (utilsMain.checkFileIsExits(avatarFile)) {
                         //Push File by SSH

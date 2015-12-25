@@ -122,43 +122,16 @@ public class RegisterActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.register_progress);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     private void onSetAvatar() {
         //Check folder app
         if (UtilsMain.CreateFolder(ContantsHomeMMS.AppFolder) && UtilsMain.CreateFolder(ContantsHomeMMS.AppCacheFolder)) {
-            openImageIntent();
+            UtilsMain.openImageIntent(RegisterActivity.this, avatarCache);
         }
-    }
-
-    public void openImageIntent() {
-//        final String fnameP = "img_" + System.currentTimeMillis() + ".jpg";
-//        final File sdImageMainDirectory = new File(mDir, fnameP);
-//        outputFileUri = Uri.fromFile(sdImageMainDirectory);
-        Uri outputFileUri = Uri.fromFile(new File(avatarCache));
-
-        // Camera.
-        final List<Intent> cameraIntents = new ArrayList<Intent>();
-        final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        final PackageManager packageManager = getPackageManager();
-        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-        for (ResolveInfo res : listCam) {
-            final String packageName = res.activityInfo.packageName;
-            final Intent intent = new Intent(captureIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(packageName);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-            cameraIntents.add(intent);
-        }
-
-        //FileSystem
-        final Intent galleryIntent = new Intent();
-        galleryIntent.setType("image/");
-        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-
-        // Chooser of filesystem options.
-        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
-        // Add the camera options.
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
-        startActivityForResult(chooserIntent, ContantsHomeMMS.CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
     }
 
     private void attemptRegister() {
@@ -344,6 +317,11 @@ public class RegisterActivity extends AppCompatActivity {
                                 case ExifInterface.ORIENTATION_ROTATE_180:
                                     matrix = new Matrix();
                                     matrix.postRotate(180);
+                                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                    break;
+                                case ExifInterface.ORIENTATION_ROTATE_270:
+                                    matrix = new Matrix();
+                                    matrix.postRotate(270);
                                     bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                                     break;
                                 default:

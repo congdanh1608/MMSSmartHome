@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity{
     private Button mForgotPassword;
     private RelativeLayout activity_login;
     private UtilsNetwork utilsNetwork;
+    private boolean loginSuccess = false;
 
     //Group in class networkUils
     public String getMacAddress() {
@@ -183,8 +184,8 @@ public class LoginActivity extends AppCompatActivity{
                 MainActivity.myUser.setId(mMACAddress);
                 MainActivity.myUser.setPassword(mPassword);
 
-                boolean b = MainActivity.client.SendLoginInfoOfClient();
-                Log.d("login", b + "");
+                loginSuccess = MainActivity.client.SendLoginInfoOfClient();
+                Log.d("login", loginSuccess + "");
 
 //                Thread.sleep(1000);
 //            } catch (InterruptedException e) {
@@ -198,7 +199,7 @@ public class LoginActivity extends AppCompatActivity{
 //                    return pieces[1].equals(mPassword);
 //                }
 //            }
-            return b;
+            return loginSuccess;
         }
 
         @Override

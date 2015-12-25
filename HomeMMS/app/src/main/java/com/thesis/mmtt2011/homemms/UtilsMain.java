@@ -169,59 +169,39 @@ public class UtilsMain {
         }
     }
 
-    public void startRecordingA(String mFileNameAudio) {
-        mRecorderAudio = new MediaRecorder();
-        mRecorderAudio.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorderAudio.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorderAudio.setOutputFile(mFileNameAudio);
-        mRecorderAudio.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        try {
-            mRecorderAudio.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mRecorderAudio.start();
-    }
-
-    public void stopRecordingA() {
-        if (mRecorderAudio != null) {
-            mRecorderAudio.release();
-            mRecorderAudio = null;
-        }
-    }
-
-    public void startRecordingAudio(String mFilePathAudio){
+    public static void startRecordingAudio(Activity mActivity, String mFilePathAudio){
         Uri outputFileUriAudio = Uri.fromFile(new File(mFilePathAudio));
         Intent tankAudioIntent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
         tankAudioIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 300);     //Limit 300s
         tankAudioIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUriAudio);
-        if (tankAudioIntent.resolveActivity(activity.getPackageManager())!=null) {
-            activity.startActivityForResult(tankAudioIntent, ContantsHomeMMS.REQUEST_AUDIO_CAPTURE);
+        if (tankAudioIntent.resolveActivity(mActivity.getPackageManager())!=null) {
+            mActivity.startActivityForResult(tankAudioIntent, ContantsHomeMMS.REQUEST_AUDIO_CAPTURE);
         }
     }
 
-    public void startRecordingV(String mFilePathVideo) {
+    public static void startRecordingV(Activity mActivity, String mFilePathVideo) {
         Uri outputFileUriVideo = Uri.fromFile(new File(mFilePathVideo));
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         takeVideoIntent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, 10983040L);       //Limit 10Mb    or
         takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30);          //Limit 30s
         takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUriVideo);
         takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
-        if (takeVideoIntent.resolveActivity(activity.getPackageManager()) != null) {
-            activity.startActivityForResult(takeVideoIntent, ContantsHomeMMS.REQUEST_VIDEO_CAPTURE);
+        if (takeVideoIntent.resolveActivity(mActivity.getPackageManager()) != null) {
+            mActivity.startActivityForResult(takeVideoIntent, ContantsHomeMMS.REQUEST_VIDEO_CAPTURE);
         }
     }
 
-    public void openImageIntent(String mFilePathImage) {
+    public static void openImageIntent(Activity mActivity, String mFilePathImage) {
 //        final String fnameP = "img_" + System.currentTimeMillis() + ".jpg";
 //        final File sdImageMainDirectory = new File(mDir, fnameP);
 //        outputFileUri = Uri.fromFile(sdImageMainDirectory);
         Uri outputFileUri = Uri.fromFile(new File(mFilePathImage));
 
+
         // Camera.
         final List<Intent> cameraIntents = new ArrayList<Intent>();
         final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        final PackageManager packageManager = activity.getPackageManager();
+        final PackageManager packageManager = mActivity.getPackageManager();
         final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
         for (ResolveInfo res : listCam) {
             final String packageName = res.activityInfo.packageName;
@@ -241,7 +221,7 @@ public class UtilsMain {
         final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
         // Add the camera options.
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
-        activity.startActivityForResult(chooserIntent, ContantsHomeMMS.CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+        mActivity.startActivityForResult(chooserIntent, ContantsHomeMMS.CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
 
     }
 

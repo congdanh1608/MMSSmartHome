@@ -3,11 +3,11 @@ package Router;
 public class LoadCommand {
 	
 	public static String loadShellInstallRouter(){
-		return "sudo sh /home/pi/shell/implementRouter.sh";
+		return "sudo sh /home/pi/shell/implement.sh ad-hoc";
 	}
 	
 	public static String loadShellInstallNormal(){
-		return "sudo sh /home/pi/shell/implementNormal.sh";
+		return "sudo sh /home/pi/shell/implement.sh normal";
 	}
 	
 	public static String loadCommandInstallRaspRouter(){

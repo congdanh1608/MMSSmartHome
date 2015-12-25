@@ -66,7 +66,7 @@ public class SocketControl {
                             MainActivity.ShowRegisterActivity();
 //                            showDialogRegister(context);
                             //Send info of client to Server.
-//                        client.SendMessageInfoOfClient();
+//                        client.SendRegisterInfoOfClient();
                             break;
                         case REQUESTLOGIN: //Server request client login.
                             //if login, will show Login form.

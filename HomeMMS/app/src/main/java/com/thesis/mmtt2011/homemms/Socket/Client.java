@@ -159,7 +159,7 @@ public class Client {
     }
 
     //Send message contain info of client.
-    public boolean SendMessageInfoOfClient() {
+    public boolean SendRegisterInfoOfClient() {
         if (socketB.isConnected()) {
             try {
                 printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream(),  "UTF-8")), true);
@@ -171,20 +171,6 @@ public class Client {
         } else return false;
         return false;
     }
-
-    //Send message contain info of client.
-   /* public boolean SendLoginInfoOfClient() {
-        if (socketB.isConnected()) {
-            try {
-                printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socketB.getOutputStream())), true);
-                printWriter.println(socketControl.createLoginInfoClient());
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else return false;
-        return false;
-    }*/
 
     //Send message contain info of client.
     public boolean SendLoginInfoOfClient() {

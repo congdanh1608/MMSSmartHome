@@ -76,6 +76,8 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
 
     private boolean tabSentButton = false;
 
+    private Message draftMessage;
+
     ContactAdapter mAdapter;
     ArrayList<User> contacts = new ArrayList<User>();
     ArrayList<User> selectedContacts = new ArrayList<>();
@@ -178,7 +180,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
         btnPlayVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaPlayer != null && mediaPlayer.isPlaying()) {
+                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
                     btnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
                 }
@@ -247,15 +249,13 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
         fabSendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mMessageContentView.getText().toString().isEmpty()){
+                if (mMessageContentView.getText().toString().isEmpty()) {
                     Snackbar.make(view, "Content is not empty.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                }
-                else if (mMessageTitleView.getText().toString().isEmpty()) {
+                } else if (mMessageTitleView.getText().toString().isEmpty()) {
                     Snackbar.make(view, "Title is not empty.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                }
-                else if (contact_list.getText().toString().isEmpty()) {
+                } else if (contact_list.getText().toString().isEmpty()) {
                     Snackbar.make(view, "Select contact to send message.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 } else {
@@ -271,7 +271,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mediaPlayer != null) {
+        if (mediaPlayer != null) {
             mediaPlayer.stop();
             //mediaPlayer.release();
         }
@@ -310,13 +310,13 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
             if (utilsMain.checkFileIsExits(mFilePathImage)) pushFileAttachToPi(mFileNameImage);
             if (utilsMain.checkFileIsExits(mFilePathVideo)) pushFileAttachToPi(mFileNameVideo);
 
-                //Connect SSH.
+            //Connect SSH.
 //                new ConnectSSHAsyncTask(this, rasp).execute();
-                //Push File by SSH
+            //Push File by SSH
 //                pushFileAttachToPi(mFileNameAudio);
 //                pushFileAttachToPi(mFileNameImage);
 //                pushFileAttachToPi(mFileNameVideo);
-                //close SSH.
+            //close SSH.
 //                new DisConnectSSHAsyncTask(this, rasp).execute();
 
             //Notify server myUser finished note.
@@ -328,7 +328,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                 //update message in Sent Fragment.
                 SentFragment.UpdateNewMessageSent(message.getId());
             }
-        }else{      //Save message with status wait_send
+        } else {      //Save message with status wait_send
             message.setStatus(ContantsHomeMMS.MessageStatus.wait_send.name());
             homeMMSDatabaseHelper.updateMessage(this, message);
             utilsMain.ShowToast("Message will send to Server when online.");
@@ -337,9 +337,8 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
         }
 
 
-
         Snackbar.make(coordinatorlayout, "Send successful", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null);
+                .setAction("Action", null);
         //Finish activity
 //        try {
 //            Thread.sleep(2000);
@@ -349,37 +348,42 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
 //        finish();
     }
 
-    private void saveMessageDraft(){
-        if (!selectedContacts.isEmpty() && !tabSentButton){
-                //info reciever.
-                List<User> receivers = selectedContacts;
+    private void saveMessageDraft() {
+        if (!selectedContacts.isEmpty() && !tabSentButton && (!mMessageTitleView.getText().toString().isEmpty() || mMessageContentView.getText().toString().isEmpty())) {
+            //info reciever.
+            List<User> receivers = selectedContacts;
 
-                //Get Name file mms.
-                if (mFilePathAudio != null) {
-                    String[] separatedA = mFilePathAudio.split("/");
-                    mFileNameAudio = separatedA[separatedA.length - 1];
-                }
-                //Get Name file Photo
-                if (mFilePathImage != null) {
-                    String[] separatedP = mFilePathImage.split("/");
-                    mFileNameImage = separatedP[separatedP.length - 1];
-                }
-                //Get Name file Video
-                if (mFilePathVideo != null) {
-                    String[] separatedV = mFilePathVideo.split("/");
-                    mFileNameVideo = separatedV[separatedV.length - 1];
-                }
+            //Get Name file mms.
+            if (mFilePathAudio != null) {
+                String[] separatedA = mFilePathAudio.split("/");
+                mFileNameAudio = separatedA[separatedA.length - 1];
+            }
+            //Get Name file Photo
+            if (mFilePathImage != null) {
+                String[] separatedP = mFilePathImage.split("/");
+                mFileNameImage = separatedP[separatedP.length - 1];
+            }
+            //Get Name file Video
+            if (mFilePathVideo != null) {
+                String[] separatedV = mFilePathVideo.split("/");
+                mFileNameVideo = separatedV[separatedV.length - 1];
+            }
 
+            if (draftMessage == null) {
                 Message message = createAMessageDraft(receivers);
                 //Save message to database with status draft.
                 homeMMSDatabaseHelper.createMessage(getApplicationContext(), message);
+            }else{
+                Message message = createAMessageOldDraft(receivers, draftMessage.getId());
+                homeMMSDatabaseHelper.updateMessage(getApplicationContext(), message);
+            }
         }
     }
 
     private void loadMessageDraft(Intent intent) {
         if (intent.hasExtra(TAG)) {
             String messageId = intent.getStringExtra(TAG);
-            Message draftMessage = new Message();
+            draftMessage = new Message();
             draftMessage = HomeMMSDatabaseHelper.getMessage(this, messageId);
             mMessageTitleView.setText(draftMessage.getTitle());
             mMessageContentView.setText(draftMessage.getContentText());
@@ -402,10 +406,27 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
         }
         return contactList.toString();
     }
+
     //Create a message.
     private Message createAMessageDraft(List<User> receivers) {
         Message message = new Message();
         message.setMId(utilsMain.createMessageID(myUser.getId()));
+        message.setSender(myUser);
+        message.setReceiver(receivers);
+        message.setTitle(mMessageTitleView.getText().toString());
+        message.setContentText(mMessageContentView.getText().toString());
+        message.setContentAudio(mFileNameAudio);
+        message.setContentImage(mFileNameImage);
+        message.setContentVideo(mFileNameVideo);
+        message.setTimestamp(utilsMain.getCurrentTime());
+        message.setStatus(ContantsHomeMMS.MessageStatus.draft.name());
+        return message;
+    }
+
+    //Create a message.
+    private Message createAMessageOldDraft(List<User> receivers, String mID) {
+        Message message = new Message();
+        message.setMId(mID);
         message.setSender(myUser);
         message.setReceiver(receivers);
         message.setTitle(mMessageTitleView.getText().toString());
@@ -449,7 +470,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                         }
                         Bitmap bitmap = BitmapFactory.decodeFile(mFilePathImage, options);
                         //rotete image.
-                        if (mFilePathImage!=null) {
+                        if (mFilePathImage != null) {
                             try {
                                 ExifInterface ei = new ExifInterface(mFilePathImage);
                                 int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
@@ -463,6 +484,11 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                                     case ExifInterface.ORIENTATION_ROTATE_180:
                                         matrix = new Matrix();
                                         matrix.postRotate(180);
+                                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                        break;
+                                    case ExifInterface.ORIENTATION_ROTATE_270:
+                                        matrix = new Matrix();
+                                        matrix.postRotate(270);
                                         bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                                         break;
                                     default:
@@ -557,21 +583,21 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
             mFilePathImage = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
                     + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Photo);
             PreferencesHelper.writeToPreferencesString(getBaseContext(), mFilePathImage, ContantsHomeMMS.ImagePref);
-            utilsMain.openImageIntent(mFilePathImage);
+            utilsMain.openImageIntent(ComposeMessageActivity.this, mFilePathImage);
             return true;
         }
 
         if (id == R.id.action_video) {
             mFilePathVideo = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
                     + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Video);
-            utilsMain.startRecordingV(mFilePathVideo);
+            utilsMain.startRecordingV(ComposeMessageActivity.this, mFilePathVideo);
             return true;
         }
 
         if (id == R.id.action_record) {
             mFilePathAudio = ContantsHomeMMS.AppFolder + "/" + MainActivity.myUser.getId() + "/"
                     + utilsMain.createNameForFile(ContantsHomeMMS.TypeFile.Audio);
-            utilsMain.startRecordingAudio(mFilePathAudio);
+            utilsMain.startRecordingAudio(ComposeMessageActivity.this, mFilePathAudio);
             return true;
         }
 

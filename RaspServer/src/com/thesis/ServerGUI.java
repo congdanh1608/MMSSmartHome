@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,6 +53,7 @@ public class ServerGUI {
 	private JButton btnStartListening, btn2;
 	private JPanel panelLeft, panelRight;
 	private int col = 4, rows = 4;
+	private double ratio;
 	private List<JPanel> jPanels;
 	private JLabel lblSender, lblTitle;
 	private JTextArea tAMessage;
@@ -98,7 +101,7 @@ public class ServerGUI {
 		//start socket listen broadcast
 		startListenBroadcase();
 		//start dectect network problem.
-//		startDectectNetworkProblem();
+		startDectectNetworkProblem();
 	}
 
 	/**
@@ -112,7 +115,7 @@ public class ServerGUI {
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-		double ratio = screenSize.getWidth() / 1366;
+		ratio = screenSize.getWidth() / 1366;
 		int widthLeft = (int) (screenSize.width * 0.82);
 		int xright = (int) (screenSize.getWidth() * 0.82);
 		int widthRight = screenSize.width - widthLeft;
@@ -147,7 +150,7 @@ public class ServerGUI {
 
 		btnStartListening = new JButton("Ad-hoc");
 		btnStartListening.setBounds(52, (int) (screenSize.height * 0.9), 144, 25);
-		btnStartListening.setVisible(true);
+		btnStartListening.setVisible(false);
 		btnStartListening.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Run Server listen.
@@ -160,7 +163,7 @@ public class ServerGUI {
 		
 		btn2 = new JButton("Normal");
 		btn2.setBounds(52, (int) (screenSize.height * 0.8), 144, 25);
-		btn2.setVisible(true);
+		btn2.setVisible(false);
 		btn2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				UtilsRouter.executeCommand(LoadCommand.loadShellInstallNormal());
@@ -170,7 +173,9 @@ public class ServerGUI {
 		panelRight.setLayout(null);
 
 		lblServerStatus = new JLabel("Server has stopped");
-		lblServerStatus.setBounds(53, 12, 143, 15);
+		lblServerStatus.setHorizontalAlignment(SwingConstants.CENTER);
+		lblServerStatus.setFont(new Font("Dialog", Font.PLAIN, (int) (14 * ratio)));
+		lblServerStatus.setBounds(53, 12, 143, 30);
 		panelRight.add(lblServerStatus);
 		panelRight.add(btnStartListening);
 		panelRight.add(btn2);
@@ -178,13 +183,13 @@ public class ServerGUI {
 		lblCurrenttime = new JLabel("00:00");
 		lblCurrenttime.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCurrenttime.setFont(new Font("Dialog", Font.BOLD, (int) (60 * ratio)));
-		lblCurrenttime.setBounds(22, 39, 212, 73);
+		lblCurrenttime.setBounds(22, 55, 212, 73);
 		panelRight.add(lblCurrenttime);
 
 		lblCurrentday = new JLabel("000 00/00/0000");
 		lblCurrentday.setFont(new Font("Dialog", Font.BOLD, (int) (20 * ratio)));
 		lblCurrentday.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCurrentday.setBounds(22, 112, 212, 40);
+		lblCurrentday.setBounds(22, 128, 212, 40);
 		panelRight.add(lblCurrentday);
 	}
 
@@ -223,18 +228,22 @@ public class ServerGUI {
 
 				// Set label...
 				lblSender = new JLabel("Sender");
+				lblSender.setFont(new Font("Dialog", Font.BOLD, (int) (14 * ratio)));
 				note.add(lblSender);
 
 				lblTitle = new JLabel("Title");
+				lblTitle.setFont(new Font("Dialog", Font.BOLD, (int) (14 * ratio)));
 				note.add(lblTitle);
 
 				tAMessage = new JTextArea();
 				tAMessage.setEditable(false);
 				tAMessage.setLineWrap(true);
 				tAMessage.setWrapStyleWord(true);;
+				tAMessage.setFont(new Font("Dialog", Font.PLAIN, (int) (14 * ratio)));
 				note.add(tAMessage);
 
 				lblTime = new JLabel("00:00 00 00/00/0000");
+				lblTime.setFont(new Font("Dialog", Font.BOLD, (int) (14 * ratio)));
 				note.add(lblTime);
 
 				// Add note to List JPanels
@@ -335,7 +344,7 @@ public class ServerGUI {
 		// start socket listen command
 		server = new Server(port, this);
 		new ServerRunning().start();
-		lblServerStatus.setText("Server is listening");
+		lblServerStatus.setText("<html>Server is listening <br/>" + getIPOfServer() + ":" + port +"</html>");
 	}
 
 	// Reset status for all user - Set status for all user.
@@ -372,5 +381,15 @@ public class ServerGUI {
 	private void startDectectNetworkProblem(){
 		Thread thread = new DectectNetworkProblem();
 		thread.start();
+	}
+	
+	private String getIPOfServer(){
+		try {
+			return Inet4Address.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

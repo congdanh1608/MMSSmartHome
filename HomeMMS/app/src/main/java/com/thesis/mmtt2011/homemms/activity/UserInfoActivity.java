@@ -122,7 +122,7 @@ public class UserInfoActivity extends MainActivity {
             @Override
             public void onClick(View v) {
                 //select image to change avatar
-                utilsMain.openImageIntent(avatarCache);
+                utilsMain.openImageIntent(UserInfoActivity.this, avatarCache);
             }
         });
         formChangePass = findViewById(R.id.change_password_form);
@@ -187,6 +187,11 @@ public class UserInfoActivity extends MainActivity {
                                     case ExifInterface.ORIENTATION_ROTATE_180:
                                         matrix = new Matrix();
                                         matrix.postRotate(180);
+                                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                                        break;
+                                    case ExifInterface.ORIENTATION_ROTATE_270:
+                                        matrix = new Matrix();
+                                        matrix.postRotate(270);
                                         bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                                         break;
                                     default:
