@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.media.Image;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,6 +48,8 @@ import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 import com.thesis.mmtt2011.homemms.persistence.UtilsPersis;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -65,6 +68,18 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
     private Button add_contact;
     private TextView contact_list;
     private CoordinatorLayout coordinatorlayout;
+    static View attatchFileView;
+    //static VideoView mVideoView;
+    static View imageView;
+    static View playAudioView;
+    static View videoView;
+    ImageButton btnPlay;
+    SeekBar audioProgressBar;
+    TextView audioTotalDuration;
+    TextView videoName;
+    ImageButton imageCancel, audioCancel, videoCancel;
+    //Button btnPlayVideo;
+    //static View videoView;
 
     public static String receiverID;      //ID of receiver.
 
@@ -87,19 +102,10 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
     static RecyclerView.Adapter mImageAdapter;
     static RecyclerView.LayoutManager mLayoutManager;
 
-    static View attatchFileView;
-    static VideoView mVideoView;
-    static View playAudioView;
-    ImageButton btnPlay;
-    SeekBar audioProgressBar;
-    TextView audioTotalDuration;
-    Button btnPlayVideo;
-    static View videoView;
-
     MediaPlayer mediaPlayer;
     private Handler mHandler = new Handler();
     //dumpmy content audioName = "/storage/extSdCard/Music/Ryuukou-HoaTau-3089028.mp3"
-    static String audioName = "/storage/extSdCard/Music/Ryuukou-HoaTau-3089028.mp3";
+    static String audioName = "";
 
     //get draftmessges id to load message draft
     public static Intent getStartIntent(Context context, Message message) {
@@ -136,17 +142,21 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
 
         attatchFileView = findViewById(R.id.attach_content_view);
         // get images devices
+        imageView = findViewById(R.id.image_view);
         mRecyclerView = (RecyclerView) findViewById(R.id.image_recycler_view);
+        imageCancel = (ImageButton) findViewById(R.id.cancel_image);
+        imageCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetImageAttach();
+            }
+        });
         //dummy content
         //attachImages.add(0, "/storage/emulated/0/Snapseed/snapseed-14.jpeg");
         //attachImages.add(0, "/storage/emulated/0/HOMEMMS/34:4d:f7:55:50:18/20154523174531.jpg");
 
-        mImageAdapter = new ImageAdapter(this, attachImages);
-        mRecyclerView.setAdapter(mImageAdapter);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView.setLayoutManager(mLayoutManager);
         //load list image attach path were downloaded on android
+        videoName = (TextView) findViewById(R.id.video_name);
 
         audioProgressBar = (SeekBar) findViewById(R.id.seekbar);
         audioProgressBar.setOnSeekBarChangeListener(this);
@@ -174,8 +184,15 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
             }
         });
         playAudioView = findViewById(R.id.play_audio_view);
+        audioCancel = (ImageButton) findViewById(R.id.cancel_audio);
+        audioCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetAudioAttach();
+            }
+        });
         //load video
-        videoView = findViewById(R.id.video_view);
+        /*videoView = findViewById(R.id.video_view);
         btnPlayVideo = (Button) findViewById(R.id.bt_play_video);
         btnPlayVideo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,13 +206,28 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                 mVideoView.start();
                 mVideoView.setVisibility(View.VISIBLE);
             }
+        });*/
+        videoView = findViewById(R.id.video_view);
+        videoCancel = (ImageButton) findViewById(R.id.cancel_video);
+        videoCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetVideoAttach();
+            }
         });
-        mVideoView = (VideoView) findViewById(R.id.video_content);
+        hideAllAttachView();
+        mImageAdapter = new ImageAdapter(this, attachImages);
+        mRecyclerView.setAdapter(mImageAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
-        FloatingActionButton fabSendMsg = (FloatingActionButton) findViewById(R.id.fabSendMsg);
-
+        attachImages.clear();
+        checkPathFileAttach();
         Intent intent = getIntent();
         loadMessageDraft(intent);
+
+        FloatingActionButton fabSendMsg = (FloatingActionButton) findViewById(R.id.fabSendMsg);
 
         initContacts();
         mAdapter = new ContactAdapter(ComposeMessageActivity.this, contacts, selectedContacts);
@@ -236,8 +268,10 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                         if (checkedTextView.isChecked()) {
                             selectedContacts.add(0, contacts.get(position));
                         } else {
-                            if (selectedContacts.contains(contacts.get(position))) {
-                                selectedContacts.remove(contacts.get(position));
+                            for(User selectedContact : selectedContacts) {
+                                if (selectedContact.getId().equals(contacts.get(position).getId())) {
+                                    selectedContacts.remove(selectedContact);
+                                }
                             }
                         }
                     }
@@ -267,16 +301,21 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
             }
         });
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            //mediaPlayer.release();
+    //check file attach when click in main and draft message
+    private void checkPathFileAttach() {
+        if(UtilsMain.checkFileIsExits(mFilePathImage)) {
+            attachImages.add(0, mFilePathImage);
+            mImageAdapter.notifyDataSetChanged();
+            imageView.setVisibility(View.VISIBLE);
         }
-        //check and save message draft.
-        saveMessageDraft();
+        if(UtilsMain.checkFileIsExits(mFilePathAudio)) {
+            audioName = mFilePathAudio;
+            playAudioView.setVisibility(View.VISIBLE);
+        }
+        if(UtilsMain.checkFileIsExits(mFilePathVideo)) {
+            videoName.setText(mFilePathVideo);
+            videoView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void onSendMessage() {
@@ -389,22 +428,23 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
             mMessageContentView.setText(draftMessage.getContentText());
             selectedContacts.addAll(draftMessage.getReceiver());
             contact_list.setText(showListSelectedContact());
-            //
-
             //get attach files
-        }
-    }
-
-    private String showListSelectedContact() {
-        StringBuilder contactList = new StringBuilder();
-        for (int i = 0; i < selectedContacts.size(); i++) {
-            User user = selectedContacts.get(i);
-            contactList.append(user.getNameDisplay());
-            if (i < selectedContacts.size() - 1) {
-                contactList.append(", ");
+            String PATH = ContantsHomeMMS.AppFolder + "/" + draftMessage.getSender().getId() + "/";
+            attachImages.clear();
+            if(!draftMessage.getContentImage().equals("null")){
+                attachImages.add(0, PATH + draftMessage.getContentImage());
+                mImageAdapter.notifyDataSetChanged();
+                imageView.setVisibility(View.VISIBLE);
+            }
+            if(!draftMessage.getContentVideo().equals("null")) {
+                videoName.setText(PATH + draftMessage.getContentVideo());
+                videoView.setVisibility(View.VISIBLE);
+            }
+            if(!draftMessage.getContentAudio().equals("null")) {
+                audioName = PATH + draftMessage.getContentAudio();
+                playAudioView.setVisibility(View.VISIBLE);
             }
         }
-        return contactList.toString();
     }
 
     //Create a message.
@@ -439,6 +479,40 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
         return message;
     }
 
+    private String showListSelectedContact() {
+        StringBuilder contactList = new StringBuilder();
+        for (int i = 0; i < selectedContacts.size(); i++) {
+            User user = selectedContacts.get(i);
+            contactList.append(user.getNameDisplay());
+            if (i < selectedContacts.size() - 1) {
+                contactList.append(", ");
+            }
+        }
+        return contactList.toString();
+    }
+
+    private void resetImageAttach() {
+        imageView.setVisibility(View.GONE);
+        attachImages.clear();
+        mFilePathImage = "null";
+    }
+
+    private void resetAudioAttach() {
+        playAudioView.setVisibility(View.GONE);
+        audioName = "";
+        mFilePathAudio = "null";
+    }
+
+    private void resetVideoAttach() {
+        videoView.setVisibility(View.GONE);
+        mFilePathVideo = "null";
+    }
+
+    private void hideAllAttachView() {
+        imageView.setVisibility(View.GONE);
+        playAudioView.setVisibility(View.GONE);
+        videoView.setVisibility(View.GONE);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -468,7 +542,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                         if (mFilePathImage == null) {
                             mFilePathImage = PreferencesHelper.getIsPreferenceString(this, ContantsHomeMMS.ImagePref);
                         }
-                        Bitmap bitmap = BitmapFactory.decodeFile(mFilePathImage, options);
+                        /*Bitmap bitmap = BitmapFactory.decodeFile(mFilePathImage, options);
                         //rotete image.
                         if (mFilePathImage != null) {
                             try {
@@ -497,7 +571,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        }
+                        }*/
                         //set image to viewimage
 //                        imgPhoto.setImageBitmap(bitmap);
                     } else {
@@ -518,6 +592,13 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                             e.printStackTrace();
                         }
                     }
+                    //show image mFilePathImage
+                    if(UtilsMain.checkFileIsExits(mFilePathImage)) {
+                        attachImages.clear();
+                        attachImages.add(0, mFilePathImage);
+                        mImageAdapter.notifyDataSetChanged();
+                        imageView.setVisibility(View.VISIBLE);
+                    }
 
                 } else if (resultCode == RESULT_CANCELED) {
                     // myUser cancelled Image capture
@@ -537,6 +618,9 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
 //                    vViewV.setVideoURI(videoUri);
                     //set video to viewimage
 //                    vViewV.setVideoURI(Uri.fromFile(new File(mFileNameVideo)));
+                    videoName.setText(mFilePathVideo);
+                    videoView.setVisibility(View.VISIBLE);
+
                 } else if (resultCode == RESULT_CANCELED) {
                     // myUser cancelled Image capture
                     Toast.makeText(getApplicationContext(),
@@ -554,6 +638,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                 if (resultCode == RESULT_OK) {
                     String tempPath = utilsMain.getRealPathFromURI(this, data.getData());
                     utilsMain.copyFile(new File(tempPath), new File(mFilePathAudio));
+                    //check exists mFilePathAudio
                 } else if (resultCode == RESULT_CANCELED) {
                     // myUser cancelled Image capture
                     Toast.makeText(getApplicationContext(),
@@ -565,8 +650,21 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                             "Sorry! Failed.", Toast.LENGTH_SHORT)
                             .show();
                 }
+                if(UtilsMain.checkFileIsExits(mFilePathAudio)) {
+                    audioName = mFilePathAudio;
+                    playAudioView.setVisibility(View.VISIBLE);
+                }
                 break;
         }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //if (ContantsHomeMMS.ROLEOFMYUSER != null && ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
+            menu.clear();
+            getMenuInflater().inflate(R.menu.menu_compose_message, menu);
+        //}
+        return true;
     }
 
     @Override
@@ -604,6 +702,19 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            //mediaPlayer.release();
+        }
+        //check and save message draft.
+        saveMessageDraft();
+    }
+
+
+    //Audio
     @Override
     public void onCompletion(MediaPlayer mp) {
         btnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);

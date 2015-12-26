@@ -65,9 +65,14 @@ public class ContactAdapter extends ArrayAdapter{
             imStatus.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
         }
         tvUserName.setText(contact.getNameDisplay());
-        if(selectedContacts.contains(contact)) {
-            tvUserName.setChecked(true);
+        for(User selectedContact : selectedContacts) {
+            if(selectedContact.getId().equals(contact.getId())) {
+                tvUserName.setChecked(true);
+            }
         }
+        /*if(selectedContacts.contains(contact)) {
+            tvUserName.setChecked(true);
+        }*/
         return convertView;
     }
 

@@ -34,6 +34,7 @@ public class DraftFragment extends Fragment implements MessageAdapter.MessageVie
 
     static List<Message> draftMessages;
     private static MessageAdapter mAdapter;
+    RecyclerView mRecyclerView;
 
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
@@ -56,7 +57,7 @@ public class DraftFragment extends Fragment implements MessageAdapter.MessageVie
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_draft, container, false);
-        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.draft_recycler_view);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.draft_recycler_view);
 
         initListMessage();
         mAdapter = new MessageAdapter(getActivity(), draftMessages, this);
@@ -75,10 +76,17 @@ public class DraftFragment extends Fragment implements MessageAdapter.MessageVie
         return rootView;
     }
 
-    @Override
+    /*@Override
     public void onResume() {
         super.onResume();
         mAdapter.notifyDataSetChanged();
+    }*/
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 100) {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -87,7 +95,7 @@ public class DraftFragment extends Fragment implements MessageAdapter.MessageVie
             toggleSelection(position);
         } else {
             Intent intent = ComposeMessageActivity.getStartIntent(getActivity(), draftMessages.get(position));
-            startActivity(intent);
+            startActivityForResult(intent, 100);
         }
     }
 
@@ -95,7 +103,7 @@ public class DraftFragment extends Fragment implements MessageAdapter.MessageVie
     public boolean onItemLongClicked(int position) {
         if (actionMode == null) {
             actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(actionModeCallback);
-            Toast.makeText(getActivity(), "Long click to this message" + position, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), "Long click to this message" + position, Toast.LENGTH_SHORT).show();
         }
         toggleSelection(position);
         return true;

@@ -30,10 +30,9 @@ import java.util.List;
  */
 public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageViewHolder> {
 
-    //public final static String EXTRA_MESSAGE_ID = "com.thesis.mmtt2011.EXTRA_MESSAGE_ID";
+    private static final String TAG = MessageAdapter.class.getSimpleName();
     private static final int TYPE_UNREAD = 0;
     private static final int TYPE_READ = 1;
-    //private static final int ITEM_COUNT = 50;
     private List<Message> messages = new ArrayList<>();
 
     private MessageViewHolder.ClickListener clickListener;
@@ -88,7 +87,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
         }
     }
 
-    private void removeRange(Integer positionStart, int itemCount) {
+    private void removeRange(int positionStart, int itemCount) {
         for (int i = 0; i < itemCount; ++i) {
             messages.remove(positionStart);
         }
@@ -132,6 +131,8 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
     public static class MessageViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnLongClickListener {
 
+        private static final String TAG = MessageViewHolder.class.getSimpleName();
+
         private final TextView tvUsername;
         private final TextView tvContent;
         private final TextView tvTitle;
@@ -157,7 +158,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
             ivAudio =(ImageView)messageView.findViewById(R.id.audio_attach);
             ivVideo =(ImageView)messageView.findViewById(R.id.video_attach);
 
-            listener = _listener;
+            this.listener = _listener;
             //Select message when click on message card view
             messageView.setOnClickListener(this);
             messageView.setOnLongClickListener(this);
@@ -190,14 +191,6 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
             if (listener != null) {
                 listener.onItemClicked(getPosition());
             }
-
-            /*if (mMessage != null) {
-                //send mMessage to MessageContentActivity????
-                //through message id
-                *//*Intent intent = new Intent(v.getContext(), MessageContentActivity.class);
-                intent.putExtra(EXTRA_MESSAGE_ID, mMessage.getId());*//*
-                //v.getContext().startActivity(MessageContentActivity.getStartIntent(v.getContext(),mMessage));
-            }*/
         }
 
         @Override
@@ -205,12 +198,12 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
             if (listener != null) {
                 return listener.onItemLongClicked(getPosition());
             }
+
             return false;
         }
 
         public interface ClickListener {
             public void onItemClicked(int position);
-
             public boolean onItemLongClicked(int position);
         }
     }

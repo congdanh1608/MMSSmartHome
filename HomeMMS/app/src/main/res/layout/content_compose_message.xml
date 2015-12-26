@@ -100,14 +100,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="visible"
                 android:layout_marginTop="@dimen/activity_vertical_margin">
                 <!--Image-->
+                <LinearLayout
+                    android:id="@+id/image_view"
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/image_recycler_view"
                     android:scrollbars="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="128dp"/>
+                    android:layout_width="0dp"
+                    android:layout_height="128dp"
+                    android:layout_weight="1"/>
+                <ImageButton
+                    android:id="@+id/cancel_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/abc_ic_clear_mtrl_alpha"
+                    android:layout_gravity="center|right"
+                    android:tint="@color/colorAccent"
+                    android:background="@android:color/transparent"/>
+                </LinearLayout>
                 <!--Audio -->
                 <LinearLayout
                     android:id="@+id/play_audio_view"
@@ -115,14 +130,15 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="16dp"
-                    android:visibility="visible">
+                    android:visibility="gone">
                     <ImageButton
                         android:id="@+id/play_button"
                         android:src="@drawable/ic_play_circle_outline_white_36dp"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         android:tint="@color/colorAccent"
-                        android:background="@android:color/transparent" />
+                        android:background="@android:color/transparent"
+                        android:layout_gravity="center"/>
                     <SeekBar
                         android:id="@+id/seekbar"
                         android:layout_width="0dp"
@@ -134,8 +150,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="end"
-                        android:layout_gravity="center_vertical"
+                        android:layout_gravity="center"
                         android:text="@string/time_default"/>
+                    <ImageButton
+                        android:id="@+id/cancel_audio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/abc_ic_clear_mtrl_alpha"
+                        android:layout_gravity="center|right"
+                        android:tint="@color/colorAccent"
+                        android:background="@android:color/transparent"/>
                 </LinearLayout>
                 <!--Video-->
                 <LinearLayout
@@ -143,22 +167,44 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:orientation="vertical"
-                    android:visibility="visible">
-                    <Button
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black"
+                        android:layout_gravity="center"
+                        android:text="@string/video"/>
+                    <TextView
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:id="@+id/video_name"
+                        android:layout_gravity="center"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                    <ImageButton
+                        android:id="@+id/cancel_video"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/abc_ic_clear_mtrl_alpha"
+                        android:layout_gravity="center|right"
+                        android:tint="@color/colorAccent"
+                        android:background="@android:color/transparent"/>
+                    <!--<Button
                         android:id="@+id/bt_play_video"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Play Video"
                         android:background="@android:color/transparent"
                         android:textColor="@color/colorAccent"
-                        style="?android:attr/borderlessButtonStyle"/>
-                    <VideoView
+                        style="?android:attr/borderlessButtonStyle"/>-->
+                    <!--<VideoView
                         android:id="@+id/video_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
-                        android:visibility="visible"/>
+                        android:visibility="visible"/>-->
                 </LinearLayout>
 
             </LinearLayout>
