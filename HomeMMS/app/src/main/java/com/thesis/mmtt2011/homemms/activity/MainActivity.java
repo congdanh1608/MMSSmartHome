@@ -262,14 +262,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        //When?
-        if (!PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL)) {
-            // server is ad-hoc.
-        }
         //check role user to show menu appropriate
         if (ContantsHomeMMS.ROLEOFMYUSER != null && ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
             menu.clear();
             getMenuInflater().inflate(R.menu.menu_admin, menu);
+            //When?
+            if (!PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL)) {
+                // server is ad-hoc.
+                menu.findItem(R.id.action_switch_ap).setTitle("Switch AP");
+            }
+            else menu.findItem(R.id.action_switch_ap).setTitle("Switch Ad-hoc");
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -426,9 +428,15 @@ public class MainActivity extends AppCompatActivity {
             //when this option menu is enabled
             //quit adhoc of server and use wifi access point
             //Change state client to normal
-            PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
+            boolean state = PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL);
+            if (state) {
+                PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
+            }else {
+                PreferencesHelper.writeToPreferencesBoolean(mActivity, true, ContantsHomeMMS.STATE_NORMAL);
+                client.SendRequestServerToNormalState();
+            }
             //Request Server to normal
-            client.SendRequestServerToNormalState();
+
             return true;
         }
         return super.onOptionsItemSelected(item);

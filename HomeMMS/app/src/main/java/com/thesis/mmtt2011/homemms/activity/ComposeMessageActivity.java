@@ -375,6 +375,10 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
             SentFragment.UpdateNewMessageSent(message.getId());
         }
 
+        //Delete old message draft if has after send success
+        if (draftMessage !=null){
+            homeMMSDatabaseHelper.deleteMessage(this, draftMessage.getId());
+        }
 
         Snackbar.make(coordinatorlayout, "Send successful", Snackbar.LENGTH_LONG)
                 .setAction("Action", null);
