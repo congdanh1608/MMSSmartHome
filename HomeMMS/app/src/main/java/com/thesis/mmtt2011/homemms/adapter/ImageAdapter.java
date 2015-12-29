@@ -66,7 +66,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
             this.imgPath = imagePath;
             File imgFile = new File(imagePath);
             if(imgFile.exists()) {
-                Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                final BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 8;
+
+                Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath(),options);
                 imageView.setImageBitmap(bmp);
             }
         }

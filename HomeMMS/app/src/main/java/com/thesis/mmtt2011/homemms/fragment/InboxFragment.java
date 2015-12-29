@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
 import com.thesis.mmtt2011.homemms.adapter.MessageAdapter;
@@ -24,6 +26,9 @@ import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 import com.thesis.mmtt2011.homemms.persistence.HomeMMSDatabaseHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -81,8 +86,24 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
 
     public static void UpdateNewMessageReceive(String mID) {
         Message message = HomeMMSDatabaseHelper.getMessage(mActivity, mID);
-        messages.add(0, message);
+        messages.add(message);
         mAdapter.notifyDataSetChanged();
+    }
+
+    public static void sortMessage(final List<Message> messages){
+        Collections.sort(messages, new Comparator<Message>() {
+            public int compare(Message m1, Message m2) {
+                Date d1 = UtilsMain.convertStringToDate(m1.getTimestamp());
+                Date d2 = UtilsMain.convertStringToDate(m2.getTimestamp());
+                if (d1 == null || d2 == null)
+                    return 0;
+                //reverse
+                int reverse = d1.compareTo(d2);
+                if (reverse == -1) return 1;
+                if (reverse == 1) return  -1;
+                return 0;
+            }
+        });
     }
 
     @Override

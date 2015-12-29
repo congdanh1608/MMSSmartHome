@@ -110,7 +110,7 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             mMessage = HomeMMSDatabaseHelper.getMessage(this, messageId);
             mTitleView.setText(mMessage.getTitle());
             mContentView.setText(mMessage.getContentText());
-            mTimestamp.setText(mMessage.getTimestamp());
+            mTimestamp.setText(UtilsMain.stringToDateCondition(mMessage.getTimestamp()));
             //Set Avatar
             String avatar = ContantsHomeMMS.AppFolder + "/" + mMessage.getSender().getId() + "/" + mMessage.getSender().getAvatar();
             if (UtilsMain.checkFileIsExits(avatar)) {
