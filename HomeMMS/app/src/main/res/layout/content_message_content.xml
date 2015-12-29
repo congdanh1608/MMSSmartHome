@@ -112,15 +112,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone"
                 android:layout_marginTop="@dimen/activity_vertical_margin">
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/image_recycler_view"
-                    android:scrollbars="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="128dp"/>
-
+                <!--Image-->
+                <LinearLayout
+                    android:id="@+id/image_view"
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/image_recycler_view"
+                        android:scrollbars="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="128dp"/>
+                </LinearLayout>
+                <!--Audio -->
                 <LinearLayout
                     android:id="@+id/play_audio_view"
                     android:layout_width="match_parent"
@@ -134,7 +140,8 @@
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         android:tint="@color/colorAccent"
-                        android:background="@android:color/transparent" />
+                        android:background="@android:color/transparent"
+                        android:layout_gravity="center"/>
                     <SeekBar
                         android:id="@+id/seekbar"
                         android:layout_width="0dp"
@@ -146,14 +153,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="end"
-                        android:layout_gravity="center_vertical"
+                        android:layout_gravity="center"
                         android:text="@string/time_default"/>
                 </LinearLayout>
+                <!--Video-->
                 <LinearLayout
                     android:id="@+id/video_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     android:orientation="vertical"
                     android:visibility="gone">
                     <Button
@@ -171,6 +179,7 @@
                         android:layout_gravity="bottom"
                         android:visibility="gone"/>
                 </LinearLayout>
+
             </LinearLayout>
             
         </LinearLayout>

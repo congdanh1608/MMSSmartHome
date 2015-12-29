@@ -61,7 +61,8 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
     static RecyclerView.Adapter mImageAdapter;
     static RecyclerView.LayoutManager mLayoutManager;
 
-    static View attatchFileView;
+    //static View attatchFileView;
+    static View imageView;
     private TextView mTitleView;
     private TextView mContentView;
     private TextView mTimestamp;
@@ -107,7 +108,8 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             getSupportLoaderManager().initLoader(0, null, this);
         }
 
-        attatchFileView = findViewById(R.id.attach_content_view);
+        //attatchFileView = findViewById(R.id.attach_content_view);
+        imageView = findViewById(R.id.image_view);
         // get images devices
         mRecyclerView = (RecyclerView) findViewById(R.id.image_recycler_view);
         //dummy content
@@ -369,7 +371,6 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             long totalDuration = mediaPlayer.getDuration();
             long currentDuration = mediaPlayer.getCurrentPosition();
             int progress = (int) UtilsPersis.getProgressPercentage(currentDuration, totalDuration);
-
             // Displaying Total Duration time
             audioTotalDuration.setText("" + UtilsPersis.milliSecondsToTimer(totalDuration));
 
@@ -382,19 +383,29 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
     public static void loadAttachFiles() {
         if(!mMessage.getContentImage().equals("null")) {
             attachImages.clear();
-            attachImages.add(0, PATH_FOLDER_USER + mMessage.getSender().getId() + "/" + mMessage.getContentImage());
+            attachImages.add(0, PATH_FOLDER_USER + "/" + mMessage.getSender().getId() + "/" + mMessage.getContentImage());
             mImageAdapter.notifyDataSetChanged();
+            imageView.setVisibility(View.VISIBLE);
         }
         if(!mMessage.getContentAudio().equals("null")) {
-            audioName = PATH_FOLDER_USER + mMessage.getContentAudio();
+            audioName = PATH_FOLDER_USER + "/" + mMessage.getSender().getId() + "/" + mMessage.getContentAudio();
             playAudioView.setVisibility(View.VISIBLE);
         }
 
         if(!mMessage.getContentVideo().equals("null")) {
-            mVideoView.setVideoPath(PATH_FOLDER_USER + mMessage.getContentVideo());
+            mVideoView.setVideoPath(PATH_FOLDER_USER + "/" + mMessage.getSender().getId() + "/" + mMessage.getContentVideo());
             videoView.setVisibility(View.VISIBLE);
         }
-        attatchFileView.setVisibility(View.VISIBLE);
+        //attatchFileView.setVisibility(View.VISIBLE);
+    }
+
+    private void resetAllAttachView() {
+        imageView.setVisibility(View.GONE);
+        playAudioView.setVisibility(View.GONE);
+        videoView.setVisibility(View.GONE);
+        attachImages.clear();
+        audioName = "";
+
     }
 
     @Override
@@ -402,5 +413,6 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
         super.onDestroy();
         if(mediaPlayer!=null)
             mediaPlayer.stop();
+        resetAllAttachView();
     }
 }
