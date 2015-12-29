@@ -307,11 +307,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        /*if (id == R.id.action_scan_devices) {
+        if (id == R.id.action_scan_devices) {
             Intent intent = new Intent(this, ScanDevicesActivity.class);
             startActivity(intent);
             return true;
-        }*/
+        }
 
         if (id == R.id.action_user_info) {
             Intent intent = new Intent(this, UserInfoActivity.class);
@@ -812,8 +812,8 @@ public class MainActivity extends AppCompatActivity {
         PreferencesHelper.writeToPreferences(mActivity, false);
     }
 
-    /*@Override
+    @Override
     public void onBackPressed() {
         this.moveTaskToBack(true);
-    }*/
+    }
 }

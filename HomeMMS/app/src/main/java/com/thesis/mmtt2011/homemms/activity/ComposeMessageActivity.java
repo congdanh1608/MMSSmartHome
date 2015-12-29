@@ -717,6 +717,10 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
         saveMessageDraft();
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 
     //Audio
     @Override

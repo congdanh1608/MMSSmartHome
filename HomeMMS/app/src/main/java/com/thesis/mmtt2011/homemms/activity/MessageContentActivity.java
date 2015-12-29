@@ -253,6 +253,10 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 
     public static class ReceiveFile extends AsyncTask<Void, Void, Void> {
         public final static int SOCKET_PORT = 6666;
