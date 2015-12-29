@@ -102,7 +102,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
     @Override
     public MessageAdapter.MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //create a new view
-        final int layout = viewType == TYPE_UNREAD ? R.layout.message_card_view : R.layout.message_card_view_read;
+        int layout = ((viewType == TYPE_UNREAD) ? R.layout.message_card_view : R.layout.message_card_view_read);
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
         MessageViewHolder messageViewHolder = new MessageViewHolder(v, clickListener);
