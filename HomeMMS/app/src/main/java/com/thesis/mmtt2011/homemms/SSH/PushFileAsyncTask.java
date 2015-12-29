@@ -31,7 +31,7 @@ public class PushFileAsyncTask extends AsyncTask<Void, Void, Integer> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        pd.setTitle("Pushing to Pi...");
+        pd.setTitle("Watting...");
         pd.setMessage("Please Wait...");
         pd.setProgressStyle(pd.STYLE_SPINNER);
         pd.show();
@@ -53,7 +53,7 @@ public class PushFileAsyncTask extends AsyncTask<Void, Void, Integer> {
         switch (integer){
             case 1:
 //                MainActivity.client.SendMessageInfoFilePush(fName);
-                Toast.makeText(activity, "Successful Push File", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Successful.", Toast.LENGTH_SHORT).show();
                 break;
             case 0:
                 Toast.makeText(activity, "Error not data byte", Toast.LENGTH_SHORT).show();
