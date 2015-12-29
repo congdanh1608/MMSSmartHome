@@ -1,6 +1,8 @@
 package com.thesis.mmtt2011.homemms.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.media.Image;
@@ -12,6 +14,7 @@ import android.widget.CheckedTextView;
 import android.widget.ImageView;
 
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.model.User;
 import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
@@ -58,8 +61,15 @@ public class ContactAdapter extends ArrayAdapter{
         ImageView imStatus = (ImageView)convertView.findViewById(R.id.iv_status);
 
         tvUserName.setChecked(false);
-        CircleImageView avatar = (CircleImageView)convertView.findViewById(R.id.avatar_circle);
+        CircleImageView avatar_imgView = (CircleImageView)convertView.findViewById(R.id.avatar_circle);
         User contact = contacts.get(position);
+        String avatar = ContantsHomeMMS.AppFolder + "/" + contact.getId() + "/" + contact.getAvatar();
+        if (UtilsMain.checkFileIsExits(avatar)) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 8;
+            Bitmap bitmap = BitmapFactory.decodeFile(ContantsHomeMMS.AppFolder + "/" + contact.getId() + "/" + contact.getAvatar(), options);
+            avatar_imgView.setImageBitmap(bitmap);
+        }else avatar_imgView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_homemms));
         if(contact.getStatus().equals(ContantsHomeMMS.UserStatus.online.name())) {
 //            imStatus.setColorFilter(R.color.colorAccent);
             imStatus.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
@@ -73,6 +83,7 @@ public class ContactAdapter extends ArrayAdapter{
         /*if(selectedContacts.contains(contact)) {
             tvUserName.setChecked(true);
         }*/
+
         return convertView;
     }
 

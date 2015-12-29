@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -44,6 +46,8 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MessageContentActivity extends MainActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
@@ -63,6 +67,8 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
 
     //static View attatchFileView;
     static View imageView;
+    private CircleImageView contact_avatar;
+    private TextView username;
     private TextView mTitleView;
     private TextView mContentView;
     private TextView mTimestamp;
@@ -95,6 +101,8 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
         mTitleView = (TextView) findViewById(R.id.message_title);
         mContentView = (TextView) findViewById(R.id.message_content);
         mTimestamp = (TextView) findViewById(R.id.timestamp);
+        contact_avatar = (CircleImageView) findViewById(R.id.contact_avatar);
+        username = (TextView) findViewById(R.id.username);
         // Get the message from the intent
         Intent intent = getIntent();
         if (intent.hasExtra(TAG)) {
@@ -103,6 +111,16 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             mTitleView.setText(mMessage.getTitle());
             mContentView.setText(mMessage.getContentText());
             mTimestamp.setText(mMessage.getTimestamp());
+            //Set Avatar
+            String avatar = ContantsHomeMMS.AppFolder + "/" + mMessage.getSender().getId() + "/" + mMessage.getSender().getAvatar();
+            if (UtilsMain.checkFileIsExits(avatar)) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 8;
+                Bitmap bitmap = BitmapFactory.decodeFile(ContantsHomeMMS.AppFolder + "/" + mMessage.getSender().getId() + "/" + mMessage.getSender().getAvatar(), options);
+                contact_avatar.setImageBitmap(bitmap);
+            }
+            //SetName
+            username.setText(mMessage.getSender().getNameDisplay());
         } else {
             mUri = intent.getData();
             getSupportLoaderManager().initLoader(0, null, this);
@@ -221,7 +239,7 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
 
     private boolean checkMessageHasAttach(Message message) { //true - down, false - not down
         if (!message.getContentImage().equals("null") || !message.getContentVideo().equals("null") || !message.getContentAudio().equals("null")) {
-            String myPath = ContantsHomeMMS.AppFolder + "/" + myUser.getId() + "/";
+            String myPath = ContantsHomeMMS.AppFolder + "/" + message.getSender().getId() + "/";
             if (!message.getContentAudio().equals("null") && !UtilsMain.checkFileIsExits(myPath + message.getContentAudio())) {
                 return true;
             }

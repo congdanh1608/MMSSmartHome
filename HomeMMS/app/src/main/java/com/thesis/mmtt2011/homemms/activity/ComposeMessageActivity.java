@@ -176,7 +176,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
                         btnPlay.setImageResource(R.drawable.ic_pause_circle_outline_white_36dp);
                     }
                 } else {
-                    //audio
+                    //audioas
                     mediaPlayer = new MediaPlayer();
                     playAudio(audioName);
                     btnPlay.setImageResource(R.drawable.ic_pause_circle_outline_white_36dp);

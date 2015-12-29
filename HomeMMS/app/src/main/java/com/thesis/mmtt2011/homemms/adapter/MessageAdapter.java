@@ -2,6 +2,8 @@ package com.thesis.mmtt2011.homemms.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thesis.mmtt2011.homemms.R;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.activity.MainActivity;
 import com.thesis.mmtt2011.homemms.activity.MessageContentActivity;
 import com.thesis.mmtt2011.homemms.model.Message;
@@ -25,6 +28,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by Xpie on 10/20/2015.
  */
@@ -36,7 +41,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
     private List<Message> messages = new ArrayList<>();
 
     private MessageViewHolder.ClickListener clickListener;
-    private Context context;
+    protected static Context context;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public MessageAdapter(Context context, List<Message> _messages, MessageViewHolder.ClickListener _clickListener) {
@@ -132,7 +137,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
             implements View.OnClickListener, View.OnLongClickListener {
 
         private static final String TAG = MessageViewHolder.class.getSimpleName();
-
+        private CircleImageView avatar_circle;
         private final TextView tvUsername;
         private final TextView tvContent;
         private final TextView tvTitle;
@@ -153,6 +158,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
             tvContent = (TextView) messageView.findViewById(R.id.content);
             tvTimeStamp = (TextView) messageView.findViewById(R.id.timestamp);
             selectedOverlay = messageView.findViewById(R.id.selected_overlay);
+            avatar_circle = (CircleImageView) messageView.findViewById(R.id.avatar_circle);
 
             ivImage =(ImageView)messageView.findViewById(R.id.image_attach);
             ivAudio =(ImageView)messageView.findViewById(R.id.audio_attach);
@@ -162,12 +168,21 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
             //Select message when click on message card view
             messageView.setOnClickListener(this);
             messageView.setOnLongClickListener(this);
+
         }
 
         //bind message properties to interface
         public void bindMessage(Message message) {
             //mMessage = message;
             if(message!=null) {
+                String avatar = ContantsHomeMMS.AppFolder + "/" + message.getSender().getId() + "/" + message.getSender().getAvatar();
+                if (UtilsMain.checkFileIsExits(avatar)) {
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inSampleSize = 8;
+                    Bitmap bitmap = BitmapFactory.decodeFile(ContantsHomeMMS.AppFolder + "/" + message.getSender().getId() + "/" + message.getSender().getAvatar(), options);
+                    avatar_circle.setImageBitmap(bitmap);
+                }else avatar_circle.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_homemms));
+
                 tvUsername.setText(message.getSender().getNameDisplay());
 
                 tvTitle.setText(message.getTitleTrim());
