@@ -43,6 +43,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
     private MessageViewHolder.ClickListener clickListener;
     protected static Context context;
 
+
     // Provide a suitable constructor (depends on the kind of dataset)
     public MessageAdapter(Context context, List<Message> _messages, MessageViewHolder.ClickListener _clickListener) {
         super();
@@ -187,7 +188,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
 
                 tvTitle.setText(message.getTitleTrim());
                 tvContent.setText(message.getContentTextTrim());
-                tvTimeStamp.setText(message.getTimestamp());
+                tvTimeStamp.setText(UtilsMain.stringToDateCondition(message.getTimestamp()));
 
                 if(message.getContentImage()!=null && !message.getContentImage().equals("null")) {
                     ivImage.setVisibility(View.VISIBLE);

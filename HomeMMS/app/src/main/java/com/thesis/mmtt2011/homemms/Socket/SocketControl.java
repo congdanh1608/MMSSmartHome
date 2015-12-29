@@ -132,6 +132,7 @@ public class SocketControl {
 
                         //Update message to Inbox or SentBox
                         //Message reset pw
+
                         if (messageReceive.getSender().getId().equals(myUser.getId()) && messageReceive.getReceiver().contains(myUser.getId())){
                             InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
                         }

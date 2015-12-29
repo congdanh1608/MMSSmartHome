@@ -383,7 +383,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
             message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
             message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
             message.setContentVideo(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_VIDEO)));
-            message.setTimeCondition(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+            message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
             message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
             return message;
         } else {
@@ -407,7 +407,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
                 message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
                 message.setContentVideo(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_VIDEO)));
-                message.setTimeCondition(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
                 message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
 
                 messages.add(message);
@@ -435,7 +435,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
                 message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
                 message.setContentVideo(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_VIDEO)));
-                message.setTimeCondition(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
                 message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
 
                 messages.add(0, message);
@@ -462,7 +462,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
                 message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
                 message.setContentVideo(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_VIDEO)));
-                message.setTimeCondition(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
                 message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
 
                 messages.add(message);
