@@ -173,7 +173,7 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
         btnPlayVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaPlayer != null && mediaPlayer.isPlaying()) {
+                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
                     btnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
                 }
@@ -208,7 +208,7 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             //check need download attach file.
             if (checkMessageHasAttach(mMessage)) {
                 client.SendRequestFileAttach(mMessage);
-            }else {
+            } else {
                 loadAttachFiles();
             }
         } else {
@@ -399,18 +399,18 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
     };
 
     public static void loadAttachFiles() {
-        if(!mMessage.getContentImage().equals("null")) {
+        if (!mMessage.getContentImage().equals("null")) {
             attachImages.clear();
             attachImages.add(0, PATH_FOLDER_USER + "/" + mMessage.getSender().getId() + "/" + mMessage.getContentImage());
             mImageAdapter.notifyDataSetChanged();
             imageView.setVisibility(View.VISIBLE);
         }
-        if(!mMessage.getContentAudio().equals("null")) {
+        if (!mMessage.getContentAudio().equals("null")) {
             audioName = PATH_FOLDER_USER + "/" + mMessage.getSender().getId() + "/" + mMessage.getContentAudio();
             playAudioView.setVisibility(View.VISIBLE);
         }
 
-        if(!mMessage.getContentVideo().equals("null")) {
+        if (!mMessage.getContentVideo().equals("null")) {
             mVideoView.setVideoPath(PATH_FOLDER_USER + "/" + mMessage.getSender().getId() + "/" + mMessage.getContentVideo());
             videoView.setVisibility(View.VISIBLE);
         }
@@ -429,7 +429,7 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mediaPlayer!=null)
+        if (mediaPlayer != null)
             mediaPlayer.stop();
         resetAllAttachView();
     }
