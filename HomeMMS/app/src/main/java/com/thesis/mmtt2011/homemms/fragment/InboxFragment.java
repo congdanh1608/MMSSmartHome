@@ -86,25 +86,9 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
 
     public static void UpdateNewMessageReceive(String mID) {
         Message message = HomeMMSDatabaseHelper.getMessage(mActivity, mID);
-	messages.add(0, message);
+	    messages.add(0, message);
         mAdapter.notifyItemInserted(0);
    }
-
-    public static void sortMessage(final List<Message> messages){
-        Collections.sort(messages, new Comparator<Message>() {
-            public int compare(Message m1, Message m2) {
-                Date d1 = UtilsMain.convertStringToDate(m1.getTimestamp());
-                Date d2 = UtilsMain.convertStringToDate(m2.getTimestamp());
-                if (d1 == null || d2 == null)
-                    return 0;
-                //reverse
-                int reverse = d1.compareTo(d2);
-                if (reverse == -1) return 1;
-                if (reverse == 1) return  -1;
-                return 0;
-            }
-        });
-    }
 
     @Override
     public void onItemClicked(int position) {
