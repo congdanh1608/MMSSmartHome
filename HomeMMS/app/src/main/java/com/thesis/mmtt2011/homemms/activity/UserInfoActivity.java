@@ -132,6 +132,9 @@ public class UserInfoActivity extends MainActivity {
         etNewPass = (EditText) findViewById(R.id.new_password);
         etRetypePass = (EditText) findViewById(R.id.retype_password);
 
+        //
+        etNameDisplay.setText(myUser.getNameDisplay());
+
         btChangePass = (Button) findViewById(R.id.bt_change_password);
         btChangePass.setOnClickListener(new View.OnClickListener() {
             @Override
