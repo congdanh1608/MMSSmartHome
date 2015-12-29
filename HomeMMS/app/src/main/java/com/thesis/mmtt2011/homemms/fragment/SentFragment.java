@@ -94,7 +94,7 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
     public static void UpdateNewMessageSent(String mID) {
         Message message = HomeMMSDatabaseHelper.getMessage(mActivity, mID);
         sentMessages.add(0, message);
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyItemInserted(0);
     }
 
 

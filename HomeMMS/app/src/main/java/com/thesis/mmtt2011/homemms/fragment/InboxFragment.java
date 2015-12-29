@@ -82,7 +82,7 @@ public class InboxFragment extends Fragment implements MessageAdapter.MessageVie
     public static void UpdateNewMessageReceive(String mID) {
         Message message = HomeMMSDatabaseHelper.getMessage(mActivity, mID);
         messages.add(0, message);
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyItemInserted(0);
     }
 
     @Override
