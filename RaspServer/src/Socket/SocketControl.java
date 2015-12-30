@@ -79,9 +79,8 @@ public class SocketControl {
 					// Update status of user.
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
 					System.out.println(userID + " online.");
-					sendAskWasRegitered(userID);
-
 					user = userModel.getUser(userID);
+					sendAskWasRegitered(userID);
 
 					// Compare data and send client if have note need send to
 					// client.
@@ -321,6 +320,17 @@ public class SocketControl {
 		return false;
 	}
 
+	public boolean checkNewRegister(String msg) {
+		String cmd = getCommandMsg(msg);
+		if (cmd != null) {
+			Command command = Command.valueOf(cmd);
+			if (command.equals(Command.INFOREGISTER)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean checkReceiveEndNote(String msg) {
 		String cmd = getCommandMsg(msg);
 		if (cmd != null) {
@@ -445,7 +455,7 @@ public class SocketControl {
 				}
 				// wait between every send msg
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -722,7 +732,7 @@ public class SocketControl {
 		SendMsg(socket, JsonHelper.createJsonLoginFail());
 	}
 
-	protected void sendAskWasRegitered(String userID) {
+	public void sendAskWasRegitered(String userID) {
 		SendMsg(socket, JsonHelper.createJsonRegisted(userID));
 
 		// Sent file avatar to Client.

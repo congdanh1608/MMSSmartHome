@@ -102,6 +102,12 @@ public class Server {
 						// Check keyword ENDNOTE
 						// Call function Check user online
 						// --> Call function in all Thread client to check New
+						// Update User Database.
+						if (socketControl.checkNewRegister(temp)) {
+							Thread.sleep(1000);
+							UpdateUserDatabaseToAllThreadClient();
+						}
+						
 						// Message
 						if (socketControl.checkReceiveEndNote(temp)) {
 							Thread.sleep(1000);
@@ -177,6 +183,14 @@ public class Server {
 						removeClientThread(ct);
 						System.out.println(client.socketControl.user.getId() + " disconnect.");
 					}
+				}
+			}
+		}
+		
+		public void UpdateUserDatabaseToAllThreadClient() {
+			if (clients != null) {
+				for (ClientThread_ client : clients) {
+					client.socketControl.sendAskWasRegitered(socketControl.user.getId());
 				}
 			}
 		}

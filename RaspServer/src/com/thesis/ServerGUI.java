@@ -14,12 +14,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -384,12 +388,25 @@ public class ServerGUI {
 	}
 	
 	private String getIPOfServer(){
-		try {
-			return Inet4Address.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+		 String ip = null;
+		    try {
+		        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+		        while (interfaces.hasMoreElements()) {
+		            NetworkInterface iface = interfaces.nextElement();
+		            // filters out 127.0.0.1 and inactive interfaces
+		            if (iface.isLoopback() || !iface.isUp())
+		                continue;
+
+		            Enumeration<InetAddress> addresses = iface.getInetAddresses();
+		            while(addresses.hasMoreElements()) {
+		                InetAddress addr = addresses.nextElement();
+		                ip = addr.getHostAddress();
+		                System.out.println(iface.getDisplayName() + " " + ip);
+		            }
+		        }
+		    } catch (SocketException e) {
+		        throw new RuntimeException(e);
+		    }
+		    return ip;
 	}
 }

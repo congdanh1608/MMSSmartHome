@@ -18,15 +18,14 @@ public class DectectNetworkProblem extends Thread {
 		try {
 			int limit = 0;
 			while (true) {
-				Thread.sleep(2000);
-				limit += 1000;
+				Thread.sleep(5000);
+				limit += 1;
 
 				// Get Name of interface.
 				Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
 				while (networkInterfaces.hasMoreElements()) {
 					NetworkInterface networkInterface = (NetworkInterface) networkInterfaces.nextElement();
-					if (networkInterface.getName().startsWith("eth")) {
-//					if (networkInterface.getName().startsWith("wlan")) {
+					if (networkInterface.getName().startsWith("wlan")) {
 						nameInterface = networkInterface.getDisplayName();
 					}
 				}
@@ -39,7 +38,7 @@ public class DectectNetworkProblem extends Thread {
 					System.out.println("Has connected.");
 				} else {
 					System.out.println("Dont connected.");
-					if (limit > 10000) {
+					if (limit > 6) {
 						System.out.println("Start implement AP");
 						UtilsRouter.executeCommand(LoadCommand.loadShellInstallRouter());
 					}
