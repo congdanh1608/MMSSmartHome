@@ -421,9 +421,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
     public static List<Message> getAllMessagesByReceiver(Context context, String value) {
         List<Message> messages = new ArrayList<Message>();
 
-        String sql = "SELECT * FROM " + MessageTable.NAME +
-                " WHERE " + MessageTable.COLUMN_RECEIVER + " LIKE '%" + value + "%'" +
-                "ORDER BY " + MessageTable.COLUMN_TIMESTAMP + " DESC";
+        String sql = "SELECT * FROM " + MessageTable.NAME + " WHERE " + MessageTable.COLUMN_RECEIVER + " LIKE '%" + value + "%'";
         Cursor data = getReadableDatabase(context).rawQuery(sql, null);
         if (data.moveToFirst()) {
             do {
@@ -451,7 +449,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         String[] selectionArgs = {value};
         Cursor data = getReadableDatabase(context)
                 .query(MessageTable.NAME, MessageTable.PROJECTION, byColumn + " = ?",
-                        selectionArgs, null, null, MessageTable.COLUMN_TIMESTAMP + " DESC");
+                        selectionArgs, null, null, null);
         if (data.moveToFirst()) {
             do {
                 Message message = new Message();
@@ -468,6 +466,32 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
                 message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
 
                 messages.add(message);
+            } while (data.moveToNext());
+        }
+        return messages;
+    }
+
+    public static List<Message> getAllMessagesBySender(Context context, String value) {
+        List<Message> messages = new ArrayList<Message>();
+
+        String sql = "SELECT * FROM " + MessageTable.NAME + " WHERE " + MessageTable.COLUMN_STATUS + "='" + value +
+                "' AND " + MessageTable.COLUMN_TITLE + " NOT LIKE '%Reset%Password%'";
+        Cursor data = getReadableDatabase(context).rawQuery(sql, null);
+        if (data.moveToFirst()) {
+            do {
+                Message message = new Message();
+                message.setMId(data.getString(data.getColumnIndex(MessageTable.COLUMN_ID)));
+                User sender = getUser(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_SENDER)));
+                message.setSender(sender);
+                message.setListReceiverString(context, data.getString(data.getColumnIndex(MessageTable.COLUMN_RECEIVER)));
+                message.setTitle(data.getString(data.getColumnIndex(MessageTable.COLUMN_TITLE)));
+                message.setContentAudio(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_AUDIO)));
+                message.setContentImage(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_IMAGE)));
+                message.setContentVideo(data.getString(data.getColumnIndex(MessageTable.COLUMN_CONTENT_VIDEO)));
+                message.setTimestamp(data.getString(data.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
+                message.setStatus(data.getString(data.getColumnIndex(MessageTable.COLUMN_STATUS)));
+
+                messages.add(0, message);
             } while (data.moveToNext());
         }
         return messages;

@@ -228,7 +228,7 @@ public class RegisterActivity extends AppCompatActivity {
                 avatarFile = ContantsHomeMMS.myUserFolder + MainActivity.myUser.getId() + "/" + avatarName;
                 //Resize avatar
                 if (UtilsMain.checkFileIsExits(avatarCache)) {
-                    UtilsMain.resizeImage(avatarCache, avatarFile, 64, 64);
+                    UtilsMain.resizeImage(avatarCache, avatarFile, 256, 256);
                 }else avatarFile=null;
                 //Simulate network access.
                 Log.d("package", getBaseContext().getPackageName());

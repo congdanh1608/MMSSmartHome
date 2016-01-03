@@ -124,7 +124,7 @@ public class Server {
 				if (temp == null) {
 					socketControl.setStatusForUser(ContantsHomeMMS.UserStatus.offline.name());
 					removeClientThread(this);
-					System.out.println("Client " + socketControl.user.getId() + "disconnect");
+					System.out.println("Client " + socketControl.myUser.getId() + "disconnect");
 				}
 
 			} catch (IOException e) {
@@ -136,7 +136,7 @@ public class Server {
 		}
 
 		public void close() {
-			System.out.println("Close connect " + socketControl.user.getId());
+			System.out.println("Close connect " + socketControl.myUser.getId());
 			try {
 				if (socket != null && !socket.isClosed())
 					socket.close();
@@ -174,14 +174,14 @@ public class Server {
 				// Check status of client.
 				for (ClientThread_ client : clients) {
 					if (writeMsg(client.socket)) {
-						if (client.socketControl.user.getId() != null) {
+						if (client.socketControl.myUser.getId() != null) {
 							client.socketControl.setStatusForUser(ContantsHomeMMS.UserStatus.online.name());
-							System.out.println(client.socketControl.user.getId() + " still connect.");
+							System.out.println(client.socketControl.myUser.getId() + " still connect.");
 						}
 					} else {
 						client.socketControl.setStatusForUser(ContantsHomeMMS.UserStatus.offline.name());
 						removeClientThread(ct);
-						System.out.println(client.socketControl.user.getId() + " disconnect.");
+						System.out.println(client.socketControl.myUser.getId() + " disconnect.");
 					}
 				}
 			}
@@ -190,7 +190,7 @@ public class Server {
 		public void UpdateUserDatabaseToAllThreadClient() {
 			if (clients != null) {
 				for (ClientThread_ client : clients) {
-					client.socketControl.sendAskWasRegitered(socketControl.user.getId());
+					client.socketControl.sendAskWasRegitered();
 				}
 			}
 		}
@@ -198,7 +198,7 @@ public class Server {
 		public void CheckNewMessageForThreadClient() {
 			if (clients != null) {
 				for (ClientThread_ client : clients) {
-					if (socketControl.checkUserIsReceive(client.socketControl.user.getId())) {
+					if (socketControl.checkUserIsReceive(client.socketControl.myUser.getId())) {
 						client.socketControl.checkNewMessageSendToClient();
 					}
 				}

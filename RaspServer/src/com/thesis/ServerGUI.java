@@ -16,9 +16,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -110,7 +114,7 @@ public class ServerGUI {
 		// start socket listen broadcast
 		startListenBroadcase();
 		// start dectect network problem.
-		startDectectNetworkProblem();
+//		startDectectNetworkProblem();
 	}
 
 	/**
@@ -247,7 +251,9 @@ public class ServerGUI {
 				constraints.gridheight = 2;
 				constraints.weighty = 0;
 				constraints.weightx = 0;
-				ImageIcon imageIcon = ScaleImage(ContantsHomeMMS.AppFolder + "/" + "ic_homemms.png");
+//				URL url = getClass().getResource("/resources/ic_homemms.png");
+				
+				ImageIcon imageIcon = ScaleImage(ContantsHomeMMS.PiFolder + "/" + "ic_homemms.png");
 				ImagePanel imagePanel = new ImagePanel(imageIcon.getImage());
 				imagePanel.setLayout(gridbag);
 				JPanel pnAvatar = new JPanel();
@@ -328,9 +334,11 @@ public class ServerGUI {
 					pnAvatar.setVisible(true);
 					ImagePanel imgPanel = (ImagePanel) pnAvatar.getComponent(0);
 					User sender = messages.get(i).getSender();
+			
 					String avatar = ContantsHomeMMS.AppFolder + "/" + sender.getId() + "/" + sender.getAvatar();
 					if (!UtilsMain.checkFilsIsExits(avatar)) {
-						avatar = ContantsHomeMMS.AppFolder + "/" + "ic_homemms.png";
+//						URL url = getClass().getResource("/resources/ic_homemms.png"); 
+						avatar = ContantsHomeMMS.PiFolder + "/" + "ic_homemms.png";
 					}
 					ImageIcon imageIcon = ScaleImage(avatar);
 					imgPanel.setImage(imageIcon.getImage());

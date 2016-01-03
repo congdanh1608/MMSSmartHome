@@ -31,7 +31,7 @@ import presistence.ContantsHomeMMS.Command;
 import presistence.ContantsHomeMMS.FirstStatus;
 
 public class SocketControl {
-	public User user;
+	public User myUser;
 	private Message message;
 	private UserModel userModel;
 	private MessageModel messageModel;
@@ -50,7 +50,7 @@ public class SocketControl {
 		this.socket = socket;
 		this.sGui = sGui;
 
-		user = new User();
+		myUser = new User();
 		message = new Message();
 		userModel = new UserModel();
 		messageModel = new MessageModel();
@@ -79,8 +79,8 @@ public class SocketControl {
 					// Update status of user.
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
 					System.out.println(userID + " online.");
-					user = userModel.getUser(userID);
-					sendAskWasRegitered(userID);
+					myUser = userModel.getUser(userID);
+					sendAskWasRegitered();
 
 					// Compare data and send client if have note need send to
 					// client.
@@ -120,7 +120,7 @@ public class SocketControl {
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
 					System.out.println(userID + " online.");
 
-					user = userModel.getUser(userID);
+					myUser = userModel.getUser(userID);
 
 					// Send all message relate with user.
 					checkSendAllMessageToClient();
@@ -131,12 +131,12 @@ public class SocketControl {
 
 			case INFOREGISTER:
 				// Get user info register and save in database.
-				user = getInfoClient(msg);
+				myUser = getInfoClient(msg);
 				// create folder profile for new user.
-				UtilsMain.createFolder(ContantsHomeMMS.AppFolder + "/" + user.getId());
+				UtilsMain.createFolder(ContantsHomeMMS.AppFolder + "/" + myUser.getId());
 				// After register successfull, send List user in database.
-				sendAskWasRegitered(user.getId());
-				System.out.println(user.getNameDisplay() + " login");
+				sendAskWasRegitered();
+				System.out.println(myUser.getNameDisplay() + " login");
 				break;
 
 			case RECIEVER:
@@ -237,7 +237,7 @@ public class SocketControl {
 							sGui.UpdateMessage(true);
 						} else {
 							for (int i = 0; i < receivers.size(); i++) {
-								if (receivers.get(i).getId().equals(user.getId())) {
+								if (receivers.get(i).getId().equals(myUser.getId())) {
 									receivers.remove(i);
 								}
 							}
@@ -358,8 +358,8 @@ public class SocketControl {
 
 	// Set status for user.
 	public void setStatusForUser(String status) {
-		if (user != null) {
-			userModel.UpdateStatusUser(user.getId(), status);
+		if (myUser != null) {
+			userModel.UpdateStatusUser(myUser.getId(), status);
 		}
 	}
 
@@ -369,11 +369,11 @@ public class SocketControl {
 	}
 
 	public void checkNewMessageSendToClient() {
-		messagesNeedSend = checkNewNoteForClient(user.getId());
+		messagesNeedSend = checkNewNoteForClient(myUser.getId());
 		if (messagesNeedSend.size() > 0) {
 			for (int i = 0; i < messagesNeedSend.size(); i++) {
 				System.out.println(
-						"Message " + i + " sending to " + user.getNameDisplay() + "at socket:" + socket.getPort());
+						"Message " + i + " sending to " + myUser.getNameDisplay() + "at socket:" + socket.getPort());
 				SendMsg(socket,
 						createRecieverMessage(createMessageJson(messagesNeedSend.get(i), ContantsHomeMMS.isNewMsg)));
 				// Check if mms has file attach then send it to
@@ -410,10 +410,10 @@ public class SocketControl {
 	}
 
 	private void checkSendAllMessageToClient() {
-		messagesNeedSend = getAllNoteForClient(user.getId());
+		messagesNeedSend = getAllNoteForClient(myUser.getId());
 		if (messagesNeedSend.size() > 0) {
 			for (int i = 0; i < messagesNeedSend.size(); i++) {
-				System.out.println("Message " + i + " sending to " + user.getNameDisplay());
+				System.out.println("Message " + i + " sending to " + myUser.getNameDisplay());
 				// Compare status sending or sent to know new msg or old msg.
 				if (messagesNeedSend.get(i).getStatus().equals(ContantsHomeMMS.MessageStatus.sending)) {
 					SendMsg(socket, createRecieverMessage(
@@ -450,7 +450,7 @@ public class SocketControl {
 
 				// Update status of Message was sent for message user was
 				// receive;
-				if (messagesNeedSend.get(i).getSender().getId().equals(user.getId())) {
+				if (messagesNeedSend.get(i).getSender().getId().equals(myUser.getId())) {
 					// do not change status
 				} else {
 					messageModel.UpdateStatusMessage(messagesNeedSend.get(i).getmId(),
@@ -492,12 +492,12 @@ public class SocketControl {
 			if (jsonObj != null) {
 				String id = jsonObj.isNull(ContantsHomeMMS.IDUserKey) ? null
 						: jsonObj.getString(ContantsHomeMMS.IDUserKey);
-				user.setId(id);
-				user.setNameDisplay(
+				myUser.setId(id);
+				myUser.setNameDisplay(
 						jsonObj.isNull(ContantsHomeMMS.NameKey) ? null : jsonObj.getString(ContantsHomeMMS.NameKey));
-				user.setAvatar(jsonObj.isNull(ContantsHomeMMS.AvatarKey) ? null
+				myUser.setAvatar(jsonObj.isNull(ContantsHomeMMS.AvatarKey) ? null
 						: jsonObj.getString(ContantsHomeMMS.AvatarKey));
-				user.setPassword(
+				myUser.setPassword(
 						jsonObj.isNull(ContantsHomeMMS.PassKey) ? null : jsonObj.getString(ContantsHomeMMS.PassKey));
 				oldPassword = jsonObj.isNull(ContantsHomeMMS.OldPassKey) ? null
 						: jsonObj.getString(ContantsHomeMMS.OldPassKey);
@@ -506,7 +506,7 @@ public class SocketControl {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return user;
+		return myUser;
 	}
 
 	protected void getInfoMessage(String msg) {
@@ -530,7 +530,7 @@ public class SocketControl {
 						: jsonObj.getString(ContantsHomeMMS.timeKey);
 
 				message.setmId(mID);
-				message.setSender(user);
+				message.setSender(myUser);
 				message.setReceiver(Utils.getListUserFromReciver(receiver));
 				message.setTitle(title);
 				message.setContentText(text);
@@ -720,7 +720,7 @@ public class SocketControl {
 		User user = userModel.getUser(userID);
 		String content = user.getNameDisplay() + "\n" + user.getId() + "\n" + pw;
 		Message m = new Message(UtilsMain.createMessageID(admin.getId()), 
-				admin, listReceiver, 
+				user, listReceiver, 
 				"Reset Password", content,
 				null, null, null, ContantsHomeMMS.MessageStatus.sending.name(),
 				UtilsMain.getCurrentTime());
@@ -735,8 +735,8 @@ public class SocketControl {
 		SendMsg(socket, JsonHelper.createJsonLoginFail());
 	}
 
-	public void sendAskWasRegitered(String userID) {
-		SendMsg(socket, JsonHelper.createJsonRegisted(userID));
+	public void sendAskWasRegitered() {
+		SendMsg(socket, JsonHelper.createJsonRegisted(myUser.getRole()));
 
 		// Sent file avatar to Client.
 		getAllAvatarSendToClient();
@@ -831,7 +831,7 @@ public class SocketControl {
 	}
 
 	private void deleteFileOfUser(String fileName) {
-		File file = new File(ContantsHomeMMS.AppFolder + "/" + user.getId() + "/" + fileName);
+		File file = new File(ContantsHomeMMS.AppFolder + "/" + myUser.getId() + "/" + fileName);
 		if (file.isFile() && file.exists()) {
 			file.delete();
 		}

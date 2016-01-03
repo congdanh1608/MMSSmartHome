@@ -95,7 +95,7 @@ public class UserInfoActivity extends MainActivity {
                             mFilePathAvatar = ContantsHomeMMS.AppFolder + "/" + myUser.getId() + "/" + newAvatar;
                             //Resize avatar
                             if (UtilsMain.checkFileIsExits(avatarCache)) {
-                                UtilsMain.resizeImage(avatarCache, mFilePathAvatar, 64, 64);
+                                UtilsMain.resizeImage(avatarCache, mFilePathAvatar, 156, 156);
                                 myUser.setAvatar(newAvatar);
                                 pushFileAttachToPi(newAvatar);
                             }else{
@@ -118,7 +118,9 @@ public class UserInfoActivity extends MainActivity {
         civAvatar = (CircleImageView) findViewById(R.id.change_avatar);
         //Set image.
         Bitmap bmp = BitmapFactory.decodeFile(ContantsHomeMMS.AppFolder + "/" + myUser.getId() + "/" + myUser.getAvatar());
-        civAvatar.setImageBitmap(bmp);
+        if (bmp!=null) {
+            civAvatar.setImageBitmap(bmp);
+        }
         civAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

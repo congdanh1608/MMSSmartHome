@@ -1,5 +1,6 @@
 package Helper;
 
+import java.awt.Robot;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,7 +169,7 @@ public class JsonHelper {
 		return null;
 	}
 	
-	public static String createJsonRegisted(String userID){
+	public static String createJsonRegisted(String role){
 		List<User> users = new ArrayList<User>();
 		users = userModel.getAllUser();
 		
@@ -188,7 +189,7 @@ public class JsonHelper {
 			}
 			jsonObj.put(ContantsHomeMMS.userDatabase, jsonArray);
 			
-			jsonObj.put(ContantsHomeMMS.RoleKey, userModel.getRoleOfUser(userID));
+			jsonObj.put(ContantsHomeMMS.RoleKey, role);
 			
 			jsonObj.put(ContantsHomeMMS.cmdKey, Command.HASREGISTER);
 			return jsonObj.toString();

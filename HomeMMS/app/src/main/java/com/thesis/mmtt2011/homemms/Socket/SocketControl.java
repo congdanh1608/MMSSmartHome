@@ -106,7 +106,10 @@ public class SocketControl {
                     //Update to textview
                     if (messageReceive != null) {
                         //Notify fragment myUser received or sent a new message with mID.
-                        if (messageReceive.getSender().getId().equals(myUser.getId())) {
+//                        if (messageReceive.getSender().getId().equals(myUser.getId()) && messageReceive.getReceiver().contains(myUser.getId())) {
+//                            messageReceive.setStatus(MessageStatus.received.name());
+//                        }
+                       if (messageReceive.getSender().getId().equals(myUser.getId())) {
                             //Set message status for message was sent.
                             messageReceive.setStatus(MessageStatus.sent.name());
                         }
@@ -135,8 +138,7 @@ public class SocketControl {
 
                         if (messageReceive.getSender().getId().equals(myUser.getId()) && messageReceive.getReceiver().contains(myUser.getId())){
                             InboxFragment.UpdateNewMessageReceive(messageReceive.getId());
-                        }
-                        else if (messageReceive.getSender().getId().equals(myUser.getId())) {
+                        } else if (messageReceive.getSender().getId().equals(myUser.getId())) {
                             SentFragment.UpdateNewMessageSent(messageReceive.getId());
                         } else {
                             InboxFragment.UpdateNewMessageReceive(messageReceive.getId());

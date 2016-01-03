@@ -45,8 +45,8 @@ public class SentFragment extends Fragment implements MessageAdapter.MessageView
     //Khoi tao danh sach cach message mau
     public void initListMessage() {
         sentMessages = new ArrayList<>();
-        sentMessages = HomeMMSDatabaseHelper.getAllMessagesBy(getActivity(),
-                MessageTable.COLUMN_STATUS, ContantsHomeMMS.MessageStatus.sent.name());
+        sentMessages = HomeMMSDatabaseHelper.getAllMessagesBySender(getActivity(),
+               ContantsHomeMMS.MessageStatus.sent.name());
         /*List<User> receivers = new ArrayList<>();
         User receiver = new User("00:00:00:00:00:00", "Name Display", "password", "link avatar", "offline");
         receivers.add(receiver);

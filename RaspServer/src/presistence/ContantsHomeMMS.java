@@ -2,6 +2,7 @@ package presistence;
 
 public class ContantsHomeMMS {
 	public static final String NameApp = "HOMEMMS", NameCacheApp = "Cache";
+	public static final String PiFolder = "/home/pi";
 	public static final String AppFolder = "/home/pi/" + NameApp; 
 	public static final String AppCacheFolder = AppFolder + "/" + NameCacheApp;
 

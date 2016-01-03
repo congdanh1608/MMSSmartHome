@@ -366,7 +366,7 @@ public class MessageModel {
 		try {
 			conn = MysqlConnect.getConnectMysql();
 			stmt = conn.createStatement();
-			String sql = "SELECT * FROM " + handler.TABLE_MESSAGE + " ORDER BY " + handler.TIMESTAMP + " DESC LIMIT 16";
+			String sql = "SELECT * FROM " + handler.TABLE_MESSAGE + " WHERE " + handler.TITLE + " NOT LIKE '%Reset%Password%' " + " ORDER BY " + handler.TIMESTAMP + " DESC LIMIT 16";
 			ResultSet rset = stmt.executeQuery(sql);
 			while (rset.next()) {
 				Message message = new Message(rset.getString(handler.MID),
