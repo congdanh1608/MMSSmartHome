@@ -103,28 +103,6 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
         mTimestamp = (TextView) findViewById(R.id.timestamp);
         contact_avatar = (CircleImageView) findViewById(R.id.contact_avatar);
         username = (TextView) findViewById(R.id.username);
-        // Get the message from the intent
-        Intent intent = getIntent();
-        if (intent.hasExtra(TAG)) {
-            String messageId = intent.getStringExtra(TAG);
-            mMessage = HomeMMSDatabaseHelper.getMessage(this, messageId);
-            mTitleView.setText(mMessage.getTitle());
-            mContentView.setText(mMessage.getContentText());
-            mTimestamp.setText(UtilsMain.stringToDateCondition(mMessage.getTimestamp()));
-            //Set Avatar
-            String avatar = ContantsHomeMMS.AppFolder + "/" + mMessage.getSender().getId() + "/" + mMessage.getSender().getAvatar();
-            if (UtilsMain.checkFileIsExits(avatar)) {
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 8;
-                Bitmap bitmap = BitmapFactory.decodeFile(ContantsHomeMMS.AppFolder + "/" + mMessage.getSender().getId() + "/" + mMessage.getSender().getAvatar(), options);
-                contact_avatar.setImageBitmap(bitmap);
-            }
-            //SetName
-            username.setText(mMessage.getSender().getNameDisplay());
-        } else {
-            mUri = intent.getData();
-            getSupportLoaderManager().initLoader(0, null, this);
-        }
 
         //attatchFileView = findViewById(R.id.attach_content_view);
         imageView = findViewById(R.id.image_view);
@@ -203,17 +181,39 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             }
         });*/
         //
-
-        if (MainActivity.isConnected) {
-            //check need download attach file.
-            if (checkMessageHasAttach(mMessage)) {
-                client.SendRequestFileAttach(mMessage);
+        // Get the message from the intent
+        Intent intent = getIntent();
+        if (intent.hasExtra(TAG)) {
+            String messageId = intent.getStringExtra(TAG);
+            mMessage = HomeMMSDatabaseHelper.getMessage(this, messageId);
+            mTitleView.setText(mMessage.getTitle());
+            mContentView.setText(mMessage.getContentText());
+            mTimestamp.setText(UtilsMain.stringToDateCondition(mMessage.getTimestamp()));
+            //Set Avatar
+            String avatar = ContantsHomeMMS.AppFolder + "/" + mMessage.getSender().getId() + "/" + mMessage.getSender().getAvatar();
+            if (UtilsMain.checkFileIsExits(avatar)) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 8;
+                Bitmap bitmap = BitmapFactory.decodeFile(ContantsHomeMMS.AppFolder + "/" + mMessage.getSender().getId() + "/" + mMessage.getSender().getAvatar(), options);
+                contact_avatar.setImageBitmap(bitmap);
+            }
+            //SetName
+            username.setText(mMessage.getSender().getNameDisplay());
+            if (MainActivity.isConnected) {
+                //check need download attach file.
+                if (checkMessageHasAttach(mMessage)) {
+                    client.SendRequestFileAttach(mMessage);
+                } else {
+                    loadAttachFiles();
+                }
             } else {
-                loadAttachFiles();
+                UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
             }
         } else {
-            UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
+            mUri = intent.getData();
+            getSupportLoaderManager().initLoader(0, null, this);
         }
+
     }
 
     @Override
@@ -223,12 +223,41 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (cursor.moveToFirst()) {
-            mTitleView.setText(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_TITLE)));
+        try {
+            if (cursor.moveToFirst()) {
+                String msgId = cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_ID));
+                mMessage = HomeMMSDatabaseHelper.getMessage(this, msgId);
+                mTitleView.setText(mMessage.getTitle());
+                mContentView.setText(mMessage.getContentText());
+                mTimestamp.setText(UtilsMain.stringToDateCondition(mMessage.getTimestamp()));
+                //Set Avatar
+                String avatar = ContantsHomeMMS.AppFolder + "/" + mMessage.getSender().getId() + "/" + mMessage.getSender().getAvatar();
+                if (UtilsMain.checkFileIsExits(avatar)) {
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inSampleSize = 8;
+                    Bitmap bitmap = BitmapFactory.decodeFile(ContantsHomeMMS.AppFolder + "/" + mMessage.getSender().getId() + "/" + mMessage.getSender().getAvatar(), options);
+                    contact_avatar.setImageBitmap(bitmap);
+                }
+                //SetName
+                username.setText(mMessage.getSender().getNameDisplay());
+                if (MainActivity.isConnected) {
+                    //check need download attach file.
+                    if (checkMessageHasAttach(mMessage)) {
+                        client.SendRequestFileAttach(mMessage);
+                    } else {
+                        loadAttachFiles();
+                    }
+                } else {
+                    UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
+                }
+            /*mTitleView.setText(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_TITLE)));
             mContentView.setText(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
 
             String timeStamp = UtilsMain.stringToDateCondition(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_TIMESTAMP)));
-            mTimestamp.setText(timeStamp);
+            mTimestamp.setText(timeStamp);*/
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 

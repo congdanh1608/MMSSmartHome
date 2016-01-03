@@ -9,6 +9,22 @@
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
+    <item android:id="@+id/action_user_info"
+        android:title="Profile"
+        android:orderInCategory="2"/>
+
+    <item
+        android:id="@+id/action_reconnect"
+        android:orderInCategory="3"
+        android:title="@string/action_reconnect"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_switch_ap"
+        android:orderInCategory="4"
+        android:title="@string/action_switchAP"
+        app:showAsAction="never" />
+
     <!--<item android:id="@+id/action_refresh"
         android:title="@string/action_refresh"
         android:icon="@android:drawable/stat_notify_sync_noanim"
@@ -21,9 +37,6 @@
         android:title="@string/action_scan_devices"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_user_info"
-        android:title="Profile"
-        android:orderInCategory="4"/>
     <item
         android:id="@+id/action_uninstall"
         android:orderInCategory="5"
@@ -42,22 +55,12 @@
         android:title="@string/action_shutdown"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_switch_ap"
-        android:orderInCategory="8"
-        android:title="@string/action_switchAP"
-        app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_reconnect"
-        android:orderInCategory="9"
-        android:title="@string/action_reconnect"
-        app:showAsAction="never" />
 
-    <item
+    <!--<item
         android:id="@+id/action_settings"
         android:orderInCategory="10"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="never" />-->
 
 </menu>

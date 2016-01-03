@@ -266,6 +266,17 @@ public class MainActivity extends AppCompatActivity {
         if (ContantsHomeMMS.ROLEOFMYUSER != null && ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
             menu.clear();
             getMenuInflater().inflate(R.menu.menu_admin, menu);
+            //update searchview
+            MenuItem searchItem = menu.findItem(R.id.action_search);
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            //SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+            ComponentName componentName = new ComponentName(this, SearchResultsActivity.class);
+            searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName));
+
+            searchView.setQueryHint(getResources().getString(R.string.search_hint));
+            searchView.setIconifiedByDefault(false);
+
             //When?
             if (!PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL)) {
                 // server is ad-hoc.
@@ -301,11 +312,11 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-           /* Intent intent = new Intent(this, RegisterActivity.class);
-            startActivity(intent);*/
+        /*if (id == R.id.action_settings) {
+           *//* Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);*//*
             return true;
-        }
+        }*/
 
         if (id == R.id.action_scan_devices) {
             Intent intent = new Intent(this, ScanDevicesActivity.class);

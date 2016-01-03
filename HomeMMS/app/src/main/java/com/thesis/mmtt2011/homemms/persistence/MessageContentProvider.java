@@ -25,7 +25,7 @@ public class MessageContentProvider extends ContentProvider {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         // Suggestion items of Search Dialog is provided by this uri
-        uriMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY,SUGGESTIONS_MESSAGE);
+        uriMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SUGGESTIONS_MESSAGE);
 
         // This URI is invoked, when user presses "Go" in the Keyboard of Search Dialog
         // Listview items of SearchResultActivity is provided by this uri
@@ -33,9 +33,9 @@ public class MessageContentProvider extends ContentProvider {
         uriMatcher.addURI(AUTHORITY, "message", SEARCH_MESSAGE);
 
         // This URI is invoked, when user selects a suggestion from search dialog or an item from the listview
-        // Country details for CountryActivity is provided by this uri
-        // See, SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID in CountryDB.java
-        uriMatcher.addURI(AUTHORITY, "message/#", GET_MESSAGE);
+        // Country details for MessageContentActivity is provided by this uri
+        // See, SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID in MessageDB.java
+        uriMatcher.addURI(AUTHORITY, "message/*", GET_MESSAGE);
 
         return uriMatcher;
     }
