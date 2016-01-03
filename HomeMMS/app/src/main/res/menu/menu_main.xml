@@ -32,6 +32,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_switch_ap"
+        android:orderInCategory="8"
+        android:title="@string/action_switchAP"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="500"
         android:title="@string/action_settings"

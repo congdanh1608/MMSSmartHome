@@ -433,10 +433,10 @@ public class MainActivity extends AppCompatActivity {
                 PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
             }else {
                 PreferencesHelper.writeToPreferencesBoolean(mActivity, true, ContantsHomeMMS.STATE_NORMAL);
-                client.SendRequestServerToNormalState();
+                if (ContantsHomeMMS.ROLEOFMYUSER!=null && ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
+                    client.SendRequestServerToNormalState();
+                }
             }
-            //Request Server to normal
-
             return true;
         }
         return super.onOptionsItemSelected(item);

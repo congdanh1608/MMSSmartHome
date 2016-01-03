@@ -96,6 +96,7 @@ public class MessageAdapter extends SelectableAdapter<MessageAdapter.MessageView
     private void removeRange(int positionStart, int itemCount) {
         for (int i = 0; i < itemCount; ++i) {
             messages.remove(positionStart);
+            removeMessage(positionStart);
         }
         notifyItemRangeRemoved(positionStart, itemCount);
     }

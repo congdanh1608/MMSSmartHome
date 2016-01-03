@@ -174,7 +174,7 @@ public class SocketControl {
 			case ENDNOTE:
 				saveMessage(message);
 				// update Message to GUI
-				sGui.UpdateMessage();
+				sGui.UpdateMessage(false);
 				break;
 
 			case DISCONNECT:
@@ -232,6 +232,9 @@ public class SocketControl {
 								deleteFileOfUser(tempV);
 							if (tempP != null && !tempP.equals("null"))
 								deleteFileOfUser(tempP);
+							
+							//Update GUI
+							sGui.UpdateMessage(true);
 						} else {
 							for (int i = 0; i < receivers.size(); i++) {
 								if (receivers.get(i).getId().equals(user.getId())) {

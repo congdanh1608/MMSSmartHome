@@ -359,14 +359,14 @@ public class MessageModel {
 		return messages;
 	}
 
-	public List<Message> get12Message() {
+	public List<Message> get16Message() {
 		List<Message> messages = new ArrayList<Message>();
 		Connection conn = null;
 		Statement stmt = null;
 		try {
 			conn = MysqlConnect.getConnectMysql();
 			stmt = conn.createStatement();
-			String sql = "SELECT * FROM " + handler.TABLE_MESSAGE + " ORDER BY " + handler.TIMESTAMP + " DESC LIMIT 12";
+			String sql = "SELECT * FROM " + handler.TABLE_MESSAGE + " ORDER BY " + handler.TIMESTAMP + " DESC LIMIT 16";
 			ResultSet rset = stmt.executeQuery(sql);
 			while (rset.next()) {
 				Message message = new Message(rset.getString(handler.MID),
