@@ -421,7 +421,9 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
     public static List<Message> getAllMessagesByReceiver(Context context, String value) {
         List<Message> messages = new ArrayList<Message>();
 
-        String sql = "SELECT * FROM " + MessageTable.NAME + " WHERE " + MessageTable.COLUMN_RECEIVER + " LIKE '%" + value + "%'";
+        String sql = "SELECT * FROM " + MessageTable.NAME +
+                " WHERE " + MessageTable.COLUMN_RECEIVER + " LIKE '%" + value + "%'" +
+                "ORDER BY " + MessageTable.COLUMN_TIMESTAMP + " DESC";
         Cursor data = getReadableDatabase(context).rawQuery(sql, null);
         if (data.moveToFirst()) {
             do {
@@ -449,7 +451,7 @@ public class HomeMMSDatabaseHelper extends SQLiteOpenHelper {
         String[] selectionArgs = {value};
         Cursor data = getReadableDatabase(context)
                 .query(MessageTable.NAME, MessageTable.PROJECTION, byColumn + " = ?",
-                        selectionArgs, null, null, null);
+                        selectionArgs, null, null, MessageTable.COLUMN_TIMESTAMP + " DESC");
         if (data.moveToFirst()) {
             do {
                 Message message = new Message();
