@@ -114,7 +114,7 @@ public class ServerGUI {
 		// start socket listen broadcast
 		startListenBroadcase();
 		// start dectect network problem.
-//		startDectectNetworkProblem();
+		startDectectNetworkProblem();
 	}
 
 	/**
@@ -425,6 +425,15 @@ public class ServerGUI {
 			}
 		});
 	}
+	
+	public void UpdateMessageServerNotConnect(final String msg) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				UpdateMessageNotConnect(msg);
+			}
+		});
+	}
 
 	private void UpdateTime() {
 		Timer timer = new Timer(30000, new ActionListener() {
@@ -444,6 +453,13 @@ public class ServerGUI {
 		timer.setCoalesce(true);
 		timer.setInitialDelay(0);
 		timer.start();
+	}
+	
+	public void UpdateMessageNotConnect(String msg) {
+		// start socket listen command
+		server = new Server(port, this);
+		new ServerRunning().start();
+		lblServerStatus.setText("<html>" + msg + "</html>");
 	}
 
 	private void startSocketListener() {
@@ -485,7 +501,7 @@ public class ServerGUI {
 	}
 
 	private void startDectectNetworkProblem() {
-		Thread thread = new DectectNetworkProblem();
+		Thread thread = new DectectNetworkProblem(this);
 		thread.start();
 	}
 

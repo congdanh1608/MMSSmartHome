@@ -277,13 +277,13 @@ public class MainActivity extends AppCompatActivity {
             searchView.setQueryHint(getResources().getString(R.string.search_hint));
             searchView.setIconifiedByDefault(false);
 
-            //When?
-            if (!PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL)) {
-                // server is ad-hoc.
-                menu.findItem(R.id.action_switch_ap).setTitle("Switch AP");
-            }
-            else menu.findItem(R.id.action_switch_ap).setTitle("Switch Ad-hoc");
         }
+        //When?
+        if (!PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL)) {
+            // server is ad-hoc.
+            menu.findItem(R.id.action_switch_ap).setTitle("Switch AP");
+        }
+        else menu.findItem(R.id.action_switch_ap).setTitle("Switch Ad-hoc");
         return super.onPrepareOptionsMenu(menu);
     }
 
