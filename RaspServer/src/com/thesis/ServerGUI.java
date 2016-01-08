@@ -7,10 +7,12 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -114,7 +116,7 @@ public class ServerGUI {
 		// start socket listen broadcast
 		startListenBroadcase();
 		// start dectect network problem.
-//		startDectectNetworkProblem();
+		startDectectNetworkProblem();
 	}
 
 	/**
@@ -138,13 +140,12 @@ public class ServerGUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setUndecorated(true); // Hide bar Window
-		// frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		frame.setBounds(0, 0, screenSize.width, (int) (screenSize.height * 0.95));
+		frame.setBounds(0, 0, screenSize.width, (int) (screenSize.height * 1));	//full - 1  taskbar - 0.95
 		frame.setVisible(true);
 
 		panelLeft = new JPanel();
 		// panelLeft.setBounds(0, 0, 1110, screenSize.height);
-		panelLeft.setBounds(0, 0, widthLeft, (int) (screenSize.height * 0.95));
+		panelLeft.setBounds(0, 0, widthLeft, (int) (screenSize.height * 1));//full - 1  taskbar - 0.95
 		frame.getContentPane().add(panelLeft);
 		GridBagLayout gbl_panelLeft = new GridBagLayout();
 		// gbl_panelLeft.columnWidths = new int[] { 0, 0, 0, 0 };
@@ -158,7 +159,7 @@ public class ServerGUI {
 
 		panelRight = new JPanel();
 		// panelRight.setBounds(1120, 0, 246, screenSize.height);
-		panelRight.setBounds(xright, 0, widthRight, (int) (screenSize.height * 0.95));
+		panelRight.setBounds(xright, 0, widthRight, (int) (screenSize.height * 1));//full - 1  taskbar - 0.95
 		frame.getContentPane().add(panelRight);
 
 		btnStartListening = new JButton("Ad-hoc");
@@ -425,6 +426,24 @@ public class ServerGUI {
 			}
 		});
 	}
+	
+	public void UpdateMessageStateServer(final String msg) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				UpdateMsgStateServer(msg);
+			}
+		});
+	}
+	
+	public void UpdateMessageStateServerConnected() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				UpdateMsgStateServer("Server is connected <br/>" + getIPOfServer() + ":" + port);
+			}
+		});
+	}
 
 	private void UpdateTime() {
 		Timer timer = new Timer(30000, new ActionListener() {
@@ -445,12 +464,19 @@ public class ServerGUI {
 		timer.setInitialDelay(0);
 		timer.start();
 	}
+	
+	public void UpdateMsgStateServer(String msg) {
+		// start socket listen command
+//		server = new Server(port, this);
+//		new ServerRunning().start();
+		lblServerStatus.setText("<html>" + msg + "</html>");
+	}
 
 	private void startSocketListener() {
 		// start socket listen command
 		server = new Server(port, this);
 		new ServerRunning().start();
-		lblServerStatus.setText("<html>Server is listening <br/>" + getIPOfServer() + ":" + port + "</html>");
+		lblServerStatus.setText("<html>Server is connected <br/>" + getIPOfServer() + ":" + port + "</html>");
 	}
 
 	// Reset status for all user - Set status for all user.
@@ -485,7 +511,7 @@ public class ServerGUI {
 	}
 
 	private void startDectectNetworkProblem() {
-		Thread thread = new DectectNetworkProblem();
+		Thread thread = new DectectNetworkProblem(this);
 		thread.start();
 	}
 

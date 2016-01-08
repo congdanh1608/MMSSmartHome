@@ -1,9 +1,12 @@
 package Router;
 
+import com.thesis.ServerGUI;
+
 public class RestoreRaspNormal extends Thread{
+	private ServerGUI sGui;
 	
-	public RestoreRaspNormal(){
-		
+	public RestoreRaspNormal(ServerGUI sGui){
+		this.sGui = sGui;
 	}
 	
 	@Override

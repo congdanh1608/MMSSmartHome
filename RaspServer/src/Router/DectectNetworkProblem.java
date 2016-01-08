@@ -4,12 +4,15 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
+import com.thesis.ServerGUI;
+
 public class DectectNetworkProblem extends Thread {
 
 	private String nameInterface = null;
+	private ServerGUI sGUI;
 
-	public DectectNetworkProblem() {
-
+	public DectectNetworkProblem(ServerGUI sGUI) {
+		this.sGUI = sGUI;
 	}
 
 	@Override
@@ -35,11 +38,14 @@ public class DectectNetworkProblem extends Thread {
 				String respone = UtilsRouter.executeCommand(command);	
 				if (respone.contains("inet addr")) {
 					limit = 0;
-					System.out.println("Has connected.");
+					sGUI.UpdateMessageStateServerConnected();
+					System.out.println("Server is connected.");
 				} else {
+					sGUI.UpdateMessageStateServer("Server isn't connected");
 					System.out.println("Dont connected.");
 					if (limit > 6) {
-						System.out.println("Start implement AP");
+						sGUI.UpdateMessageStateServer("Start implementing Ad-hoc");
+						System.out.println("Start implementing Ad-hoc");
 						UtilsRouter.executeCommand(LoadCommand.loadShellInstallRouter());
 					}
 				}

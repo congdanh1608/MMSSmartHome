@@ -8,8 +8,11 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 
 import com.thesis.mmtt2011.homemms.SSH.UtilsSSH;
+import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.model.RaspberryPi;
+import com.thesis.mmtt2011.homemms.persistence.ContantsHomeMMS;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import ch.ethz.ssh2.Session;
@@ -81,15 +84,18 @@ public class RemoveRaspAsyncTask extends AsyncTask<Void, Void, Void>{
         createDialogReboot(activity).show();
     }
 
-    public Dialog createDialogReboot(Activity activity) {
+    public Dialog createDialogReboot(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage("Do you want reboot?");
+        builder.setMessage("Do you want reboot and quit app?");
         builder.setTitle("Reboot")
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UtilsImple.excCommand(rasp, LoadCommands.addCommandsReboot());
+                        UtilsImple.excCommand(rasp, LoadCommands.addCommandsReboot());  //reboot server
+                        UtilsMain.clearAppData(activity);                                  //Clear data
+                        UtilsMain.deleteDir(new File(ContantsHomeMMS.AppFolder));       //Clear app folder
+                        activity.finish();                                              //Exit app
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

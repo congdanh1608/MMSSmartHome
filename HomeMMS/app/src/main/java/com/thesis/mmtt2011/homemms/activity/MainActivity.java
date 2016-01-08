@@ -42,6 +42,7 @@ import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.adapter.ViewPagerAdapter;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 import com.thesis.mmtt2011.homemms.implement.LoadCommands;
+import com.thesis.mmtt2011.homemms.implement.RemoveRaspAsyncTask;
 import com.thesis.mmtt2011.homemms.implement.UtilsImple;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.RaspberryPi;
@@ -277,13 +278,13 @@ public class MainActivity extends AppCompatActivity {
             searchView.setQueryHint(getResources().getString(R.string.search_hint));
             searchView.setIconifiedByDefault(false);
 
-            //When?
-            if (!PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL)) {
-                // server is ad-hoc.
-                menu.findItem(R.id.action_switch_ap).setTitle("Switch AP");
-            }
-            else menu.findItem(R.id.action_switch_ap).setTitle("Switch Ad-hoc");
         }
+        //When?
+        if (!PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL)) {
+            // server is ad-hoc.
+            menu.findItem(R.id.action_switch_ap).setTitle("Switch AP");
+        }
+        else menu.findItem(R.id.action_switch_ap).setTitle("Switch Ad-hoc");
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -363,16 +364,7 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (rasp.getConnection()==null) {
-                                UtilsSSH.connectSSH(rasp);
-                            }
-                            UtilsImple.excCommand(rasp, LoadCommands.addCommandsRemoveInstall(rasp));
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            finish();
+                            new RemoveRaspAsyncTask(mActivity, MainActivity.rasp).execute();
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -439,15 +431,34 @@ public class MainActivity extends AppCompatActivity {
             //when this option menu is enabled
             //quit adhoc of server and use wifi access point
             //Change state client to normal
-            boolean state = PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL);
-            if (state) {
-                PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
-            }else {
-                PreferencesHelper.writeToPreferencesBoolean(mActivity, true, ContantsHomeMMS.STATE_NORMAL);
-                if (ContantsHomeMMS.ROLEOFMYUSER!=null && ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
-                    client.SendRequestServerToNormalState();
-                }
-            }
+            final boolean state = PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL);
+            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            String msg = "Do you want switch state to ";
+            if (state) msg += "ad-hoc?"; else msg += "access point";
+            builder.setMessage(msg);
+            builder.setTitle("Switch state")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (state) {
+                                PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
+                            }else {
+                                PreferencesHelper.writeToPreferencesBoolean(mActivity, true, ContantsHomeMMS.STATE_NORMAL);
+                                if (ContantsHomeMMS.ROLEOFMYUSER!=null && ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
+                                    client.SendRequestServerToNormalState();
+                                    new WaitServerRebootSwitchToAP().execute();
+                                }
+                            }
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -748,7 +759,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class WaitServerReboot extends AsyncTask<Void, Void, Void>{
+    public class WaitServerRebootSwitchToAP extends AsyncTask<Void, String, Void>{
 
         ProgressDialog progressDialog;
 
@@ -757,14 +768,21 @@ public class MainActivity extends AppCompatActivity {
             super.onPreExecute();
             progressDialog = new ProgressDialog(mActivity);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("Server is rebooting. Please waiting...");
-            progressDialog.setTitle("Server is rebooting.");
+            progressDialog.setMessage("Start implementing AP. Please waiting...");
+            progressDialog.setTitle("Implementing AP.");
             progressDialog.setCancelable(false);
             progressDialog.show();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+            MainActivity.rasp.setIPAddress(null);
+            try {
+                Thread.sleep(12000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publishProgress("Waiting Server reboot.");
             while (MainActivity.rasp.getIPAddress()==null){
                 try {
                     Thread.sleep(5000);
@@ -790,6 +808,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            progressDialog.setMessage(values[0]);
         }
 
         @Override
