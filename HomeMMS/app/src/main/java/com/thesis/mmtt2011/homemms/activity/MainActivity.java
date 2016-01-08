@@ -42,6 +42,7 @@ import com.thesis.mmtt2011.homemms.UtilsMain;
 import com.thesis.mmtt2011.homemms.adapter.ViewPagerAdapter;
 import com.thesis.mmtt2011.homemms.helper.PreferencesHelper;
 import com.thesis.mmtt2011.homemms.implement.LoadCommands;
+import com.thesis.mmtt2011.homemms.implement.RemoveRaspAsyncTask;
 import com.thesis.mmtt2011.homemms.implement.UtilsImple;
 import com.thesis.mmtt2011.homemms.model.Message;
 import com.thesis.mmtt2011.homemms.model.RaspberryPi;
@@ -363,16 +364,7 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (rasp.getConnection()==null) {
-                                UtilsSSH.connectSSH(rasp);
-                            }
-                            UtilsImple.excCommand(rasp, LoadCommands.addCommandsRemoveInstall(rasp));
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            finish();
+                            new RemoveRaspAsyncTask(mActivity, MainActivity.rasp).execute();
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

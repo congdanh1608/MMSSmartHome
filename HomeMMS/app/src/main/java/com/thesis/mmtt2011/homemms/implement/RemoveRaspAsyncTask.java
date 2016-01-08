@@ -81,15 +81,16 @@ public class RemoveRaspAsyncTask extends AsyncTask<Void, Void, Void>{
         createDialogReboot(activity).show();
     }
 
-    public Dialog createDialogReboot(Activity activity) {
+    public Dialog createDialogReboot(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage("Do you want reboot?");
+        builder.setMessage("Do you want reboot and quit app?");
         builder.setTitle("Reboot")
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         UtilsImple.excCommand(rasp, LoadCommands.addCommandsReboot());
+                        activity.finish();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
