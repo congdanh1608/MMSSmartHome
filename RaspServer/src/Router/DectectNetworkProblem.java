@@ -38,13 +38,14 @@ public class DectectNetworkProblem extends Thread {
 				String respone = UtilsRouter.executeCommand(command);	
 				if (respone.contains("inet addr")) {
 					limit = 0;
-					System.out.println("Has connected.");
+					sGUI.UpdateMessageStateServerConnected();
+					System.out.println("Server is connected.");
 				} else {
-					sGUI.UpdateMessageServerNotConnect("Server is not connect");
+					sGUI.UpdateMessageStateServer("Server isn't connected");
 					System.out.println("Dont connected.");
 					if (limit > 6) {
-						sGUI.UpdateMessageServerNotConnect("Start implement AP");
-						System.out.println("Start implement AP");
+						sGUI.UpdateMessageStateServer("Start implementing Ad-hoc");
+						System.out.println("Start implementing Ad-hoc");
 						UtilsRouter.executeCommand(LoadCommand.loadShellInstallRouter());
 					}
 				}

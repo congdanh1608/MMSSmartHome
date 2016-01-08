@@ -292,7 +292,7 @@ public class SocketControl {
 				break;
 
 			case RESTORENORMAL:
-				Thread thread = new RestoreRaspNormal();
+				Thread thread = new RestoreRaspNormal(sGui);
 				thread.run();
 				break;
 

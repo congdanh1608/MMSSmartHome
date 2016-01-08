@@ -446,6 +446,7 @@ public class MainActivity extends AppCompatActivity {
                 PreferencesHelper.writeToPreferencesBoolean(mActivity, true, ContantsHomeMMS.STATE_NORMAL);
                 if (ContantsHomeMMS.ROLEOFMYUSER!=null && ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
                     client.SendRequestServerToNormalState();
+                    new WaitServerRebootSwitchToAP().execute();
                 }
             }
             return true;
@@ -748,7 +749,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class WaitServerReboot extends AsyncTask<Void, Void, Void>{
+    public class WaitServerRebootSwitchToAP extends AsyncTask<Void, String, Void>{
 
         ProgressDialog progressDialog;
 
@@ -757,14 +758,21 @@ public class MainActivity extends AppCompatActivity {
             super.onPreExecute();
             progressDialog = new ProgressDialog(mActivity);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("Server is rebooting. Please waiting...");
-            progressDialog.setTitle("Server is rebooting.");
+            progressDialog.setMessage("Start implementing AP. Please waiting...");
+            progressDialog.setTitle("Implementing AP.");
             progressDialog.setCancelable(false);
             progressDialog.show();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+            MainActivity.rasp.setIPAddress(null);
+            try {
+                Thread.sleep(12000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publishProgress("Waiting Server reboot.");
             while (MainActivity.rasp.getIPAddress()==null){
                 try {
                     Thread.sleep(5000);
@@ -790,6 +798,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            progressDialog.setMessage(values[0]);
         }
 
         @Override

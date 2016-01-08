@@ -19,7 +19,7 @@ public class UtilsRouter {
 			while ((line = reader.readLine())!= null) {
 				output.append(line + "\n");
 			}
-			System.out.println(output);
+//			System.out.println(output);
 			
 			String line2 = "";			
 			while ((line2 = error.readLine())!= null) {
