@@ -81,8 +81,8 @@ public class Client {
                             UtilsMain.showMessage(activity, "Cannot connect to Server. May be your Server has problem.");
                             firstshow = false;
                         }
-                        //fail connect, wait 20s to try again.
-                        Thread.sleep(10000);
+                        //fail connect, wait 5s to try again.
+                        Thread.sleep(5000);
                     }
 
                     if (socketB != null) {
