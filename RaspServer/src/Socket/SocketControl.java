@@ -292,6 +292,7 @@ public class SocketControl {
 				break;
 
 			case RESTORENORMAL:
+				sGui.UpdateMessageStateServer("Start implementing AP");
 				Thread thread = new RestoreRaspNormal(sGui);
 				thread.run();
 				break;

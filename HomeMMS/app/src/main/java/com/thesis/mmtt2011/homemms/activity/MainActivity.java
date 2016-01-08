@@ -439,16 +439,34 @@ public class MainActivity extends AppCompatActivity {
             //when this option menu is enabled
             //quit adhoc of server and use wifi access point
             //Change state client to normal
-            boolean state = PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL);
-            if (state) {
-                PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
-            }else {
-                PreferencesHelper.writeToPreferencesBoolean(mActivity, true, ContantsHomeMMS.STATE_NORMAL);
-                if (ContantsHomeMMS.ROLEOFMYUSER!=null && ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
-                    client.SendRequestServerToNormalState();
-                    new WaitServerRebootSwitchToAP().execute();
-                }
-            }
+            final boolean state = PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL);
+            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            String msg = "Do you want switch state to ";
+            if (state) msg += "ad-hoc?"; else msg += "access point";
+            builder.setMessage(msg);
+            builder.setTitle("Switch state")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (state) {
+                                PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
+                            }else {
+                                PreferencesHelper.writeToPreferencesBoolean(mActivity, true, ContantsHomeMMS.STATE_NORMAL);
+                                if (ContantsHomeMMS.ROLEOFMYUSER!=null && ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
+                                    client.SendRequestServerToNormalState();
+                                    new WaitServerRebootSwitchToAP().execute();
+                                }
+                            }
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
             return true;
         }
         return super.onOptionsItemSelected(item);
