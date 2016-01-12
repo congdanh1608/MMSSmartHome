@@ -334,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_reconnect) {
             //reconnect when server change IP
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            builder.setMessage("Do you want reconnect?");
+            builder.setMessage("Do you want to reconnect?");
             builder.setTitle("Reconnect")
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -358,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_uninstall) {
             //uninstall configuration of server
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            builder.setMessage("Do you want uninstall?");
+            builder.setMessage("Do you want to uninstall?");
             builder.setTitle("Uninstall")
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_reboot) {
             //send command reboot server
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            builder.setMessage("Do you want reboot?");
+            builder.setMessage("Do you want to reboot?");
             builder.setTitle("Reboot")
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -405,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_shutdown) {
             //send command shutdown server
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            builder.setMessage("Do you want shutdown?");
+            builder.setMessage("Do you want to shutdown?");
             builder.setTitle("Shutdown")
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -433,7 +433,7 @@ public class MainActivity extends AppCompatActivity {
             //Change state client to normal
             final boolean state = PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL);
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            String msg = "Do you want switch state to ";
+            String msg = "Do you want to switch state to ";
             if (state) msg += "ad-hoc?"; else msg += "access point";
             builder.setMessage(msg);
             builder.setTitle("Switch state")
@@ -653,7 +653,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (testWifi == -1) {
             utilsMain.ShowToast("App is offline");
         } else if (testWifi == 0) {
-            utilsMain.ShowToast("Dont config Server.");
+//            utilsMain.ShowToast("Dont config Server.");
         }
     }
 
@@ -768,7 +768,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPreExecute();
             progressDialog = new ProgressDialog(mActivity);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("Start implementing AP. Please waiting...");
+            progressDialog.setMessage("Start implementing AP. Please wait...");
             progressDialog.setTitle("Implementing AP.");
             progressDialog.setCancelable(false);
             progressDialog.show();

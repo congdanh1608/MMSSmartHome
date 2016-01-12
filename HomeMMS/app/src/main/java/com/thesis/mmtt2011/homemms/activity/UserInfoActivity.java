@@ -103,9 +103,12 @@ public class UserInfoActivity extends MainActivity {
                                 newAvatar = null;
                             }
 
-                            //Send request to Server
-                            new UserChangeProfileTask(myUser, etNameDisplay.getText().toString(), newAvatar
-                                    , etNewPass.getText().toString(), etOldPass.getText().toString()).execute();
+                            if (MainActivity.isConnected) {
+                                //Send request to Server
+                                new UserChangeProfileTask(myUser, etNameDisplay.getText().toString(), newAvatar
+                                        , etNewPass.getText().toString(), etOldPass.getText().toString()).execute();
+                            }else Snackbar.make(view, "Server is offline. Try again later.", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
 
                         } else {
                             Snackbar.make(view, "Try password is wrong.", Snackbar.LENGTH_LONG)

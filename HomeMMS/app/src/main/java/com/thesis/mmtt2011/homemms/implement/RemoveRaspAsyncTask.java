@@ -35,7 +35,7 @@ public class RemoveRaspAsyncTask extends AsyncTask<Void, Void, Void>{
     protected void onPreExecute() {
         super.onPreExecute();
         pd.setTitle("Removing...");
-        pd.setMessage("Wating remove install.");
+        pd.setMessage("Waiting for removing install.");
         pd.setProgressStyle(pd.STYLE_SPINNER);
         pd.show();
         pd.setCancelable(false);
@@ -86,7 +86,7 @@ public class RemoveRaspAsyncTask extends AsyncTask<Void, Void, Void>{
 
     public Dialog createDialogReboot(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage("Do you want reboot and quit app?");
+        builder.setMessage("Do you want to reboot and quit app?");
         builder.setTitle("Reboot")
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {

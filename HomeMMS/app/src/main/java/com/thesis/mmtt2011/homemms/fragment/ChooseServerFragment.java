@@ -68,7 +68,7 @@ public class ChooseServerFragment extends Fragment {
                 fragmentTransaction.commit();
                 /*Intent intent = new Intent(getActivity(), ConnectConfiguredServerActivity.class);
                 startActivity(intent);*/
-                }else UtilsMain.showMessage(getActivity(), "Dont connection!");
+                }else UtilsMain.showMessage(getActivity(), "Not connection!");
             }
         });
 

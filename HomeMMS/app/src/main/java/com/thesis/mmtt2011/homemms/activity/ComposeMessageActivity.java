@@ -380,7 +380,7 @@ public class ComposeMessageActivity extends MainActivity implements MediaPlayer.
             homeMMSDatabaseHelper.deleteMessage(this, draftMessage.getId());
         }
 
-        Snackbar.make(coordinatorlayout, "Send successful", Snackbar.LENGTH_LONG)
+        Snackbar.make(coordinatorlayout, "Sent successful", Snackbar.LENGTH_LONG)
                 .setAction("Action", null);
         //Finish activity
 //        try {

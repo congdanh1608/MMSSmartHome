@@ -58,7 +58,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
     protected void onPreExecute() {
         super.onPreExecute();
         pd.setTitle("Installing...");
-        pd.setMessage("Prepaid install.");
+        pd.setMessage("Prepare to install.");
         pd.setProgressStyle(pd.STYLE_HORIZONTAL);
         pd.setProgress(0);
         pd.show();
@@ -140,7 +140,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
                 pd.setMessage("Unziping file in Pi.");
                 break;
             case 4:
-                pd.setMessage("Prepare install config for Pi.");
+                pd.setMessage("Prepare to install config for Pi.");
                 break;
             case 5:
                 pd.setMessage("Config start for Pi.");
@@ -149,7 +149,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
                 pd.setMessage("Config Wifi profile to Pi.");
                 break;
             case 7:
-                pd.setMessage("Install dependencies and mysql");
+                pd.setMessage("Install mysql");
                 break;
             case 8:
                 pd.setMessage("Config mysql.");
@@ -174,8 +174,8 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
 
     public Dialog createDialogReboot(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage("Do you want reboot?");
-        builder.setTitle("Reboot")
+        builder.setMessage("Do you want to reboot?");
+        builder.setTitle("Install successful")
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -202,7 +202,7 @@ public class InstallRaspAsyncTask extends AsyncTask<Void, Integer, Void> {
             super.onPreExecute();
             progressDialog = new ProgressDialog(activity);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("Server is rebooting. Please waiting...");
+            progressDialog.setMessage("Server is rebooting. Please wait...");
             progressDialog.setTitle("Server is rebooting.");
             progressDialog.setCancelable(false);
             progressDialog.show();

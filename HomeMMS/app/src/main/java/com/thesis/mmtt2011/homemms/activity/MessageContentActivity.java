@@ -207,7 +207,10 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
                     loadAttachFiles();
                 }
             } else {
-                UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
+//                UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
+                if (!checkMessageHasAttach(mMessage)){
+                    loadAttachFiles();
+                }
             }
         } else {
             mUri = intent.getData();
@@ -248,7 +251,10 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
                         loadAttachFiles();
                     }
                 } else {
-                    UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
+//                    UtilsMain.showMessage(MessageContentActivity.this, "Server is offline");
+                    if (!checkMessageHasAttach(mMessage)){
+                        loadAttachFiles();
+                    }
                 }
             /*mTitleView.setText(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_TITLE)));
             mContentView.setText(cursor.getString(cursor.getColumnIndex(MessageTable.COLUMN_CONTENT_TEXT)));
@@ -280,6 +286,11 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return true;
     }
 
     @Override
