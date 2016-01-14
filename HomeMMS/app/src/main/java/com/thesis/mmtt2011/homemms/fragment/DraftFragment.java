@@ -76,12 +76,6 @@ public class DraftFragment extends Fragment implements MessageAdapter.MessageVie
         return rootView;
     }
 
-    /*@Override
-    public void onResume() {
-        super.onResume();
-        mAdapter.notifyDataSetChanged();
-    }*/
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 100) {

@@ -37,7 +37,7 @@ public class Server {
 			serverSocketA = new ServerSocket(port);
 			while (keepGoing) {
 				socket = serverSocketA.accept();
-//				socket.setKeepAlive(true);
+				// socket.setKeepAlive(true);
 				System.out.println("Accepted connection : " + socket);
 				if (!keepGoing)
 					break;
@@ -107,7 +107,7 @@ public class Server {
 							Thread.sleep(1000);
 							UpdateUserDatabaseToAllThreadClient();
 						}
-						
+
 						// Message
 						if (socketControl.checkReceiveEndNote(temp)) {
 							Thread.sleep(1000);
@@ -186,7 +186,7 @@ public class Server {
 				}
 			}
 		}
-		
+
 		public void UpdateUserDatabaseToAllThreadClient() {
 			if (clients != null) {
 				for (ClientThread_ client : clients) {
@@ -194,12 +194,22 @@ public class Server {
 				}
 			}
 		}
+		
+		public void UpdateStatusUserDatabaseToAllThreadClient() {
+			if (clients != null) {
+				for (ClientThread_ client : clients) {
+					client.socketControl.sendUpdateStatusUser();
+				}
+			}
+		}
 
 		public void CheckNewMessageForThreadClient() {
 			if (clients != null) {
 				for (ClientThread_ client : clients) {
-					if (socketControl.checkUserIsReceive(client.socketControl.myUser.getId())) {
-						client.socketControl.checkNewMessageSendToClient();
+					if (client.socketControl.myUser.getId() != null) {
+						if (socketControl.checkUserIsReceive(client.socketControl.myUser.getId())) {
+							client.socketControl.checkNewMessageSendToClient();
+						}
 					}
 				}
 			}

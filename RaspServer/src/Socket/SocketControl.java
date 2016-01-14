@@ -78,6 +78,7 @@ public class SocketControl {
 				case REGISTERED: {
 					// Update status of user.
 					userModel.UpdateStatusUser(userID, ContantsHomeMMS.UserStatus.online.name());
+					ct.UpdateStatusUserDatabaseToAllThreadClient();
 					System.out.println(userID + " online.");
 					myUser = userModel.getUser(userID);
 					sendAskWasRegitered();
@@ -361,6 +362,7 @@ public class SocketControl {
 	public void setStatusForUser(String status) {
 		if (myUser != null) {
 			userModel.UpdateStatusUser(myUser.getId(), status);
+			ct.UpdateStatusUserDatabaseToAllThreadClient();
 		}
 	}
 
@@ -734,6 +736,10 @@ public class SocketControl {
 
 	protected void sendAskLoginFail() {
 		SendMsg(socket, JsonHelper.createJsonLoginFail());
+	}
+	
+	public void sendUpdateStatusUser() {
+		SendMsg(socket, JsonHelper.createJsonRegisted(myUser.getRole()));
 	}
 
 	public void sendAskWasRegitered() {

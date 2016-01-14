@@ -333,14 +333,14 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_reconnect) {
             //reconnect when server change IP
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage("Do you want to reconnect?");
             builder.setTitle("Reconnect")
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Thread thread = new Thread(DiscoveryThread.getInstance(mActivity));
+                            Thread thread = new Thread(DiscoveryThread.getInstance(MainActivity.this));
                             thread.start();
                             new ServerAutoConnectTask().execute();
                         }
@@ -357,14 +357,14 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_uninstall) {
             //uninstall configuration of server
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage("Do you want to uninstall?");
             builder.setTitle("Uninstall")
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            new RemoveRaspAsyncTask(mActivity, MainActivity.rasp).execute();
+                            new RemoveRaspAsyncTask(MainActivity.this, MainActivity.rasp).execute();
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_reboot) {
             //send command reboot server
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage("Do you want to reboot?");
             builder.setTitle("Reboot")
                     .setCancelable(false)
@@ -404,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_shutdown) {
             //send command shutdown server
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage("Do you want to shutdown?");
             builder.setTitle("Shutdown")
                     .setCancelable(false)
@@ -431,8 +431,8 @@ public class MainActivity extends AppCompatActivity {
             //when this option menu is enabled
             //quit adhoc of server and use wifi access point
             //Change state client to normal
-            final boolean state = PreferencesHelper.getIsPreferenceBoolean(mActivity, ContantsHomeMMS.STATE_NORMAL);
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            final boolean state = PreferencesHelper.getIsPreferenceBoolean(MainActivity.this, ContantsHomeMMS.STATE_NORMAL);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             String msg = "Do you want to switch state to ";
             if (state) msg += "ad-hoc?"; else msg += "access point";
             builder.setMessage(msg);
@@ -442,9 +442,9 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (state) {
-                                PreferencesHelper.writeToPreferencesBoolean(mActivity, false, ContantsHomeMMS.STATE_NORMAL);
+                                PreferencesHelper.writeToPreferencesBoolean(MainActivity.this, false, ContantsHomeMMS.STATE_NORMAL);
                             }else {
-                                PreferencesHelper.writeToPreferencesBoolean(mActivity, true, ContantsHomeMMS.STATE_NORMAL);
+                                PreferencesHelper.writeToPreferencesBoolean(MainActivity.this, true, ContantsHomeMMS.STATE_NORMAL);
                                 if (ContantsHomeMMS.ROLEOFMYUSER!=null && ContantsHomeMMS.ROLEOFMYUSER.equals(ContantsHomeMMS.UserRole.admin.name())) {
                                     client.SendRequestServerToNormalState();
                                     new WaitServerRebootSwitchToAP().execute();
@@ -752,9 +752,9 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(success);
            if (success) {
                 //finish activity, go back to MainActivity
-               UtilsMain.showMessage(mActivity, "Server found!");
+               UtilsMain.showMessage(MainActivity.this, "Server found!");
             } else {
-                UtilsMain.showMessage(mActivity, "Server not found. Try again!");
+                UtilsMain.showMessage(MainActivity.this, "Server not found. Try again!");
             }
         }
     }
@@ -766,7 +766,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(mActivity);
+            progressDialog = new ProgressDialog(MainActivity.this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.setMessage("Start implementing AP. Please wait...");
             progressDialog.setTitle("Implementing AP.");

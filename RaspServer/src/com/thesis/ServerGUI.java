@@ -133,7 +133,7 @@ public class ServerGUI {
 		ratio = screenSize.getWidth() / 1366;
 		int widthLeft = (int) (screenSize.width * 0.82);
 		int xright = (int) (screenSize.getWidth() * 0.82);
-		int widthRight = screenSize.width - widthLeft;
+		int widthRight = screenSize.width - widthLeft;			//in 1366 -> widthRight = 246
 
 		frame = new JFrame();
 		// frame.setBounds(100, 100, 562, 458);
@@ -188,8 +188,8 @@ public class ServerGUI {
 
 		lblServerStatus = new JLabel("Server has stopped");
 		lblServerStatus.setHorizontalAlignment(SwingConstants.CENTER);
-		lblServerStatus.setFont(new Font("Dialog", Font.PLAIN, (int) (14 * ratio)));
-		lblServerStatus.setBounds(53, 12, 143, 30);
+		lblServerStatus.setFont(new Font("Dialog", Font.BOLD, (int) (15 * ratio)));
+		lblServerStatus.setBounds(30, (int)(15*ratio), widthRight - 60, (int)(35*ratio));		
 		panelRight.add(lblServerStatus);
 		panelRight.add(btnStartListening);
 		panelRight.add(btn2);
@@ -197,13 +197,13 @@ public class ServerGUI {
 		lblCurrenttime = new JLabel("00:00");
 		lblCurrenttime.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCurrenttime.setFont(new Font("Dialog", Font.BOLD, (int) (60 * ratio)));
-		lblCurrenttime.setBounds(22, 55, 212, 73);
+		lblCurrenttime.setBounds(20, (int)(60*ratio), widthRight - 40, (int)(73*ratio));
 		panelRight.add(lblCurrenttime);
 
 		lblCurrentday = new JLabel("000 00/00/0000");
 		lblCurrentday.setFont(new Font("Dialog", Font.BOLD, (int) (20 * ratio)));
 		lblCurrentday.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCurrentday.setBounds(22, 128, 212, 40);
+		lblCurrentday.setBounds(20, (int)(128*ratio), widthRight - 40, (int)(40*ratio));
 		panelRight.add(lblCurrentday);
 	}
 
@@ -295,7 +295,7 @@ public class ServerGUI {
 				tAMessage.setEditable(false);
 				tAMessage.setLineWrap(true);
 				tAMessage.setWrapStyleWord(true);
-				tAMessage.setFont(new Font("Dialog", Font.PLAIN, (int) (15 * ratio)));
+				tAMessage.setFont(new Font("Dialog", Font.PLAIN, (int) (18 * ratio)));
 				tAMessage.setLayout(gridbag);
 				JScrollPane pnContent = new JScrollPane(tAMessage);
 				pnContent.setVisible(false);

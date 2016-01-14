@@ -31,7 +31,7 @@ public class PushFileAsyncTask extends AsyncTask<Void, Void, Integer> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        pd.setTitle("Watting...");
+        pd.setTitle("Sending...");
         pd.setMessage("Please Wait...");
         pd.setProgressStyle(pd.STYLE_SPINNER);
         pd.show();

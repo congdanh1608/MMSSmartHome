@@ -295,11 +295,11 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_message_content, menu);
+//        getMenuInflater().inflate(R.menu.menu_message_content, menu);
         return true;
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -307,11 +307,12 @@ public class MessageContentActivity extends MainActivity implements LoaderManage
             //implement delete message here
             MainActivity.client.SendRequestDeleteMessage(HomeMMSDatabaseHelper.getMessage(this, mMessage.getId()));
             HomeMMSDatabaseHelper.deleteMessage(this, mMessage.getId());
+            finish();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
